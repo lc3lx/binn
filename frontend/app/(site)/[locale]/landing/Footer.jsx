@@ -17,7 +17,7 @@ export default function Footer() {
 
   const contactEmail = settings.contactEmail || "support@binancecoins.com";
   const contactPhone = settings.contactPhone || "";
-  const telegramUrl = settings.telegramUrl || "https://t.me/binancecoins";
+  const telegramUrl = "https://t.me/+Kx7e0xo3dJcyNWQ0";
   const whatsappUrl = settings.whatsappUrl || "";
   const twitterUrl = settings.twitterUrl || "https://x.com/binancecoins";
   const instagramUrl = settings.instagramUrl || "";
