@@ -1,0 +1,897 @@
+{
+  "info": {
+    "_postman_id": "b3184ad3-0e72-4f26-9a1d-7994d6427c7a",
+    "name": "Mahmod Backend Full API",
+    "description": "Complete Postman collection for all APIs in the backend.\\n\\nHow to use:\\n1) Set `baseUrl` to your server (default: http://localhost:8000).\\n2) Run Auth login/signup and copy token to `token` variable (raw JWT only).\\n3) Use returned ids and fill variables: userId, planId, transactionId, ticketId, faqId, notificationId, orderId.\\n\\nNotes:\\n- Endpoints under admin routes require admin/manager role token.\\n- Protected endpoints require header Authorization: Bearer {{token}}.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8000" },
+    { "key": "token", "value": "" },
+    { "key": "userId", "value": "" },
+    { "key": "planId", "value": "" },
+    { "key": "transactionId", "value": "" },
+    { "key": "ticketId", "value": "" },
+    { "key": "faqId", "value": "" },
+    { "key": "notificationId", "value": "" },
+    { "key": "orderId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Signup",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "description": "Create new user account and return JWT token. `referralCode` is optional.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test@example.com\",\n  \"password\": \"123456\",\n  \"passwordConfirm\": \"123456\",\n  \"referralCode\": \"ABC12345\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/auth/signup"
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "description": "Login user and return JWT token.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/auth/login"
+          }
+        },
+        {
+          "name": "Google Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "description": "Login/register with Google ID token. `referralCode` is optional (works for first-time signup).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idToken\": \"GOOGLE_ID_TOKEN\",\n  \"referralCode\": \"ABC12345\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/auth/google"
+          }
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "description": "Send password reset code to user email.",
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"test@example.com\"\n}" },
+            "url": "{{baseUrl}}/api/v1/auth/forgotPassword"
+          }
+        },
+        {
+          "name": "Verify Reset Code",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "description": "Verify reset code.",
+            "body": { "mode": "raw", "raw": "{\n  \"resetCode\": \"123456\"\n}" },
+            "url": "{{baseUrl}}/api/v1/auth/verifyResetCode"
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "description": "Reset password after code verification.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"newPassword\": \"654321\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/auth/resetPassword"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get Me",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Get logged-in user profile.",
+            "url": "{{baseUrl}}/api/v1/users/getMe"
+          }
+        },
+        {
+          "name": "Update Me",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "description": "Update logged-in user data.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated User\",\n  \"email\": \"updated@example.com\",\n  \"phone\": \"+966500000000\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/users/updateMe"
+          }
+        },
+        {
+          "name": "Change My Password",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "description": "Change logged-in user password.",
+            "body": { "mode": "raw", "raw": "{\n  \"password\": \"newPassword123\"\n}" },
+            "url": "{{baseUrl}}/api/v1/users/changeMyPassword"
+          }
+        },
+        {
+          "name": "Submit KYC",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Upload front/back ID images for KYC verification with fullName and nationalNumber.",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "fullName", "type": "text", "value": "Mahmoud Ahmad" },
+                { "key": "nationalNumber", "type": "text", "value": "12345678901" },
+                { "key": "frontImage", "type": "file", "src": "" },
+                { "key": "backImage", "type": "file", "src": "" }
+              ]
+            },
+            "url": "{{baseUrl}}/api/v1/users/kyc/submit"
+          }
+        },
+        {
+          "name": "Delete Me",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Deactivate own account.",
+            "url": "{{baseUrl}}/api/v1/users/deleteMe"
+          }
+        },
+        {
+          "name": "Admin - KYC Review",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "description": "Approve/reject user KYC request.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"approved\",\n  \"rejectionReason\": \"\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/users/kyc/{{userId}}/review"
+          }
+        },
+        {
+          "name": "Admin - KYC Requests List",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "List KYC requests with filters: status=all|approved|pending|rejected, search, page, limit.",
+            "url": "{{baseUrl}}/api/v1/users/admin/kyc-requests?status=all&page=1&limit=10"
+          }
+        },
+        {
+          "name": "Admin - Users Management List",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Admin users table list with filters: status, kycStatus, search, page, limit.",
+            "url": "{{baseUrl}}/api/v1/users/admin/list?status=active&page=1&limit=10"
+          }
+        },
+        {
+          "name": "Admin - User Details",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Get full user details for admin side panel/page.",
+            "url": "{{baseUrl}}/api/v1/users/admin/{{userId}}/details"
+          }
+        },
+        {
+          "name": "Admin - Block User",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Block user account (active=false).",
+            "url": "{{baseUrl}}/api/v1/users/admin/{{userId}}/block"
+          }
+        },
+        {
+          "name": "Admin - Unblock User",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Unblock user account (active=true).",
+            "url": "{{baseUrl}}/api/v1/users/admin/{{userId}}/unblock"
+          }
+        },
+        {
+          "name": "Admin - Wallet Adjust",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "description": "Adjust user wallet manually from users management actions.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"add\",\n  \"amount\": 100,\n  \"note\": \"manual admin action\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/users/admin/{{userId}}/wallet-adjust"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Wallet",
+      "item": [
+        {
+          "name": "Get My Wallet",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Get current user wallet balance.",
+            "url": "{{baseUrl}}/api/v1/wallet/me"
+          }
+        },
+        {
+          "name": "Get My Transactions",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Get current user wallet transactions.",
+            "url": "{{baseUrl}}/api/v1/wallet/me/transactions"
+          }
+        },
+        {
+          "name": "Request Deposit",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "description": "Create deposit request (pending review).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 1000,\n  \"walletAddress\": \"TRX7a8b9c...d4e5\",\n  \"txHash\": \"0xabc...\",\n  \"note\": \"USDT TRC20 deposit\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/wallet/deposit/request"
+          }
+        },
+        {
+          "name": "Request Withdraw",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "description": "Create withdraw request (pending). Supports fee and walletAddress.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 2500,\n  \"walletAddress\": \"TRX7a8b9c...d4e5\",\n  \"withdrawalFee\": 15,\n  \"note\": \"cash out\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/wallet/withdraw/request"
+          }
+        },
+        {
+          "name": "Admin - Deposits Management",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Deposits table with counters + filters (status/search/page/limit).",
+            "url": "{{baseUrl}}/api/v1/wallet/admin/deposits?status=all&page=1&limit=10"
+          }
+        },
+        {
+          "name": "Admin - Review Deposit",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "description": "Confirm or reject pending deposit.",
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"confirmed\"\n}" },
+            "url": "{{baseUrl}}/api/v1/wallet/deposits/{{transactionId}}/review"
+          }
+        },
+        {
+          "name": "Admin - Withdrawals Management",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Withdrawals table with counters + filters.",
+            "url": "{{baseUrl}}/api/v1/wallet/admin/withdrawals?status=all&page=1&limit=10"
+          }
+        },
+        {
+          "name": "Admin - Review Withdrawal",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "description": "Approve or reject pending withdrawal.",
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"approved\"\n}" },
+            "url": "{{baseUrl}}/api/v1/wallet/transactions/{{transactionId}}/review"
+          }
+        },
+        {
+          "name": "Admin - Mark Withdrawal Paid",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Mark approved withdrawal as paid.",
+            "url": "{{baseUrl}}/api/v1/wallet/transactions/{{transactionId}}/mark-paid"
+          }
+        },
+        {
+          "name": "Admin - Notify Withdrawal Paid",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "description": "Send notification after paid withdrawal (idempotent once).",
+            "body": { "mode": "raw", "raw": "{\n  \"message\": \"Your withdrawal has been paid.\"\n}" },
+            "url": "{{baseUrl}}/api/v1/wallet/transactions/{{transactionId}}/notify-user"
+          }
+        },
+        {
+          "name": "Admin - Transactions Management",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Unified transactions table filters: type/status/search/pagination.",
+            "url": "{{baseUrl}}/api/v1/wallet/admin/transactions?type=all&status=all&page=1&limit=10"
+          }
+        },
+        {
+          "name": "Admin - Create User Transaction",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "description": "Direct transaction injection by admin for a specific user.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"deposit\",\n  \"amount\": 500,\n  \"note\": \"manual top-up\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/wallet/{{userId}}/transactions"
+          }
+        },
+        {
+          "name": "Admin - Get User Transactions",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Get all wallet transactions for a specific user.",
+            "url": "{{baseUrl}}/api/v1/wallet/{{userId}}/transactions"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Plans",
+      "item": [
+        {
+          "name": "Get Plans",
+          "request": {
+            "method": "GET",
+            "description": "Public list of plans. Optional: activeOnly=true, search=plan name.",
+            "url": "{{baseUrl}}/api/v1/plans?activeOnly=true"
+          }
+        },
+        {
+          "name": "Get Plan By Id",
+          "request": {
+            "method": "GET",
+            "description": "Get one plan details by id.",
+            "url": "{{baseUrl}}/api/v1/plans/{{planId}}"
+          }
+        },
+        {
+          "name": "Get My Subscriptions",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Get logged user current plan + all subscriptions.",
+            "url": "{{baseUrl}}/api/v1/plans/me/subscriptions"
+          }
+        },
+        {
+          "name": "Subscribe To Plan",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Subscribe user to plan (supports multiple subscriptions).",
+            "url": "{{baseUrl}}/api/v1/plans/{{planId}}/subscribe"
+          }
+        },
+        {
+          "name": "Admin - Plans Management",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Admin plans cards with subscribers stats + summary.",
+            "url": "{{baseUrl}}/api/v1/plans/admin/management?status=all&search="
+          }
+        },
+        {
+          "name": "Admin - Create Plan",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "description": "Create plan with pricing, ROI, hashrate, duration, and features.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Starter Miner\",\n  \"price\": 100,\n  \"currency\": \"USDT\",\n  \"hashrate\": 10,\n  \"hashrateUnit\": \"TH/s\",\n  \"roiMinPercent\": 30,\n  \"roiMaxPercent\": 42,\n  \"durationDays\": 30,\n  \"features\": [\"Daily payouts\", \"Instant activation\"],\n  \"isPopular\": false,\n  \"isActive\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/plans"
+          }
+        },
+        {
+          "name": "Admin - Update Plan",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "description": "Update existing plan fields.",
+            "body": { "mode": "raw", "raw": "{\n  \"price\": 120,\n  \"isPopular\": true\n}" },
+            "url": "{{baseUrl}}/api/v1/plans/{{planId}}"
+          }
+        },
+        {
+          "name": "Admin - Delete Plan",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Delete plan by id.",
+            "url": "{{baseUrl}}/api/v1/plans/{{planId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Support",
+      "item": [
+        {
+          "name": "Create Support Ticket",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "description": "User opens support ticket with first message.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subject\": \"Withdrawal not received\",\n  \"message\": \"I submitted withdrawal 3 days ago.\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/support"
+          }
+        },
+        {
+          "name": "Get My Tickets",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "User gets own support tickets.",
+            "url": "{{baseUrl}}/api/v1/support/me"
+          }
+        },
+        {
+          "name": "User Reply To Ticket",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "description": "User sends new message in own ticket.",
+            "body": { "mode": "raw", "raw": "{\n  \"message\": \"Any update please?\"\n}" },
+            "url": "{{baseUrl}}/api/v1/support/me/{{ticketId}}/message"
+          }
+        },
+        {
+          "name": "Admin - Get Support Tickets",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Admin support list. status=active hides closed by default behavior.",
+            "url": "{{baseUrl}}/api/v1/support?status=active"
+          }
+        },
+        {
+          "name": "Admin - Reply Ticket",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "description": "Admin sends reply to a ticket.",
+            "body": { "mode": "raw", "raw": "{\n  \"message\": \"We are processing your request.\"\n}" },
+            "url": "{{baseUrl}}/api/v1/support/{{ticketId}}/reply"
+          }
+        },
+        {
+          "name": "Admin - Update Ticket Status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "description": "Set ticket status: open, waiting, closed.",
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"closed\"\n}" },
+            "url": "{{baseUrl}}/api/v1/support/{{ticketId}}/status"
+          }
+        }
+      ]
+    },
+    {
+      "name": "FAQ",
+      "item": [
+        {
+          "name": "Get Public FAQ",
+          "request": {
+            "method": "GET",
+            "description": "Public active FAQs. Supports search/category.",
+            "url": "{{baseUrl}}/api/v1/faq?search=&category="
+          }
+        },
+        {
+          "name": "Admin - Get FAQ List",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Admin FAQ management list with summary, search, status, pagination.",
+            "url": "{{baseUrl}}/api/v1/faq/admin?status=all&page=1&limit=10"
+          }
+        },
+        {
+          "name": "Admin - Get FAQ By Id",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Get one FAQ for edit modal/form.",
+            "url": "{{baseUrl}}/api/v1/faq/admin/{{faqId}}"
+          }
+        },
+        {
+          "name": "Admin - Create FAQ",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "description": "Create new FAQ item.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"How do I start mining?\",\n  \"answer\": \"Create account, deposit USDT, then subscribe to a plan.\",\n  \"category\": \"mining\",\n  \"isActive\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/faq"
+          }
+        },
+        {
+          "name": "Admin - Update FAQ",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "description": "Update FAQ item.",
+            "body": { "mode": "raw", "raw": "{\n  \"isActive\": false\n}" },
+            "url": "{{baseUrl}}/api/v1/faq/{{faqId}}"
+          }
+        },
+        {
+          "name": "Admin - Delete FAQ",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Delete FAQ item by id.",
+            "url": "{{baseUrl}}/api/v1/faq/{{faqId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "Get My Notifications",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Get notifications for logged user.",
+            "url": "{{baseUrl}}/api/v1/notifications/me"
+          }
+        },
+        {
+          "name": "Mark One Notification Read",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Mark one notification as read.",
+            "url": "{{baseUrl}}/api/v1/notifications/me/{{notificationId}}/read"
+          }
+        },
+        {
+          "name": "Mark All Notifications Read",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Mark all current user notifications as read.",
+            "url": "{{baseUrl}}/api/v1/notifications/me/read-all"
+          }
+        }
+      ]
+    },
+    {
+      "name": "User Dashboard",
+      "item": [
+        {
+          "name": "Summary",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "User dashboard summary cards and active plans.",
+            "url": "{{baseUrl}}/api/v1/dashboard/summary"
+          }
+        },
+        {
+          "name": "Recent Activity",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Recent wallet activities for user dashboard.",
+            "url": "{{baseUrl}}/api/v1/dashboard/recent-activity?limit=10"
+          }
+        },
+        {
+          "name": "Hashrate Series",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "User hashrate trend points.",
+            "url": "{{baseUrl}}/api/v1/dashboard/hashrate-series?days=14"
+          }
+        },
+        {
+          "name": "Allocation",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "User mining allocation by plan.",
+            "url": "{{baseUrl}}/api/v1/dashboard/allocation"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin Dashboard",
+      "item": [
+        {
+          "name": "Overview Cards",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Admin top overview cards.",
+            "url": "{{baseUrl}}/api/v1/admin/dashboard/overview"
+          }
+        },
+        {
+          "name": "Chart - Deposits vs Withdrawals",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Monthly deposits vs withdrawals chart data.",
+            "url": "{{baseUrl}}/api/v1/admin/dashboard/charts/deposits-withdrawals"
+          }
+        },
+        {
+          "name": "Chart - User Growth",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Monthly registered users growth series.",
+            "url": "{{baseUrl}}/api/v1/admin/dashboard/charts/user-growth"
+          }
+        },
+        {
+          "name": "Chart - Mining Performance",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Weekly mining hashrate and earnings chart.",
+            "url": "{{baseUrl}}/api/v1/admin/dashboard/charts/mining-performance"
+          }
+        },
+        {
+          "name": "Recent Transactions Widget",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Recent transactions list for admin dashboard widget.",
+            "url": "{{baseUrl}}/api/v1/admin/dashboard/recent-transactions?limit=10"
+          }
+        },
+        {
+          "name": "Analytics Overview",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Statistics & Analytics top cards.",
+            "url": "{{baseUrl}}/api/v1/admin/dashboard/analytics/overview"
+          }
+        },
+        {
+          "name": "Analytics Daily Earnings",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Daily earnings chart (days query optional).",
+            "url": "{{baseUrl}}/api/v1/admin/dashboard/analytics/daily-earnings?days=7"
+          }
+        },
+        {
+          "name": "Analytics User Activity Hourly",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Hourly active users chart for today.",
+            "url": "{{baseUrl}}/api/v1/admin/dashboard/analytics/user-activity-hourly"
+          }
+        },
+        {
+          "name": "Analytics Plan Distribution",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Mining plan subscribers distribution chart.",
+            "url": "{{baseUrl}}/api/v1/admin/dashboard/analytics/plan-distribution"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Platform Settings",
+      "item": [
+        {
+          "name": "Get Platform Settings",
+          "request": {
+            "method": "GET",
+            "description": "Fetch current platform settings (deposit wallet, rates, limits, commissions).",
+            "url": "{{baseUrl}}/api/v1/platform-settings"
+          }
+        },
+        {
+          "name": "Update Platform Settings (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "description": "Save platform settings from admin panel.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"trc20DepositWalletAddress\": \"TCk6SkNHxK34eN648YUBpyBL1KYsPB5RJC\",\n  \"starterDailyRatePercent\": 1.2,\n  \"starterDurationDays\": 30,\n  \"eliteDailyRatePercent\": 5.7,\n  \"eliteDurationDays\": 90,\n  \"minimumWithdrawal\": 25,\n  \"maximumWithdrawal\": 50000,\n  \"level1CommissionPercent\": 5,\n  \"level2CommissionPercent\": 2\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/platform-settings"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin Profile",
+      "item": [
+        {
+          "name": "Get Admin Profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Get admin profile info (without 2FA).",
+            "url": "{{baseUrl}}/api/v1/admin/profile"
+          }
+        },
+        {
+          "name": "Update Admin Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "description": "Update admin personal info.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Alex Don\",\n  \"phone\": \"+1 (555) 000-0000\",\n  \"timezone\": \"UTC+4 (Dubai)\",\n  \"language\": \"English\",\n  \"profileImg\": \"admin-avatar.png\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/admin/profile"
+          }
+        },
+        {
+          "name": "Change Admin Password",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "description": "Update admin password (current + new + confirm).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"oldpass123\",\n  \"newPassword\": \"newpass123\",\n  \"confirmNewPassword\": \"newpass123\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/admin/profile/change-password"
+          }
+        }
+      ]
+    },
+    {
+      "name": "TRC20 Payments",
+      "item": [
+        {
+          "name": "Create Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "description": "Create USDT TRC20 payment order for logged-in user. Backend later auto-detects transfer and auto-credits user wallet.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"baseAmount\": 100\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/payments/create-order"
+          }
+        },
+        {
+          "name": "Get Order Status",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "Check payment order status by order id or mongo id (includes credited_at and credited_transaction_id once wallet is topped up).",
+            "url": "{{baseUrl}}/api/v1/payments/order-status/{{orderId}}"
+          }
+        }
+      ]
+    }
+  ]
+}

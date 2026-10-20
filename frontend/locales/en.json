@@ -1,0 +1,499 @@
+{
+  "nav": {
+    "plan": "Plan",
+    "stats": "Stats",
+    "howItWorks": "How it Works",
+    "dashboard": "Dashboard",
+    "startNow": "Start Now",
+    "withdraw": "Withdraw",
+    "logout": "Logout"
+  },
+  "hero": {
+    "title": "Binance Mining",
+    "titleParts": {
+      "prefix": "Binance",
+      "mining": "Mining",
+      "management": "Management"
+    },
+    "subtitle1": " Platform for Mining &",
+    "subtitle2": "Yield Management",
+    "description": {
+      "line1": "Powerful interface, live counters, and clear unit plan.",
+      "line2": "No guaranteed profits — investment involves risk."
+    },
+    "viewStats": "View Stats",
+    "viewPlan": "View Plan"
+  },
+  "sidebar": {
+    "title": "Dashboard",
+    "subtitle": "Financial Services Management",
+    "items": {
+      "overview": "Overview",
+      "mining_plans": "Mining Plans",
+      "deposit": "Deposit",
+      "withdraw": "Withdraw",
+      "transactions": "Transactions",
+      "referral": "Referral",
+      "security": "Security",
+      "statistics": "Statistics",
+      "support": "Support",
+      "faq": "FAQ Management",
+      "kyc": "KYC Verification",
+      "profile": "Admin Profile",
+      "dashboard": "Dashboard",
+      "users": "Users Management",
+      "orders": "Orders Management",
+      "codes": "Shipping Codes",
+      "pricing": "Pricing Management",
+      "exchange": "Exchange Rates",
+      "notifications": "Notifications & Offers",
+      "Platform_Settings": "Platform Settings"
+    },
+    "badge": {
+      "new": "New"
+    },
+    "footer": {
+      "role": "Administrator",
+      "email": "admin@system.com"
+    },
+    "logout": "Logout"
+  },
+  "transactions": {
+    "title": "Transaction History",
+    "subtitle": "Review your recent deposits, withdrawals and plan purchases.",
+    "searchPlaceholder": "Search by ID...",
+    "columns": {
+      "id": "ID",
+      "type": "Type",
+      "amount": "Amount",
+      "status": "Status",
+      "date": "Date"
+    },
+    "types": {
+      "deposit": "Deposit",
+      "withdraw": "Withdraw",
+      "plan": "Plan Purchase"
+    },
+    "status": {
+      "completed": "Completed",
+      "pending": "Pending",
+      "failed": "Failed",
+      "confirmed": "Confirmed",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "actions": {
+      "refresh": "Refresh",
+      "export": "Export"
+    },
+    "footer": {
+      "showing": "Showing",
+      "to": "to",
+      "of": "of",
+      "entries": "entries"
+    },
+    "pagination": {
+      "prev": "Prev",
+      "next": "Next"
+    }
+  },
+  "admin_transactions": {
+    "title": "Transactions Management",
+    "pendingWithdrawals": "{count} pending withdrawal requests",
+    "searchPlaceholder": "Search by name, phone, or email...",
+    "tabs": {
+      "all": "All",
+      "deposit": "Deposit",
+      "withdraw": "Withdraw",
+      "mining": "Mining"
+    },
+    "columns": {
+      "txnId": "TXN ID",
+      "user": "User",
+      "type": "Type",
+      "amount": "Amount",
+      "balanceAfter": "Balance After",
+      "status": "Status",
+      "date": "Date",
+      "note": "Note"
+    },
+    "types": {
+      "deposit": "Deposit",
+      "withdraw": "Withdrawal",
+      "mining_profit": "Mining",
+      "plan_purchase": "Plan Purchase",
+      "referral_commission": "Referral"
+    },
+    "loading": "Loading transactions...",
+    "error": "Error loading transactions. Please check the API endpoint.",
+    "empty": "No transactions found",
+    "pagination": {
+      "showing": "SHOWING",
+      "to": "TO",
+      "of": "OF",
+      "entries": "ENTRIES"
+    }
+  },
+  "signup": {
+    "welcome": "Welcome to Binance",
+    "emailPhone": "Email/Phone number",
+    "emailPlaceholder": "Email",
+    "privacyPart1": "By creating an account, I agree to Binance's",
+    "privacyNotice": "Privacy Notice",
+    "continue": "Continue",
+    "or": "or",
+    "google": "Continue with Google",
+    "apple": "Continue with Apple",
+    "telegram": "Continue with Telegram",
+    "entity": "Sign up as an entity",
+    "login": "Log in",
+    "comingSoon": "Coming soon",
+    "haveAccount": "Have an account?",
+    "rewards": {
+      "upTo": "Up to",
+      "amount": "100 USD",
+      "signUpRewards": "Sign Up Rewards",
+      "usersTrust": "310,524,324 Users Trust Binance",
+      "tradingVolume": "No.1 in Trading Volume & Customer Asset",
+      "safuFund": "1,000,000,000 USD SAFU Fund"
+    }
+  },
+  "login": {
+    "welcome": "Welcome back",
+    "password": "Password",
+    "passwordPlaceholder": "Password",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "createAccount": "Create new account"
+  },
+  "forgotPassword": {
+    "title": "Forgot password",
+    "subtitle": "Enter your email and we'll send you a reset code.",
+    "verifyTitle": "Verify reset code",
+    "verifySubtitle": "Enter the code sent to this email:",
+    "resetTitle": "Create a new password",
+    "resetSubtitle": "Set a new password for this email:",
+    "codeLabel": "Reset code",
+    "codePlaceholder": "Enter the 6-digit code",
+    "newPassword": "New password",
+    "newPasswordPlaceholder": "Enter your new password",
+    "confirmPassword": "Confirm password",
+    "confirmPasswordPlaceholder": "Confirm your new password",
+    "actions": {
+      "sendCode": "Send code",
+      "verifyCode": "Verify code",
+      "resetPassword": "Reset password",
+      "backToLogin": "Back to login",
+      "back": "Back"
+    },
+    "success": {
+      "emailSent": "Reset code sent successfully",
+      "codeVerified": "Code verified successfully",
+      "passwordReset": "Password reset successfully"
+    },
+    "errors": {
+      "requestFailed": "Failed to send reset code",
+      "codeFailed": "Invalid reset code",
+      "resetFailed": "Failed to reset password"
+    },
+    "validation": {
+      "emailRequired": "Email is required",
+      "emailInvalid": "Please enter a valid email address",
+      "codeRequired": "Reset code must be 6 digits",
+      "passwordRequired": "Minimum 6 characters",
+      "confirmRequired": "Please confirm your password",
+      "passwordsMatch": "Passwords do not match"
+    }
+  },
+  "support": {
+    "title": "Support",
+    "placeholder": "Type your message...",
+    "send": "Send",
+    "intro": "Hello! How can we help?",
+    "replyTemplate": "Thanks! We'll review and get back to you soon.",
+    "back": "Back"
+  },
+  "kycDialog": {
+    "title": "KYC Verification",
+    "subtitle": "Complete your identity verification to unlock all platform features.",
+    "dropzone": {
+      "idle": "Drag and drop your document here, or click to browse",
+      "dragging": "Drop your document here",
+      "hint": "Upload the front side of your ID card, passport, or a PDF copy.",
+      "supported": "Supported formats: JPG, PNG, PDF",
+      "selectedFile": "Selected file"
+    },
+    "progressLabel": "Front side",
+    "upload": "Upload Document",
+    "replace": "Replace File",
+    "remove": "Remove File",
+    "submit": "Submit",
+    "submitted": "Your identity document has been verified automatically and successfully."
+  },
+  "referral": {
+    "title": "Your Referral Link",
+    "subtitle": "Share your unique link with friends, family, or your community to start earning passive income.",
+    "copy": "Copy",
+    "copied": "Copied",
+    "shareTwitter": "Share on X",
+    "shareTelegram": "Share on Telegram",
+    "stats": {
+      "totalReferrals": "Total Referrals",
+      "totalEarnings": "Total Earnings"
+    },
+    "reward": {
+      "current": "Current Reward Tier",
+      "commission": "Commission",
+      "nextTier": "Next tier",
+      "needMore": "more active referrals needed"
+    },
+    "level": {
+      "gold": "GOLD LEVEL"
+    },
+    "recent": {
+      "title": "Recent Referrals"
+    },
+    "table": {
+      "user": "User",
+      "dateJoined": "Date Joined",
+      "status": "Status",
+      "earned": "Earned"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "pending": "Pending"
+    },
+    "milestones": {
+      "title": "Referral Deposit Milestone Rewards ($100 per 10 Referrals)",
+      "subtitle": "Earn a $100 cash bonus withdrawable instantly for every 10 members who register through your link and deposit/activate mining!",
+      "rewardPerTen": "$100 for every 10 active depositing members",
+      "qualifiedCount": "Active Depositing Referrals",
+      "unclaimedTitle": "Milestone Rewards Ready to Claim!",
+      "unclaimedDesc": "You have unlocked cash bonuses ready to transfer to your balance and withdraw instantly.",
+      "claimBtn": "Claim ${amount} Now",
+      "claiming": "Claiming...",
+      "withdrawBtn": "Submit Withdrawal Request Now",
+      "progressTitle": "Progress Towards Next $100 Reward",
+      "progressSubtitle": "{needed} more depositing members needed to unlock the next $100",
+      "roadmapTitle": "Milestones & Rewards Roadmap",
+      "tierCard": "Tier {index}",
+      "tierGoal": "{target} Depositing Referrals",
+      "tierReward": "+$100 Cash (Total: ${total})",
+      "statusClaimed": "Claimed Successfully ✓",
+      "statusReady": "Ready to Claim! 🎉",
+      "statusInProgress": "In Progress ({count}/{target})",
+      "statusLocked": "Locked",
+      "rulesTitle": "How It Works & Qualification Rules",
+      "rule1Title": "1. Share Your Referral Link",
+      "rule1Desc": "Copy your referral link or code and share it with friends, family, or social media.",
+      "rule2Title": "2. Register & Deposit",
+      "rule2Desc": "Your referred member must register and complete a deposit or activate an active mining plan.",
+      "rule3Title": "3. Claim $100 & Withdraw Anytime",
+      "rule3Desc": "Every 10 depositing members unlocks $100 cash added directly to your wallet balance with no withdrawal limits!"
+    }
+  },
+  "stats": {
+    "title": "Live Statistics",
+    "subtitle": "Real-time mining metrics — ready for API integration.",
+    "btc": {
+      "title": "BTC Mined",
+      "value": "142.87+",
+      "desc": "Total Bitcoin successfully mined by the platform, representing cumulative mining output generated over time."
+    },
+    "target": {
+      "title": "Daily Target",
+      "desc": "The projected daily growth target based on planned resource allocation and mining performance."
+    },
+    "hashrate": {
+      "title": "Total Hashrate",
+      "desc": "Combined computational power currently used to process the mining network."
+    },
+    "miners": {
+      "title": "Active Miners",
+      "desc": "Total number of miners currently participating and contributing hashing power to the mining pool."
+    }
+  },
+  "plan": {
+    "title": "Mining Plan Clear & Simple",
+    "subtitle": "No guaranteed profits — estimates only.",
+    "name": "Mining Plan • Pro",
+    "rate": "1.5%",
+    "dailyTargetLabel": "Daily Target (Not Guaranteed)",
+    "meta": {
+      "duration": "Duration",
+      "durationValue": "Up to 30 days",
+      "minimum": "Minimum",
+      "minimumValue": "100$",
+      "withdrawal": "Withdrawal",
+      "withdrawalValue": "Per Policy",
+      "transparency": "Transparency",
+      "transparencyValue": "Reports + Counter"
+    },
+    "amountLabel": "Enter Amount ($)",
+    "rangeMin": "1",
+    "rangeMax": "30",
+    "at7": "At 7d",
+    "at30": "At 30d",
+    "join": "Join Plan"
+  },
+  "mining_plans": {
+    "title": "Cloud Mining Plans",
+    "intro": "Choose the perfect hashrate power for your investment goals. All plans include automated maintenance and guaranteed uptime.",
+    "labels": {
+      "hashrate": "Hashrate",
+      "estRoi": "Est. ROI",
+      "duration": "Duration"
+    },
+    "popular": "MOST POPULAR",
+    "purchase": "Purchase Plan",
+    "plans": {
+      "basicMiner": "Basic Miner",
+      "proAsic": "Pro ASIC",
+      "premiumCluster": "Premium Cluster"
+    },
+    "roi": {
+      "8_10": "8–10% Monthly",
+      "12_15": "12–15% Monthly",
+      "18_22": "18–22% Monthly"
+    },
+    "duration": {
+      "30d": "30 Days"
+    },
+    "features": {
+      "instantActivation": "Instant Activation",
+      "dailyPayouts": "Daily Payouts",
+      "hourlyPayouts": "Hourly Payouts",
+      "standardSupport": "Standard Support",
+      "prioritySupport": "Priority 24/7 Support",
+      "advancedAnalytics": "Advanced Analytics",
+      "basicAnalytics": "Basic Analytics",
+      "vipAnalytics": "VIP Analytics",
+      "freeReinvestment": "Free Reinvestment",
+      "bonusHashrateDays": "Bonus Hashrate Days",
+      "dedicatedManager": "Dedicated Account Manager"
+    }
+  },
+  "faq": {
+    "title": "FAQ",
+    "items": {
+      "q1": {
+        "q": "Are profits guaranteed?",
+        "a": "No. Mining/investment involves risk. Platform designed professionally without unrealistic promises."
+      },
+      "q2": {
+        "q": "How to connect real data?",
+        "a": "Use API integration to fetch live metrics and counters securely."
+      },
+      "q3": {
+        "q": "More plan options?",
+        "a": "Plans are illustrative. Future options may be added based on demand."
+      },
+      "q4": {
+        "q": "How is Binance Mining different from other cryptocurrencies?",
+        "a": "Focus on operational transparency, simple plans, and API-ready stats."
+      },
+      "q5": {
+        "q": "Is Binance Mining safe?",
+        "a": "We prioritize security, but all investments carry risk."
+      }
+    }
+  },
+  "deposit": {
+    "subtitle": "Add funds to your account to purchase mining plans.",
+    "labels": {
+      "network": "Network",
+      "amount": "Deposit Amount (USDT)",
+      "txnId": "Transaction ID",
+      "address": "Deposit Address"
+    },
+    "badge": {
+      "fast": "Fast"
+    },
+    "notice": {
+      "title": "Important Notice",
+      "text": "Send only USDT to this deposit address using the selected network. Sending other coins or tokens to this address may result in loss of your deposit."
+    },
+    "actions": {
+      "check": "Check the payment"
+    },
+    "networks": {
+      "tron": "Tron (TRC20)",
+      "eth": "Ethereum (ERC20)",
+      "bsc": "BNB Smart Chain (BEP20)"
+    }
+  },
+  "withdraw": {
+    "title": "Withdraw Funds",
+    "subtitle": "Withdraw your mining earnings to your external wallet.",
+    "balance": {
+      "label": "Available Balance"
+    },
+    "network": "Network",
+    "fee": "Fee:",
+    "address": {
+      "label": "Withdrawal Address",
+      "placeholder": {
+        "tron": "Enter TRC-20 wallet address",
+        "eth": "Enter ERC-20 wallet address",
+        "bsc": "Enter BEP-20 wallet address"
+      }
+    },
+    "amount": {
+      "label": "Withdrawal Amount",
+      "max": "MAX AMOUNT"
+    },
+    "minimum": "Minimum withdrawal:",
+    "networkFee": "Network fee:",
+    "receive": "You will receive",
+    "submit": "Submit Withdrawal Request",
+    "networks": {
+      "tron": "Tron (TRC20)",
+      "eth": "Ethereum (ERC20)",
+      "bsc": "BNB Smart Chain (BEP20)"
+    }
+  },
+  "security": {
+    "title": "Security Settings",
+    "subtitle": "Manage your account security, 2FA.",
+    "twofa": {
+      "title": "Two-Factor Authentication",
+      "desc": "Protect your account and transactions.",
+      "provider": "Google Authenticator",
+      "providerNote": "Used for withdrawals and security changes",
+      "enable": "Enable 2FA",
+      "recommendation": "We highly recommend enabling 2FA to prevent unauthorized access to your account."
+    },
+    "password": {
+      "title": "Password Management",
+      "desc": "Update your login credentials.",
+      "current": "Current Password",
+      "new": "New Password",
+      "update": "Update Password"
+    }
+  },
+  "footer": {
+    "newsletterTitle": "Join our newsletter",
+    "newsletterSubtitle": "Are you ready to experience the freedom of mining?",
+    "emailPlaceholder": "Enter your email",
+    "subscribe": "Subscribe",
+    "privacyAgree": "By subscribing, you agree with our",
+    "privacyPolicy": "Privacy Policy",
+    "resources": "Resources",
+    "linkPlans": "Plans",
+    "linkStats": "Stats",
+    "linkHowItWorks": "How it works",
+    "legal": "Legal",
+    "terms": "Terms of use",
+    "privacy": "Privacy policy",
+    "copyright": "Copyright",
+    "developedByPrefix": "Developed by",
+    "allRightsReserved": "All Rights Reserved",
+    "contact": "Contact Us",
+    "support": "Support & Help",
+    "email": "Email",
+    "phone": "Phone / WhatsApp",
+    "telegram": "Telegram",
+    "whatsapp": "WhatsApp"
+  }
+}

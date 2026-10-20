@@ -1,0 +1,162 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-referral-system-0001",
+    "name": "Referral System — نظام الإحالة",
+    "description": "=== آلية العمل من A إلى Z (نظام الإحالة) ===\n\nA) الإعداد (الأدمن)\n- افتح GET /api/v1/platform-settings لقراءة الإعدادات الحالية.\n- حدّث عبر PUT /api/v1/platform-settings (توكن أدمن):\n  • level1CommissionPercent: نسبة المستوى 1 الافتراضية إذا لم تُعرّف referralTiers.\n  • level2CommissionPercent: نسبة لجدّ الداعي (مستوى 2) من **نفس** مبلغ ربح التعدين المُضاف للمحال.\n  • minimumWithdrawal: حد أدنى للسحب (عام للمنصة).\n  • referralActiveMinPlans: الحد الأدنى لعدد **الباقات النشطة** (غير منتهية) عند المحال حتى تُحسب عمولات الإحالة من ربحه (الافتراضي 3).\n  • referralRegistrationBaseUrl: رابط صفحة التسجيل (مثال: https://yoursite.com/register) ليُبنى رابط المشاركة ?ref=CODE. بديل: متغير بيئة FRONTEND_REGISTER_URL.\n  • referralTiers: مصفوفة مستويات مكافأة للداعي المباشر، مثال:\n    [{\"name\":\"Silver\",\"minActiveReferrals\":0,\"commissionPercent\":5},\n     {\"name\":\"Gold\",\"minActiveReferrals\":10,\"commissionPercent\":10}]\n    minActiveReferrals = عدد المحالين **النشطين** (لديهم ≥ referralActiveMinPlans باقة نشطة).\n\nB) كل مستخدم يحصل تلقائياً على referralCode فريد عند أول حفظ (أو عند أول طلب GET /referrals/me).\n\nC) التسجيل بالإحالة\n- المستخدم يفتح الرابط: {baseUrl_frontend}/register?ref=REFERRAL_CODE\n- الواجهة ترسل POST /auth/signup (أو google) مع الحقل الاختياري referralCode بنفس القيمة.\n- الخادم يخزّن referredBy على الحساب الجديد.\n\nD) التحقق من الكود (اختياري للواجهة)\n- GET /api/v1/referrals/validate/:code → { valid: true/false } بدون توكن.\n\nE) لوحة المستخدم للإحالة\n- GET /api/v1/referrals/me مع Bearer token:\n  رابط المشاركة، إجمالي الإحالات، الأرباح، الـ tier الحالي، المستوى التالي، جدول آخر محالين (بريد مقنع، Active/Pending، ربح من كل محال).\n  Active = لديه عدد باقات نشطة ≥ referralActiveMinPlans.\n\nF) متى تُدفع العمولة؟\n- عندما يضيف الأدمن للمحال **ربح تعدين** عبر:\n  POST /api/v1/wallet/{userId}/transactions\n  body: { \"type\": \"mining_profit\", \"amount\": 10, \"note\": \"...\" }\n- الشروط:\n  1) المحال لديه referredBy.\n  2) عدد باقاته النشطة ≥ referralActiveMinPlans.\n- النتيجة:\n  • المستوى 1 (الداعي المباشر): نسبة من amount حسب tier الداعي (أو level1 إذا لا توجد tiers).\n  • المستوى 2 (داعي الداعي): نسبة level2 من نفس amount.\n- تُسجّل معاملات نوع referral_commission في المحفظة.\n- إذا فشل توزيع الإحالات، يُلغى إيداع mining_profit لذلك الطلب (لتفادي عدم اتساق البيانات).\n\nG) لوحة الأدمن للإحالة\n- GET /api/v1/referrals/admin/overview — إجماليات.\n- GET /api/v1/referrals/admin/growth-chart — نمو الإحالات شهرياً.\n- GET /api/v1/referrals/admin/top-referrers?limit=20 — أعلى الدعاة حسب أرباح L1.\n\n=== متغيرات المجموعة ===\nbaseUrl، token (JWT)، referralCode، refereeUserId (معرّف المحال الذي سيُضاف له mining_profit)\n\n=== ملاحظة ===\nربح التعدين اليومي لا يُحسب تلقائياً بالكрон في هذا المشروع؛ الإدمن يُنشئ mining_profit يدوياً أو عبر أتمتة لاحقة.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8000" },
+    { "key": "token", "value": "" },
+    { "key": "referralCode", "value": "ضع_كود_الداعي" },
+    { "key": "refereeUserId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "1 — إعداد المنصة (أدمن)",
+      "item": [
+        {
+          "name": "GET Platform Settings (قراءة)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "قراءة الإعدادات العامة بما فيها نسب الإحالة و referralTiers و referralActiveMinPlans. لا يتطلب توكن حسب مساركم الحالي.",
+            "url": "{{baseUrl}}/api/v1/platform-settings"
+          }
+        },
+        {
+          "name": "PUT Platform Settings — إعدادات الإحالة (أدمن)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "description": "حدّث نسب المستوى 1 و 2، الحد الأدنى للسحب، عدد الباقات المطلوبة للمحال ليُحتسب له عمولة، رابط التسجيل، ومصفوفة المستويات (Tiers).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"level1CommissionPercent\": 5,\n  \"level2CommissionPercent\": 2,\n  \"minimumWithdrawal\": 50,\n  \"referralActiveMinPlans\": 3,\n  \"referralRegistrationBaseUrl\": \"https://example.com/register\",\n  \"referralTiers\": [\n    { \"name\": \"SILVER\", \"minActiveReferrals\": 0, \"commissionPercent\": 5 },\n    { \"name\": \"GOLD\", \"minActiveReferrals\": 10, \"commissionPercent\": 10 },\n    { \"name\": \"PLATINUM\", \"minActiveReferrals\": 50, \"commissionPercent\": 15 }\n  ]\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/platform-settings"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2 — التسجيل مع كود إحالة",
+      "item": [
+        {
+          "name": "POST Signup + referralCode",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "description": "إنشاء حساب مرتبط بالداعي. referralCode اختياري لكن إن وُجد يجب أن يكون صالحاً. انسخ referralCode من استجابة GET /referrals/me للداعي أو من قاعدة البيانات.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Invited User\",\n  \"email\": \"invited@example.com\",\n  \"password\": \"123456\",\n  \"passwordConfirm\": \"123456\",\n  \"referralCode\": \"{{referralCode}}\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/auth/signup"
+          }
+        },
+        {
+          "name": "POST Google + referralCode (حساب جديد فقط)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "description": "عند أول تسجيل عبر Google، يمكن إرسال referralCode في الـ body. idToken حقيقي من Google مطلوب.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idToken\": \"PASTE_GOOGLE_ID_TOKEN\",\n  \"referralCode\": \"{{referralCode}}\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/auth/google"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3 — الإحالة (مستخدم / عام)",
+      "item": [
+        {
+          "name": "GET Validate referral code (عام — بدون توكن)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "لصفحة التسجيل: التحقق من أن الكود يخص مستخدماً نشطاً.",
+            "url": "{{baseUrl}}/api/v1/referrals/validate/{{referralCode}}"
+          }
+        },
+        {
+          "name": "GET My referral dashboard",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "لوحة الإحالة: الرابط، الكود، إجمالي الإحالات، الأرباح، الـ tier، التقدم، آخر المحالين.",
+            "url": "{{baseUrl}}/api/v1/referrals/me"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4 — تشغيل العمولة (أدمن — ربح التعدين)",
+      "item": [
+        {
+          "name": "POST Wallet — mining_profit للمحال (يشغّل عمولة الإحالة)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "description": "يُضاف ربح التعدين لمحفظة userId. إذا كان المستخدم محالاً ولديه ≥ referralActiveMinPlans باقة نشطة، تُحوَّل عمولات L1 و L2 تلقائياً للداعي وجدّه.\nضع refereeUserId = معرّف المحال (الذي يستلم الربح).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"mining_profit\",\n  \"amount\": 25.5,\n  \"note\": \"Daily mining profit\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/wallet/{{refereeUserId}}/transactions"
+          }
+        },
+        {
+          "name": "GET My wallet transactions (يشاهد referral_commission)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "كمستخدم عادي: قد ترى معاملات نوع referral_commission بعد أن يحصل محالوك على mining_profit.",
+            "url": "{{baseUrl}}/api/v1/wallet/me/transactions"
+          }
+        }
+      ]
+    },
+    {
+      "name": "5 — لوحة إدمن الإحالة",
+      "item": [
+        {
+          "name": "GET Admin — Referral overview",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "إجمالي التسجيل عبر إحالة، إجمالي العمولات المدفوعة، عدد الدعاة النشطين، متوسط الربح لكل داعٍ.",
+            "url": "{{baseUrl}}/api/v1/referrals/admin/overview"
+          }
+        },
+        {
+          "name": "GET Admin — Referral growth chart",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "بيانات شهرية لعدد المستخدمين الجدد الذين لديهم referredBy (نمو الإحالات).",
+            "url": "{{baseUrl}}/api/v1/referrals/admin/growth-chart"
+          }
+        },
+        {
+          "name": "GET Admin — Top referrers",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "description": "ترتيب الدعاة حسب أرباح عمولة المستوى 1. Query: limit (افتراضي 20، حتى 100).",
+            "url": "{{baseUrl}}/api/v1/referrals/admin/top-referrers?limit=20"
+          }
+        }
+      ]
+    }
+  ]
+}
