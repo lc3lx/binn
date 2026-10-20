@@ -6,6 +6,11 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
+        hostname: "binn-oxar.onrender.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
         hostname: "api.qrserver.com",
         pathname: "/**",
       },
