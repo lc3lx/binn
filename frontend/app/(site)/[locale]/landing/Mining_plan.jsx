@@ -10,6 +10,12 @@ import { Slider } from "@/components/ui/slider";
 import { useTranslations } from "@/hooks/useTranslations";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useActivePlansQuery } from "@/api/services/user/plans/plans.query";
+import {
+  PAYOUT_INTERVAL_DAYS,
+  PAYOUT_PERCENT,
+  computePeriodProfit,
+  countPayouts,
+} from "@/lib/mining-payout";
 import { Coins, Zap, TrendingUp, ShieldCheck, Sparkles, CheckCircle2 } from "lucide-react";
 
 // Default plans fallback to ensure 100% instant calculation even if API is loading
@@ -99,22 +105,18 @@ export default function Mining_plan() {
   };
 
   // Profit calculation logic matching backend exactly:
-  // roiAvg = (roiMin + roiMax) / 2
-  // dailyProfit = (price * roiAvg) / (100 * 30)
+  // every PAYOUT_INTERVAL_DAYS the user earns PAYOUT_PERCENT of the amount
   const numericAmount = Math.max(0, Number(amount) || 0);
-  const roiMin = Number(selectedPlan.roiMinPercent) || 35;
-  const roiMax = Number(selectedPlan.roiMaxPercent) || 45;
-  const roiAvg = (roiMin + roiMax) / 2;
 
-  // Daily profit based on monthly average ROI (30 days base)
-  const dailyProfit = numericAmount > 0 ? (numericAmount * (roiAvg / 100)) / 30 : 0;
-  const dailyRatePercent = (roiAvg / 30).toFixed(2);
+  // Profit credited on each payout
+  const payoutProfit = computePeriodProfit(numericAmount);
 
-  // Profit in selected days
-  const periodProfit = dailyProfit * selectedDays;
+  // Profit in selected days (only completed payout periods count)
+  const periodProfit = payoutProfit * countPayouts(selectedDays);
 
   // Full plan duration net profit
-  const totalNetProfit = dailyProfit * planMaxDays;
+  const totalNetProfit = payoutProfit * countPayouts(planMaxDays);
+  const totalRoiPercent = PAYOUT_PERCENT * countPayouts(planMaxDays);
 
   // Total return (Capital + Net Profit)
   const totalReturn = numericAmount + totalNetProfit;
@@ -142,12 +144,12 @@ export default function Mining_plan() {
             <span>{isAr ? "حاسبة الأرباح التقديرية الحية" : "Live Mining Yield Calculator"}</span>
           </div>
           <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
-            {isAr ? "احسب أرباحك اليومية من التعدين السحابي" : "Calculate Your Daily Cloud Mining Profits"}
+            {isAr ? "احسب أرباحك من التعدين السحابي" : "Calculate Your Cloud Mining Profits"}
           </h2>
           <p className="mt-3 text-sm text-gray-400 max-w-2xl mx-auto">
             {isAr
-              ? "اختر خطة التعدين المناسبة أو حدد المبلغ والمدة لترى أرباحك اليومية والصافية فوراً دون الحاجة لتسجيل دخول."
-              : "Choose your preferred mining tier or customize your amount to see real-time daily payouts and total net ROI instantly."}
+              ? `اختر خطة التعدين المناسبة أو حدد المبلغ والمدة لترى أرباحك كل ${PAYOUT_INTERVAL_DAYS} أيام والصافية فوراً دون الحاجة لتسجيل دخول.`
+              : `Choose your preferred mining tier or customize your amount to see your payout every ${PAYOUT_INTERVAL_DAYS} days and total net ROI instantly.`}
           </p>
         </div>
 
@@ -178,7 +180,7 @@ export default function Mining_plan() {
                   ${p.price} <span className="text-[11px] font-normal text-gray-400">USDT</span>
                 </span>
                 <span className="mt-0.5 text-[11px] text-primary/90 font-semibold">
-                  ~{p.roiMinPercent}% - {p.roiMaxPercent}% {isAr ? "شهرياً" : "Monthly"}
+                  {PAYOUT_PERCENT}% {isAr ? `كل ${PAYOUT_INTERVAL_DAYS} أيام` : `every ${PAYOUT_INTERVAL_DAYS} days`}
                 </span>
               </button>
             );
@@ -275,7 +277,9 @@ export default function Mining_plan() {
                     <ShieldCheck className="h-4 w-4 text-green-400 shrink-0" />
                     <div>
                       <p className="text-gray-400 text-[10px]">{isAr ? "دورية توزيع الأرباح" : "Payout Schedule"}</p>
-                      <p className="font-bold text-white">{isAr ? "كل 24 ساعة آلياً" : "Auto Every 24h"}</p>
+                      <p className="font-bold text-white">
+                        {isAr ? `كل ${PAYOUT_INTERVAL_DAYS} أيام آلياً` : `Auto Every ${PAYOUT_INTERVAL_DAYS} Days`}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -294,19 +298,21 @@ export default function Mining_plan() {
                     </span>
                   </div>
 
-                  {/* Daily Profit Box */}
+                  {/* Payout Profit Box */}
                   <div className="mb-4 rounded-lg bg-black/40 p-3.5 border border-primary/25">
                     <div className="flex items-center justify-between">
                       <span className="text-xs text-gray-400">
-                        {isAr ? "الربح اليومي المقدر:" : "Est. Daily Profit:"}
+                        {isAr ? `الربح كل ${PAYOUT_INTERVAL_DAYS} أيام:` : `Profit Every ${PAYOUT_INTERVAL_DAYS} Days:`}
                       </span>
                       <span className="text-xs font-semibold text-green-400">
-                        +{dailyRatePercent}% / {isAr ? "يومياً" : "day"}
+                        +{PAYOUT_PERCENT}% / {isAr ? `${PAYOUT_INTERVAL_DAYS} أيام` : `${PAYOUT_INTERVAL_DAYS} days`}
                       </span>
                     </div>
                     <div className="mt-1.5 text-2xl font-black text-primary">
-                      {formatCurrency(dailyProfit)}
-                      <span className="text-xs font-normal text-gray-400 ml-1">USDT / {isAr ? "يوم" : "day"}</span>
+                      {formatCurrency(payoutProfit)}
+                      <span className="text-xs font-normal text-gray-400 ml-1">
+                        USDT / {isAr ? `${PAYOUT_INTERVAL_DAYS} أيام` : `${PAYOUT_INTERVAL_DAYS} days`}
+                      </span>
                     </div>
                   </div>
 
@@ -328,9 +334,9 @@ export default function Mining_plan() {
 
                     <div className="flex items-center justify-between py-1 border-b border-white/5">
                       <span className="text-gray-400">
-                        {isAr ? "متوسط نسبة العائد (ROI):" : "Average ROI Yield:"}
+                        {isAr ? "إجمالي نسبة العائد (ROI):" : "Total ROI Yield:"}
                       </span>
-                      <span className="font-bold text-white">~{roiAvg.toFixed(1)}%</span>
+                      <span className="font-bold text-white">{totalRoiPercent}%</span>
                     </div>
 
                     <div className="flex items-center justify-between pt-2 text-sm">

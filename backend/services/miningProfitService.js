@@ -5,12 +5,12 @@ const {
   distributeReferralCommissionsOnMiningProfit,
 } = require('./referralService');
 
-const MS_PER_DAY = 24 * 60 * 60 * 1000;
+const {
+  PAYOUT_INTERVAL_DAYS,
+  computePeriodProfit,
+} = require('../utils/miningPayout');
 
-// Every PAYOUT_INTERVAL_DAYS the subscriber earns PAYOUT_PERCENT of the plan price
-// (e.g. plan 100 -> 30, plan 200 -> 60).
-const PAYOUT_INTERVAL_DAYS = 10;
-const PAYOUT_PERCENT = 30;
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
 const round2 = (n) => Math.round((Number(n) + Number.EPSILON) * 100) / 100;
 
@@ -26,11 +26,6 @@ const dayKey = (value) => dayStartUtc(value).toISOString().slice(0, 10);
 
 const getFirstPayoutAt = (subscribedAt) =>
   new Date(new Date(subscribedAt).getTime() + PAYOUT_INTERVAL_DAYS * MS_PER_DAY);
-
-const computePeriodProfit = (plan) => {
-  const price = Number(plan && plan.price) || 0;
-  return round2((price * PAYOUT_PERCENT) / 100);
-};
 
 const hasDuplicateKeyError = (err) => Boolean(err && err.code === 11000);
 
@@ -220,7 +215,7 @@ const processSingleUser = async (user, now) => {
 
   for (let i = 0; i < processableSubs.length; i += 1) {
     const sub = processableSubs[i];
-    const periodProfit = computePeriodProfit(sub.plan);
+    const periodProfit = computePeriodProfit(sub.plan && sub.plan.price);
     if (periodProfit < 0.01) continue;
 
     const payoutMoments = buildSubscriptionPayoutMoments({

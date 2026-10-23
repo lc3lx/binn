@@ -38,6 +38,7 @@ import {
   ResponsiveContainer,
   ReferenceLine,
 } from "recharts";
+import { PAYOUT_INTERVAL_DAYS, PAYOUT_PERCENT } from "@/lib/mining-payout";
 import {
   useAllocationQuery,
   useDashboardSummaryQuery,
@@ -74,7 +75,7 @@ export default function UserDashboardPage() {
           inactive: "غير نشطة",
           hashratePower: "قوة الهاشريت",
           estimatedRoi: "العائد المتوقع",
-          monthlySuffix: "شهرياً",
+          payoutSuffix: `كل ${PAYOUT_INTERVAL_DAYS} أيام`,
           planProgress: "تقدم الخطة",
           started: "بدأت",
           ends: "تنتهي",
@@ -115,7 +116,7 @@ export default function UserDashboardPage() {
           inactive: "Inactive",
           hashratePower: "Hashrate Power",
           estimatedRoi: "Estimated ROI",
-          monthlySuffix: "Monthly",
+          payoutSuffix: `every ${PAYOUT_INTERVAL_DAYS} days`,
           planProgress: "Plan Progress",
           started: "Started",
           ends: "Ends",
@@ -362,12 +363,9 @@ export default function UserDashboardPage() {
 
   const planHashrateValue = Number(totals?.totalHashrate || 0);
   const planHashrateUnit = primaryPlan?.hashrateUnit || "TH/s";
-  const roiMin = Number(primaryPlan?.roiMinPercent || 0);
-  const roiMax = Number(primaryPlan?.roiMaxPercent || 0);
-  const estimatedRoiLabel =
-    roiMin > 0 && roiMax > 0
-      ? `+${((roiMin + roiMax) / 2).toFixed(1)}% ${text.monthlySuffix}`
-      : "--";
+  const estimatedRoiLabel = primaryPlan
+    ? `+${PAYOUT_PERCENT}% ${text.payoutSuffix}`
+    : "--";
 
   const subscribedAt = primaryPlan?.subscribedAt
     ? new Date(primaryPlan.subscribedAt)

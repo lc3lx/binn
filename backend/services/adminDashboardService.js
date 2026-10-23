@@ -4,6 +4,7 @@ const ApiError = require('../utils/apiError');
 const User = require('../models/userModel');
 const WalletTransaction = require('../models/walletTransactionModel');
 const SupportTicket = require('../models/supportTicketModel');
+const { computeAvgDailyProfit } = require('../utils/miningPayout');
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
@@ -403,11 +404,7 @@ exports.getAdminMiningPerformanceChart = asyncHandler(async (req, res, next) => 
         if (!sub.subscribedAt || !sub.expiresAt) continue;
 
         const plan = sub.plan;
-        const investedAmount = Number(plan.price) || 0;
-        const roiMin = Number(plan.roiMinPercent || 0);
-        const roiMax = Number(plan.roiMaxPercent || 0);
-        const roiAvg = (roiMin + roiMax) / 2;
-        const dailyDividends = (investedAmount * roiAvg) / 100 / 30;
+        const dailyDividends = computeAvgDailyProfit(plan.price);
 
         for (let i = 0; i < 7; i += 1) {
           const d = new Date(start.getTime() + i * MS_PER_DAY);

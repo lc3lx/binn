@@ -4,6 +4,11 @@ const ApiError = require('../utils/apiError');
 const User = require('../models/userModel');
 const WalletTransaction = require('../models/walletTransactionModel');
 const Plan = require('../models/planModel');
+const {
+  PAYOUT_INTERVAL_DAYS,
+  PAYOUT_PERCENT,
+  computeAvgDailyProfit,
+} = require('../utils/miningPayout');
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
@@ -32,16 +37,16 @@ const getActiveSubscriptions = (user) => {
 };
 
 const computeEstimatedPnLFromPlan = (plan, investedAmount) => {
-  // In our plan schema we store ROI min/max as "percent" per month.
-  const roiMin = Number(plan.roiMinPercent || 0);
-  const roiMax = Number(plan.roiMaxPercent || 0);
-  const roiAvg = (roiMin + roiMax) / 2;
+  // Profit is PAYOUT_PERCENT of the price every PAYOUT_INTERVAL_DAYS.
+  const dailyDividends = computeAvgDailyProfit(investedAmount);
+  const monthlyDividends = dailyDividends * 30;
 
-  const monthlyDividends = (investedAmount * roiAvg) / 100;
-  // Convert to daily using 30-day month approximation.
-  const dailyDividends = monthlyDividends / 30;
-
-  return { roiAvgPercent: roiAvg, dailyDividends, monthlyDividends };
+  return {
+    roiAvgPercent: PAYOUT_PERCENT,
+    payoutIntervalDays: PAYOUT_INTERVAL_DAYS,
+    dailyDividends,
+    monthlyDividends,
+  };
 };
 
 exports.getDashboardSummary = asyncHandler(async (req, res, next) => {
@@ -92,6 +97,8 @@ exports.getDashboardSummary = asyncHandler(async (req, res, next) => {
         roiMinPercent: plan.roiMinPercent,
         roiMaxPercent: plan.roiMaxPercent,
         durationDays: plan.durationDays,
+        payoutPercent: PAYOUT_PERCENT,
+        payoutIntervalDays: PAYOUT_INTERVAL_DAYS,
         estimatedMonthlyDividends: pnl.monthlyDividends,
         estimatedDailyPnL: pnl.dailyDividends,
         subscribedAt: s.subscribedAt,

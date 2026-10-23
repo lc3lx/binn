@@ -20,6 +20,7 @@ import {
   useSubscribeToPlanMutation,
 } from "@/api/services/user/plans/plans.query";
 import { toast } from "sonner";
+import { PAYOUT_INTERVAL_DAYS, PAYOUT_PERCENT } from "@/lib/mining-payout";
 
 export default function MiningPlansPage() {
   const { t, locale } = useTranslations();
@@ -101,12 +102,9 @@ export default function MiningPlansPage() {
     hashrate: plan.hashrate
       ? `${plan.hashrate} ${plan.hashrateUnit || "TH/s"}`
       : `-- ${plan.hashrateUnit || "TH/s"}`,
-    roi:
-      plan.roiMinPercent != null && plan.roiMaxPercent != null
-        ? `${plan.roiMinPercent}-${plan.roiMaxPercent}%`
-        : plan.totalReturnPercent != null
-          ? `${plan.totalReturnPercent}%`
-          : "--",
+    roi: `${PAYOUT_PERCENT}% / ${PAYOUT_INTERVAL_DAYS} ${
+      locale === "ar" ? "أيام" : "days"
+    }`,
     duration:
       plan.durationDays != null
         ? `${plan.durationDays} ${locale === "ar" ? "يوم" : "days"}`

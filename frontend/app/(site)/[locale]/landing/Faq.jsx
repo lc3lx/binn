@@ -29,8 +29,8 @@ export default function FAQ() {
           ? "كيف أبدأ التعدين في منصة Binance Mining؟"
           : "How do I start mining on Binance Mining?",
         a: isAr
-          ? "قم بإنشاء حساب جديد، وتأكيد هويتك، ثم قم بإيداع رصيد USDT عبر شبكة BEP-20، واختر خطة التعدين المناسبة لتبدأ أرباحك بالنزول يومياً."
-          : "Simply create an account, complete your basic KYC verification, deposit USDT (BEP-20) to your allocated wallet address, and choose your preferred mining plan to start earning daily profits.",
+          ? "قم بإنشاء حساب جديد، وتأكيد هويتك، ثم قم بإيداع رصيد USDT عبر شبكة BEP-20، واختر خطة التعدين المناسبة لتبدأ أرباحك بالنزول كل 10 أيام."
+          : "Simply create an account, complete your basic KYC verification, deposit USDT (BEP-20) to your allocated wallet address, and choose your preferred mining plan to start earning profits every 10 days.",
       },
       {
         q: isAr
@@ -45,8 +45,8 @@ export default function FAQ() {
           ? "متى وكيف يتم توزيع أرباح التعدين؟"
           : "When and how are mining profits distributed?",
         a: isAr
-          ? "تُحسب وتُوزع أرباح التعدين بشكل آلي تماماً كل 24 ساعة مباشرة إلى رصيد محفظتك، ويمكنك سحب أرباحك أو إعادة استثمارها في أي وقت."
-          : "Mining profits are calculated automatically and credited directly to your account wallet balance on a daily basis (every 24 hours). You can withdraw or reinvest at any time.",
+          ? "تُحسب وتُوزع أرباح التعدين بشكل آلي تماماً كل 10 أيام مباشرة إلى رصيد محفظتك بنسبة 30% من قيمة الخطة، ويمكنك سحب أرباحك أو إعادة استثمارها في أي وقت."
+          : "Mining profits are calculated automatically and credited directly to your account wallet balance every 10 days at 30% of the plan price. You can withdraw or reinvest at any time.",
       },
       {
         q: isAr

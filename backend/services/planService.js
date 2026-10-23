@@ -4,6 +4,11 @@ const ApiError = require('../utils/apiError');
 const Plan = require('../models/planModel');
 const User = require('../models/userModel');
 const WalletTransaction = require('../models/walletTransactionModel');
+const {
+  PAYOUT_INTERVAL_DAYS,
+  PAYOUT_PERCENT,
+  countPayouts,
+} = require('../utils/miningPayout');
 
 exports.getPlans = asyncHandler(async (req, res) => {
   const filter = {};
@@ -163,9 +168,8 @@ exports.getAdminPlansManagement = asyncHandler(async (req, res) => {
       totalSubscribers: 0,
       activeSubscribers: 0,
     };
-    const roiAvg = (Number(p.roiMinPercent) + Number(p.roiMaxPercent)) / 2;
-    const dailyRatePercent = roiAvg / 30;
-    const totalReturnPercent = roiAvg; // for duration configured as monthly packages
+    const dailyRatePercent = PAYOUT_PERCENT / PAYOUT_INTERVAL_DAYS;
+    const totalReturnPercent = PAYOUT_PERCENT * countPayouts(p.durationDays);
 
     return {
       planId: p._id,
@@ -175,6 +179,8 @@ exports.getAdminPlansManagement = asyncHandler(async (req, res) => {
       durationDays: p.durationDays,
       dailyRatePercent,
       totalReturnPercent,
+      payoutPercent: PAYOUT_PERCENT,
+      payoutIntervalDays: PAYOUT_INTERVAL_DAYS,
       hashrate: p.hashrate,
       hashrateUnit: p.hashrateUnit,
       roiMinPercent: p.roiMinPercent,
