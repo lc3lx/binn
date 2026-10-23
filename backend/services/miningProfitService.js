@@ -7,6 +7,11 @@ const {
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
+// Every PAYOUT_INTERVAL_DAYS the subscriber earns PAYOUT_PERCENT of the plan price
+// (e.g. plan 100 -> 30, plan 200 -> 60).
+const PAYOUT_INTERVAL_DAYS = 10;
+const PAYOUT_PERCENT = 30;
+
 const round2 = (n) => Math.round((Number(n) + Number.EPSILON) * 100) / 100;
 
 const dayStartUtc = (value) => {
@@ -20,14 +25,11 @@ const addDaysUtc = (value, days) => new Date(value.getTime() + days * MS_PER_DAY
 const dayKey = (value) => dayStartUtc(value).toISOString().slice(0, 10);
 
 const getFirstPayoutAt = (subscribedAt) =>
-  new Date(new Date(subscribedAt).getTime() + MS_PER_DAY);
+  new Date(new Date(subscribedAt).getTime() + PAYOUT_INTERVAL_DAYS * MS_PER_DAY);
 
-const computeDailyProfit = (plan) => {
+const computePeriodProfit = (plan) => {
   const price = Number(plan && plan.price) || 0;
-  const roiMin = Number(plan && plan.roiMinPercent) || 0;
-  const roiMax = Number(plan && plan.roiMaxPercent) || 0;
-  const roiAvg = (roiMin + roiMax) / 2;
-  return round2((price * roiAvg) / 100 / 30);
+  return round2((price * PAYOUT_PERCENT) / 100);
 };
 
 const hasDuplicateKeyError = (err) => Boolean(err && err.code === 11000);
@@ -110,7 +112,7 @@ const buildSubscriptionPayoutMoments = ({ subscription, now }) => {
   for (
     let payoutAt = new Date(firstPayoutAt);
     payoutAt.getTime() <= now.getTime() && payoutAt.getTime() <= expiresAtTs;
-    payoutAt = addDaysUtc(payoutAt, 1)
+    payoutAt = addDaysUtc(payoutAt, PAYOUT_INTERVAL_DAYS)
   ) {
     payoutMoments.push(new Date(payoutAt));
   }
@@ -135,7 +137,7 @@ const createPayoutTransaction = async ({
     currency: 'USD',
     balanceBefore,
     balanceAfter,
-    note: `Daily mining profit (${planName || 'Plan'}) for ${dayKey(
+    note: `${PAYOUT_INTERVAL_DAYS}-day mining profit (${planName || 'Plan'}) for ${dayKey(
       payoutMoment
     )}`,
     miningSubscriptionId: String(subscriptionId),
@@ -218,8 +220,8 @@ const processSingleUser = async (user, now) => {
 
   for (let i = 0; i < processableSubs.length; i += 1) {
     const sub = processableSubs[i];
-    const dailyProfit = computeDailyProfit(sub.plan);
-    if (dailyProfit < 0.01) continue;
+    const periodProfit = computePeriodProfit(sub.plan);
+    if (periodProfit < 0.01) continue;
 
     const payoutMoments = buildSubscriptionPayoutMoments({
       subscription: sub,
@@ -232,7 +234,7 @@ const processSingleUser = async (user, now) => {
       if (existingKeys.has(key)) continue;
 
       const balanceBefore = round2(Number(user.walletBalance) || 0);
-      const balanceAfter = round2(balanceBefore + dailyProfit);
+      const balanceAfter = round2(balanceBefore + periodProfit);
 
       user.walletBalance = balanceAfter;
       hasUserMutation = true;
@@ -243,7 +245,7 @@ const processSingleUser = async (user, now) => {
       try {
         tx = await createPayoutTransaction({
           userId: user._id,
-          amount: dailyProfit,
+          amount: periodProfit,
           balanceBefore,
           balanceAfter,
           planName: sub.planName || (sub.plan && sub.plan.name),
@@ -263,13 +265,13 @@ const processSingleUser = async (user, now) => {
       }
 
       stats.payoutsCreated += 1;
-      stats.totalCredited = round2(stats.totalCredited + dailyProfit);
+      stats.totalCredited = round2(stats.totalCredited + periodProfit);
       existingKeys.add(key);
 
       try {
         await distributeReferralCommissionsOnMiningProfit({
           refereeId: user._id,
-          profitAmount: dailyProfit,
+          profitAmount: periodProfit,
           miningTransactionId: tx._id,
         });
       } catch (err) {
