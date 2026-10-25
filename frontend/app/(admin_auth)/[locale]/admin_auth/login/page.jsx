@@ -79,7 +79,7 @@ export default function AdminLoginPage() {
           isArabic ? "text-right" : "text-left"
         }`}
       >
-       {isArabic ? "لوحة التحكم" : " Administrator"} Administrator
+        {isArabic ? "تسجيل دخول لوحة تحكم الإدارة" : "Administrator Portal Access"}
       </p>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

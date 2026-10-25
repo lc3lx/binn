@@ -75,9 +75,9 @@ export default function AdminMiningPlansPage() {
         plan.dailyRatePercent != null ? `${plan.dailyRatePercent}%` : "--",
       totalReturn:
         plan.totalReturnPercent != null ? `${plan.totalReturnPercent}%` : "--",
-      hashrate:
-        plan.hashrate != null
-          ? `${plan.hashrate} ${isArabic ? "USDT / يوم" : "USDT / day"}`
+      dailyIncome:
+        plan.scooterIncome != null || plan.hashrate != null
+          ? `${plan.scooterIncome || plan.hashrate} ${isArabic ? "USDT / يوم" : "USDT / day"}`
           : `1.6 ${isArabic ? "USDT / يوم" : "USDT / day"}`,
       subscribers: `${Number(plan.totalSubscribers || 0).toLocaleString(
         "en-US",
@@ -99,7 +99,7 @@ export default function AdminMiningPlansPage() {
       label: isArabic ? "العائد الكلي" : "Total Return",
       value: plan.totalReturn,
     },
-    { label: isArabic ? "دخل السكوتر اليومي" : "Scooter Daily Income", value: plan.hashrate },
+    { label: isArabic ? "دخل السكوتر اليومي" : "Scooter Daily Income", value: plan.dailyIncome },
   ];
 
   return (

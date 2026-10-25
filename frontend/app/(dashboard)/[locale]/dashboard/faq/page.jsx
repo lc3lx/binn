@@ -60,10 +60,12 @@ export default function AdminFaqPage() {
         <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h1 className="text-[30px] font-bold leading-none text-white">
-              FAQ Management
+              {isArabic ? "إدارة الأسئلة الشائعة" : "FAQ Management"}
             </h1>
             <p className="mt-2 text-sm text-white/45">
-              {itemsCount} FAQ items across {categoriesCount} categories
+              {isArabic
+                ? `${itemsCount} سؤال في ${categoriesCount} تصنيفات`
+                : `${itemsCount} FAQ items across ${categoriesCount} categories`}
             </p>
           </div>
 
@@ -72,21 +74,21 @@ export default function AdminFaqPage() {
             className="h-10 rounded-xl bg-primary px-4 text-sm font-semibold text-black hover:bg-primary/90"
           >
             <Plus className="mr-1.5 h-4 w-4" />
-            Add FAQ
+            {isArabic ? "إضافة سؤال" : "Add FAQ"}
           </Button>
         </div>
 
         {isLoading ? (
           <div className="rounded-[14px] border border-white/10 bg-background px-4 py-5 text-sm text-white/55">
-            Loading FAQs...
+            {isArabic ? "جاري تحميل الأسئلة..." : "Loading FAQs..."}
           </div>
         ) : isError ? (
           <div className="rounded-[14px] border border-red-400/30 bg-red-500/5 px-4 py-5 text-sm text-red-300">
-            Failed to load FAQs.
+            {isArabic ? "تعذر تحميل الأسئلة." : "Failed to load FAQs."}
           </div>
         ) : faqItems.length === 0 ? (
           <div className="rounded-[14px] border border-white/10 bg-background px-4 py-5 text-sm text-white/55">
-            No FAQs found.
+            {isArabic ? "لا توجد أسئلة شائعة." : "No FAQs found."}
           </div>
         ) : (
           <Accordion type="single" collapsible className="space-y-3">

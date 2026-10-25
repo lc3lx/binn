@@ -308,11 +308,11 @@
       "title": "Daily Scooter Yield",
       "desc": "Verified daily income for each scooter model (E1 to E6) reaching up to 275 USDT/day."
     },
-    "hashrate": {
+    "fleetDevices": {
       "title": "Active Fleet Devices",
       "desc": "GPS-monitored electric scooters in continuous active urban operation."
     },
-    "miners": {
+    "investors": {
       "title": "Fleet Investors",
       "desc": "Thousands of active members earning automated daily USDT returns."
     }
@@ -344,16 +344,16 @@
     "title": "Smart E-Scooter Energy Fleet",
     "intro": "Select your preferred e-scooter model (E1 to E6). All models include GPS tracking, one-click power control, and daily USDT yields.",
     "labels": {
-      "hashrate": "Device Count",
       "estRoi": "Daily Yield",
-      "duration": "Term"
+      "duration": "Term",
+      "deviceCount": "Device Count"
     },
     "popular": "Popular",
     "purchase": "Lease Scooter",
     "plans": {
-      "basicMiner": "E1 Commuter",
-      "proAsic": "E2 Pro Scooter",
-      "premiumCluster": "E6 Sovereign Fleet"
+      "premiumCluster": "E6 Sovereign Fleet",
+      "e1": "E1 Commuter",
+      "e2": "E2 Pro Scooter"
     },
     "roi": {
       "8_10": "Daily Yield",
@@ -373,8 +373,8 @@
       "basicAnalytics": "Daily Analytics",
       "vipAnalytics": "Fleet Operations Hub",
       "freeReinvestment": "Instant BEP-20 Wallet Payouts",
-      "bonusHashrateDays": " Bonus Per 10 Referrals",
-      "dedicatedManager": "Dedicated Fleet Concierge"
+      "dedicatedManager": "Dedicated Fleet Concierge",
+      "bonusReferralDays": " Bonus Per 10 Referrals"
     }
   },
   "faq": {

@@ -66,7 +66,7 @@ export default function Privacy() {
           },
           {
             t: "التواصل",
-            b: "لأي استفسار متعلق بالخصوصية، راسلنا على: support@system.com",
+            b: "لأي استفسار متعلق بالخصوصية، راسلنا على: support@etg-ride.com",
           },
         ]
       : [
@@ -92,7 +92,7 @@ export default function Privacy() {
           },
           {
             t: "Contact",
-            b: "For any privacy-related inquiries, contact: support@system.com",
+            b: "For any privacy-related inquiries, contact: support@etg-ride.com",
           },
         ];
 

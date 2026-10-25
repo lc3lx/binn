@@ -54,7 +54,7 @@ const copy = {
       plan: "Scooter Model",
       subscribedAt: "Subscribed",
       expiresAt: "Expires",
-      hashrate: "Daily Income",
+      dailyIncome: "Daily Income",
       duration: "Duration",
       price: "Price",
       plansTitle: "Scooter Fleet Subscriptions",
@@ -100,7 +100,7 @@ const copy = {
       plan: "طراز السكوتر",
       subscribedAt: "تاريخ الاشتراك",
       expiresAt: "تاريخ الانتهاء",
-      hashrate: "الدخل اليومي",
+      dailyIncome: "الدخل اليومي",
       duration: "المدة",
       price: "السعر",
       plansTitle: "السكوترات المؤجرة",
@@ -155,7 +155,7 @@ export default function ShowUserDialog({ userId, open, onOpenChange }) {
       ? {
           title: "السكوترات المؤجرة",
           price: "السعر",
-          hashrate: "الدخل اليومي",
+          dailyIncome: "الدخل اليومي",
           duration: "المدة",
           subscribed: "تاريخ الاشتراك",
           expires: "تاريخ الانتهاء",
@@ -164,7 +164,7 @@ export default function ShowUserDialog({ userId, open, onOpenChange }) {
       : {
           title: "Scooter Fleet Subscriptions",
           price: "Price",
-          hashrate: "Daily Income",
+          dailyIncome: "Daily Income",
           duration: "Duration",
           subscribed: "Subscribed",
           expires: "Expires",
@@ -381,7 +381,7 @@ export default function ShowUserDialog({ userId, open, onOpenChange }) {
                           </span>
                         </div>
                         <div>
-                          {planText.hashrate}: {sub.plan?.hashrate || "1.6"}{" "}
+                          {planText.dailyIncome}: {sub.plan?.dailyIncome || sub.plan?.hashrate || "1.6"}{" "}
                           USDT / {isArabic ? "يوم" : "day"}
                         </div>
                         <div>
