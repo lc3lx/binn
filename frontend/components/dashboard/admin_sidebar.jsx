@@ -11,7 +11,7 @@ import { Card } from "@/components/ui/card";
 import { clearAdminSession } from "@/api/instance";
 import {
   LayoutGrid,
-  Cpu,
+  Zap,
   Users,
   ArrowLeftRight,
   ShieldCheck,
@@ -45,7 +45,7 @@ export default function DashboardSidebar({ asDrawer = false }) {
     { key: "withdraw", href: `${base}/Withdraw`, icon: ArrowUpCircle },
 
     { key: "transactions", href: `${base}/Transactions`, icon: ArrowLeftRight },
-    { key: "mining_plans", href: `${base}/mining_plans`, icon: Cpu },
+    { key: "mining_plans", href: `${base}/mining_plans`, icon: Zap },
     {
       key: "support",
       href: `${base}/admin_support`,
@@ -78,7 +78,7 @@ export default function DashboardSidebar({ asDrawer = false }) {
       <div className="w-full h-18 grid place-items-center border-b border-gray-400/40">
         <Link href={`/${locale}`} className="block mx-auto">
           <Image
-            src="/min.svg"
+            src="/logo.svg"
             alt="logo"
             width={144}
             height={48}

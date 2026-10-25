@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Pencil, Pickaxe, Save, Trash2, Users } from "lucide-react";
+import { Pencil, Zap, Save, Trash2, Users } from "lucide-react";
 import {
   useAdminPlansManagementQuery,
   useDeleteAdminPlanMutation,
@@ -77,8 +77,8 @@ export default function AdminMiningPlansPage() {
         plan.totalReturnPercent != null ? `${plan.totalReturnPercent}%` : "--",
       hashrate:
         plan.hashrate != null
-          ? `${plan.hashrate} ${plan.hashrateUnit || "TH/s"}`
-          : `-- ${plan.hashrateUnit || "TH/s"}`,
+          ? `${plan.hashrate} ${isArabic ? "USDT / يوم" : "USDT / day"}`
+          : `1.6 ${isArabic ? "USDT / يوم" : "USDT / day"}`,
       subscribers: `${Number(plan.totalSubscribers || 0).toLocaleString(
         "en-US",
       )} ${isArabic ? "مشترك" : "subscribers"}`,
@@ -99,7 +99,7 @@ export default function AdminMiningPlansPage() {
       label: isArabic ? "العائد الكلي" : "Total Return",
       value: plan.totalReturn,
     },
-    { label: isArabic ? "الهاش ريت" : "Hashrate", value: plan.hashrate },
+    { label: isArabic ? "دخل السكوتر اليومي" : "Scooter Daily Income", value: plan.hashrate },
   ];
 
   return (
@@ -112,7 +112,7 @@ export default function AdminMiningPlansPage() {
         <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h1 className="text-[30px] font-bold leading-none text-white">
-              {isArabic ? "خطط التعدين" : "Mining Plans"}
+              {isArabic ? "طرازات سكوتر RIDE الذكية" : "Smart RIDE Scooter Models"}
             </h1>
             <p className="mt-2 text-sm text-white/45">
               {isLoading
@@ -158,7 +158,7 @@ export default function AdminMiningPlansPage() {
                   <div
                     className={`grid h-9 w-9 place-items-center rounded-full ${plan.accent}`}
                   >
-                    <Pickaxe className={`h-4 w-4 ${plan.iconClass}`} />
+                    <Zap className={`h-4 w-4 ${plan.iconClass}`} />
                   </div>
                   <div className="text-lg font-semibold text-white">
                     {plan.name}

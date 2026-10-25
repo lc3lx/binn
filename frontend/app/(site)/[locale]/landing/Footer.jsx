@@ -59,7 +59,7 @@ export default function Footer() {
               <Link href={`${base}/user_dashboard/tasks`} className="hover:text-cyan-400 transition-colors">
                 {isAr ? "شاشة تشغيل RIDE" : "RIDE Console"}
               </Link>
-              <Link href={`${base}/user_dashboard/mining_plans`} className="hover:text-cyan-400 transition-colors">
+              <Link href={`${base}/user_dashboard/my_plans`} className="hover:text-cyan-400 transition-colors">
                 {isAr ? "طاقة (تأجير سكوتر)" : "Energy (Lease Models)"}
               </Link>
               <Link href={`${base}/user_dashboard/Referral`} className="hover:text-cyan-400 transition-colors">

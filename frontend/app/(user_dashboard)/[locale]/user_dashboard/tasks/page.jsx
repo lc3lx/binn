@@ -283,7 +283,7 @@ export default function RideScootersPage() {
           {/* Quick Shortcuts to Lease more scooters */}
           <div className="text-center pt-2">
             <Link
-              href={`${base}/mining_plans`}
+              href={`${base}/my_plans`}
               className="inline-flex items-center gap-2 text-xs font-bold text-cyan-400 hover:text-cyan-300 transition-colors"
             >
               <Zap className="w-4 h-4" />

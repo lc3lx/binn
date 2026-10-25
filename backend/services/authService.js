@@ -257,7 +257,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
   await user.save();
 
   // 3) Send the reset code via email
-  const message = `Hi ${user.name},\n We received a request to reset the password on your Binance Mining account. \n ${resetCode} \n Enter this code to complete the reset. \n Thanks for helping us keep your account secure.\n The Binance Mining Team`;
+  const message = `Hi ${user.name},\n We received a request to reset the password on your ETG RIDE account. \n ${resetCode} \n Enter this code to complete the reset. \n Thanks for helping us keep your account secure.\n The ETG RIDE Team`;
   try {
     await sendEmail({
       email: user.email,

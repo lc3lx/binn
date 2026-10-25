@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useMemo } from "react";
 import { useTranslations } from "@/hooks/useTranslations";
@@ -11,32 +11,32 @@ export default function MyPlansPage() {
 
   const text = isArabic
     ? {
-        title: "خططي",
-        subtitle: "جميع خططك النشطة وتفاصيل الاشتراكات",
+        title: "سكوتراتي المؤجرة",
+        subtitle: "جميع طرازات السكوترات النشطة وسجل التأجير",
         walletBalance: "رصيد المحفظة",
-        currentPlan: "الخطة الحالية",
-        subscriptions: "الاشتراكات",
-        planName: "اسم الخطة",
+        currentPlan: "السكوتر النشط حالياً",
+        subscriptions: "سجل السكوترات المؤجرة",
+        planName: "طراز السكوتر",
         status: "الحالة",
-        subscribedAt: "تاريخ الاشتراك",
+        subscribedAt: "تاريخ الاستئجار",
         expiresAt: "تاريخ الانتهاء",
-        noCurrentPlan: "لا توجد خطة حالية",
-        noSubscriptions: "لا توجد اشتراكات حالياً",
-        active: "نشطة",
-        inactive: "غير نشطة",
+        noCurrentPlan: "لا يوجد سكوتر نشط حالياً",
+        noSubscriptions: "لا توجد سكوترات مؤجرة حالياً",
+        active: "نشط",
+        inactive: "غير نشط",
       }
     : {
-        title: "My Plans",
-        subtitle: "Your active plans and subscription details",
+        title: "My Leased Scooters",
+        subtitle: "Your active e-scooters and leasing history",
         walletBalance: "Wallet Balance",
-        currentPlan: "Current Plan",
-        subscriptions: "Plan Subscriptions",
-        planName: "Plan Name",
+        currentPlan: "Active Scooter",
+        subscriptions: "Leased Scooters History",
+        planName: "Scooter Model",
         status: "Status",
-        subscribedAt: "Subscribed At",
+        subscribedAt: "Leased At",
         expiresAt: "Expires At",
-        noCurrentPlan: "No current plan",
-        noSubscriptions: "No subscriptions found",
+        noCurrentPlan: "No active scooter",
+        noSubscriptions: "No leased scooters found",
         active: "Active",
         inactive: "Inactive",
       };

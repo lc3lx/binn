@@ -10,7 +10,6 @@ import { Card } from "@/components/ui/card";
 import { clearUserSession } from "@/api/instance";
 import {
   LayoutGrid,
-  Cpu,
   Users,
   ShoppingCart,
   Ticket,
@@ -25,7 +24,6 @@ import {
   UserPlus,
   TrendingUp,
   LogOut,
-  Car,
   Zap,
 } from "lucide-react";
 
@@ -40,7 +38,7 @@ export default function DashboardSidebar({ asDrawer = false }) {
   const items = [
     { key: "overview", label: isRTL ? "الرئيسية" : "Home", href: base, icon: LayoutGrid },
     { key: "tasks", label: isRTL ? "RIDE (تشغيل السكوتر)" : "RIDE Console", href: `${base}/tasks`, icon: Zap },
-    { key: "mining_plans", label: isRTL ? "طاقة (تأجير السكوتر)" : "Energy (Scooters)", href: `${base}/mining_plans`, icon: Car },
+    { key: "mining_plans", label: isRTL ? "طاقة (تأجير السكوتر)" : "Energy (Scooters)", href: `${base}/mining_plans`, icon: Zap },
     { key: "profile", label: isRTL ? "حسابي (الملف الشخصي)" : "My Account", href: `${base}/profile`, icon: ShieldCheck },
     { key: "referral", label: isRTL ? "دعوة (مكافأة 100$)" : "Invite ($100 Reward)", href: `${base}/Referral`, icon: UserPlus },
     { key: "deposit", label: isRTL ? "شحن المحفظة" : "Deposit USDT", href: `${base}/deposit`, icon: Wallet },
@@ -98,23 +96,10 @@ export default function DashboardSidebar({ asDrawer = false }) {
                   <span className="absolute inset-y-2 left-0 w-[2px] rounded-full bg-primary" />
                 ) : null}
                 <div className="flex items-center gap-3">
-                  {key === "transactions" ? (
-                    <Image
-                      src="/coin.svg"
-                      alt=""
-                      aria-hidden="true"
-                      width={17}
-                      height={17}
-                      className={`h-[17px] w-[17px] object-contain ${
-                        active ? "opacity-100" : "opacity-70"
-                      }`}
-                    />
-                  ) : (
-                    <Icon
-                      className={active ? "text-primary" : "text-white/70"}
-                      size={17}
-                    />
-                  )}
+                  <Icon
+                    className={active ? "text-primary" : "text-white/70"}
+                    size={17}
+                  />
                   <span
                     className={`text-sm font-medium ${
                       asDrawer ? "inline" : "hidden md:inline"

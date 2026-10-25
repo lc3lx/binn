@@ -16,8 +16,8 @@ const sendEmail = async (options) => {
   });
 
   const sender = process.env.EMAIL_FROM
-    ? `Binance Mining <${process.env.EMAIL_FROM}>`
-    : 'Binance Mining <binanceemining@gmail.com>';
+    ? `ETG RIDE <${process.env.EMAIL_FROM}>`
+    : 'ETG RIDE <support@etg-ride.com>';
 
   const mailOpts = {
     from: sender,

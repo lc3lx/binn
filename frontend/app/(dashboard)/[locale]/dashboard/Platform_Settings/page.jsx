@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Copy, Headphones, Pickaxe, Save, Wallet } from "lucide-react";
+import { Copy, Headphones, Zap, Save, Wallet } from "lucide-react";
 import { useTranslations } from "@/hooks/useTranslations";
 import {
   usePlatformSettingsQuery,
@@ -265,7 +265,7 @@ export default function AdminPlatformSettingsPage() {
           <div className="rounded-lg border border-white/5 bg-sidebar p-4">
             <div className="mb-4 flex items-start gap-3">
               <div className="grid h-10 w-10 place-items-center rounded-full bg-primary/10 text-primary">
-                <Pickaxe className="h-5 w-5" />
+                <Zap className="h-5 w-5" />
               </div>
               <div className="text-lg font-semibold text-white">{text.sectionTitle}</div>
             </div>
@@ -306,7 +306,7 @@ export default function AdminPlatformSettingsPage() {
                   type="email"
                   value={getFieldValue("contactEmail")}
                   onChange={handleChange("contactEmail")}
-                  placeholder="support@binancecoins.com"
+                  placeholder="support@etg-ride.com"
                   className="h-10 rounded-md border-white/10 bg-[#2d2d2f] text-sm text-white placeholder:text-white/25"
                 />
               </div>
@@ -332,7 +332,7 @@ export default function AdminPlatformSettingsPage() {
                   type="text"
                   value={getFieldValue("telegramUrl")}
                   onChange={handleChange("telegramUrl")}
-                  placeholder="https://t.me/binancecoins"
+                  placeholder="https://t.me/etgride"
                   className="h-10 rounded-md border-white/10 bg-[#2d2d2f] text-sm text-white placeholder:text-white/25 font-mono"
                 />
               </div>
@@ -358,7 +358,7 @@ export default function AdminPlatformSettingsPage() {
                   type="text"
                   value={getFieldValue("twitterUrl")}
                   onChange={handleChange("twitterUrl")}
-                  placeholder="https://x.com/binancecoins"
+                  placeholder="https://x.com/etgride"
                   className="h-10 rounded-md border-white/10 bg-[#2d2d2f] text-sm text-white placeholder:text-white/25 font-mono"
                 />
               </div>
@@ -371,7 +371,7 @@ export default function AdminPlatformSettingsPage() {
                   type="text"
                   value={getFieldValue("instagramUrl")}
                   onChange={handleChange("instagramUrl")}
-                  placeholder="https://instagram.com/binancecoins"
+                  placeholder="https://instagram.com/etgride"
                   className="h-10 rounded-md border-white/10 bg-[#2d2d2f] text-sm text-white placeholder:text-white/25 font-mono"
                 />
               </div>

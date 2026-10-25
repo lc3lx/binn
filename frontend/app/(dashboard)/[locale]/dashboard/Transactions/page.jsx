@@ -19,7 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ArrowDownToLine, ArrowUpFromLine, Cpu, Search } from "lucide-react";
+import { ArrowDownToLine, ArrowUpFromLine, Zap, Search } from "lucide-react";
 import { useTranslations } from "@/hooks/useTranslations";
 import { useTransactionsListQuery } from "@/api/services/admin/transactions/transactions.query";
 import { formatLocalizedDate } from "@/lib/format-localized-date";
@@ -58,17 +58,17 @@ const typeStyles = {
   },
   mining_profit: {
     label: "admin_transactions.types.mining_profit",
-    icon: Cpu,
+    icon: Zap,
     className: "border border-[#7c3aed]/30 bg-[#25173a] text-[#a78bfa]",
   },
   plan_purchase: {
     label: "admin_transactions.types.plan_purchase",
-    icon: Cpu,
+    icon: Zap,
     className: "border border-[#7c3aed]/30 bg-[#25173a] text-[#a78bfa]",
   },
   referral_commission: {
     label: "admin_transactions.types.referral_commission",
-    icon: Cpu,
+    icon: Zap,
     className: "border border-[#7c3aed]/30 bg-[#25173a] text-[#a78bfa]",
   },
 };

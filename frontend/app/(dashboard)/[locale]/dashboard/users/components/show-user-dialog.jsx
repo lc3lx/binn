@@ -51,14 +51,14 @@ const copy = {
       rejected: "Rejected",
       admin: "Admin",
       user: "User",
-      plan: "Plan",
+      plan: "Scooter Model",
       subscribedAt: "Subscribed",
       expiresAt: "Expires",
-      hashrate: "Hashrate",
+      hashrate: "Daily Income",
       duration: "Duration",
       price: "Price",
-      plansTitle: "Plan subscriptions",
-      noPlans: "No active plans",
+      plansTitle: "Scooter Fleet Subscriptions",
+      noPlans: "No active scooters",
     },
   },
   ar: {
@@ -76,7 +76,7 @@ const copy = {
       kycStatus: "حالة التوثيق",
       registeredAt: "تاريخ التسجيل",
       updatedAt: "آخر تحديث",
-      activePlans: "الخطط النشطة",
+      activePlans: "السكوترات النشطة",
       submittedAt: "تاريخ إرسال التوثيق",
       reviewedAt: "تاريخ المراجعة",
       reviewedBy: "تمت المراجعة بواسطة",
@@ -97,14 +97,14 @@ const copy = {
       rejected: "مرفوض",
       admin: "أدمن",
       user: "مستخدم",
-      plan: "الخطة",
+      plan: "طراز السكوتر",
       subscribedAt: "تاريخ الاشتراك",
       expiresAt: "تاريخ الانتهاء",
-      hashrate: "قوة الهاش",
+      hashrate: "الدخل اليومي",
       duration: "المدة",
       price: "السعر",
-      plansTitle: "الخطط المشترَك بها",
-      noPlans: "لا يوجد خطط نشطة",
+      plansTitle: "السكوترات المؤجرة",
+      noPlans: "لا توجد سكوترات نشطة",
     },
   },
 };
@@ -153,22 +153,22 @@ export default function ShowUserDialog({ userId, open, onOpenChange }) {
   const planText =
     locale === "ar"
       ? {
-          title: "الخطط المشترَك بها",
+          title: "السكوترات المؤجرة",
           price: "السعر",
-          hashrate: "قوة الهاش",
+          hashrate: "الدخل اليومي",
           duration: "المدة",
           subscribed: "تاريخ الاشتراك",
           expires: "تاريخ الانتهاء",
-          noPlans: "لا يوجد خطط نشطة",
+          noPlans: "لا توجد سكوترات نشطة",
         }
       : {
-          title: "Plan subscriptions",
+          title: "Scooter Fleet Subscriptions",
           price: "Price",
-          hashrate: "Hashrate",
+          hashrate: "Daily Income",
           duration: "Duration",
           subscribed: "Subscribed",
           expires: "Expires",
-          noPlans: "No active plans",
+          noPlans: "No active scooters",
         };
   const { data, isLoading, isError } = useAdminUserDetailsQuery(userId, {
     enabled: open && Boolean(userId),
@@ -381,8 +381,8 @@ export default function ShowUserDialog({ userId, open, onOpenChange }) {
                           </span>
                         </div>
                         <div>
-                          {planText.hashrate}: {sub.plan?.hashrate}{" "}
-                          {sub.plan?.hashrateUnit || "TH/s"}
+                          {planText.hashrate}: {sub.plan?.hashrate || "1.6"}{" "}
+                          USDT / {isArabic ? "يوم" : "day"}
                         </div>
                         <div>
                           {planText.duration}: {sub.plan?.durationDays}d

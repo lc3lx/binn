@@ -141,13 +141,13 @@ export default function AddPlanDialog({ open, onOpenChange }) {
             </div>
 
             <div className="space-y-1.5">
-              <div className="text-sm text-white/80">{isArabic ? "الهاش ريت" : "Hashrate"}</div>
+              <div className="text-sm text-white/80">{isArabic ? "دخل السكوتر اليومي (USDT)" : "Daily Scooter Income (USDT)"}</div>
               <Input type="number" step="0.01" {...register("hashrate")} />
               {errors.hashrate ? <p className="text-xs text-[#ef4444]">{errors.hashrate.message}</p> : null}
             </div>
 
             <div className="space-y-1.5">
-              <div className="text-sm text-white/80">{isArabic ? "وحدة الهاش" : "Hashrate Unit"}</div>
+              <div className="text-sm text-white/80">{isArabic ? "عدد الأجهزة" : "Device Count"}</div>
               <Input {...register("hashrateUnit")} />
             </div>
 

@@ -5,8 +5,8 @@ export default function NotFoundPage({ params }) {
 
   return (
     <NotFoundView
-      primaryLabel="View Plans"
-      primaryHref={`/${locale}/user_dashboard/mining_plans`}
+      primaryLabel="Energy Models"
+      primaryHref={`/${locale}/user_dashboard/my_plans`}
       homeHref={`/${locale}/user_dashboard`}
     />
   );

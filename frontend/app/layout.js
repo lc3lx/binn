@@ -7,11 +7,11 @@ import { parseStoredAuthUser } from "@/lib/auth-user";
 import { cairo, inter } from "@/lib/fonts";
 
 export const metadata = {
-  title: "Binance Mining",
-  description: "Platform for Mining & Yield Management",
+  title: "ETG RIDE - Smart E-Scooter Mobility & Fleet Investment",
+  description: "Smart Electric Scooter Fleet Leasing & Automated Daily USDT Earnings",
   icons: {
-    icon: "/loading-logo.png",
-    apple: "/loading-logo.png",
+    icon: "/logo.svg",
+    apple: "/logo.svg",
   },
 };
 
@@ -33,8 +33,8 @@ export default async function RootLayout({ children }) {
       className={`scroll-smooth ${inter.variable} ${cairo.variable}`}
     >
       <head>
-        <link rel="icon" href="/loading-logo.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/loading-logo.png" />
+        <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/logo.svg" />
       </head>
       <body className="min-h-full  bg-background text-foreground antialiased">
         <AuthProvider initialUser={initialUser}>

@@ -62,7 +62,7 @@ export default function AdminStatisticsPage() {
       : "Platform performance overview",
     cards: {
       profit: isArabic ? "إجمالي أرباح المنصة" : "Total Platform Profit",
-      earnings: isArabic ? "إجمالي أرباح التعدين" : "Total Mining Earnings",
+      earnings: isArabic ? "إجمالي أرباح السكوترات" : "Total Scooter Earnings",
       deposits: isArabic ? "إجمالي إيداعات المستخدمين" : "Total User Deposits",
       activeUsers: isArabic ? "المستخدمون النشطون اليوم" : "Active Users Today",
       vsLastMonth: isArabic ? "مقارنة بالشهر الماضي" : "vs last month",
@@ -84,8 +84,8 @@ export default function AdminStatisticsPage() {
         ? "عدد المستخدمين النشطين لكل ساعة اليوم"
         : "Today's active users per hour",
       planDistribution: isArabic
-        ? "توزيع خطط التعدين"
-        : "Mining Plan Distribution",
+        ? "توزيع طرازات السكوتر"
+        : "Scooter Model Distribution",
       noPlanDistribution: isArabic
         ? "لا توجد بيانات لتوزيع الخطط."
         : "No plan distribution data.",

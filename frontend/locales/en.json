@@ -26,21 +26,21 @@
   },
   "sidebar": {
     "title": "Dashboard",
-    "subtitle": "Fleet & Profit Management",
+    "subtitle": "Fleet & Earnings Hub",
     "items": {
       "overview": "Home",
-      "tasks": "Daily Ride Tasks",
-      "mining_plans": "VIP Fleet Vehicles",
+      "tasks": "RIDE Console",
+      "mining_plans": "Energy (Scooters)",
       "deposit": "Deposit USDT",
       "withdraw": "Withdraw",
       "transactions": "Transactions",
-      "referral": "Referral",
+      "referral": "Invite ( Reward)",
       "security": "Security",
       "statistics": "Statistics",
       "support": "Support",
       "faq": "FAQ Management",
       "kyc": "KYC Verification",
-      "profile": "Admin Profile",
+      "profile": "My Account",
       "dashboard": "Dashboard",
       "users": "Users Management",
       "orders": "Orders Management",
@@ -106,7 +106,7 @@
       "all": "All",
       "deposit": "Deposit",
       "withdraw": "Withdraw",
-      "mining": "Mining"
+      "mining": "Scooter Profits"
     },
     "columns": {
       "txnId": "TXN ID",
@@ -121,7 +121,7 @@
     "types": {
       "deposit": "Deposit",
       "withdraw": "Withdrawal",
-      "mining_profit": "Mining",
+      "mining_profit": "Scooter Profit",
       "plan_purchase": "Plan Purchase",
       "referral_commission": "Referral"
     },
@@ -136,11 +136,11 @@
     }
   },
   "signup": {
-    "welcome": "Welcome to Binance",
+    "welcome": "Welcome to ETG RIDE",
     "emailPhone": "Email/Phone number",
     "emailPlaceholder": "Email",
-    "privacyPart1": "By creating an account, I agree to Binance's",
-    "privacyNotice": "Privacy Notice",
+    "privacyPart1": "By creating an account, I agree to ETG RIDE's",
+    "privacyNotice": "Privacy Notice & Terms",
     "continue": "Continue",
     "or": "or",
     "google": "Continue with Google",
@@ -154,10 +154,12 @@
       "upTo": "Up to",
       "amount": "100 USD",
       "signUpRewards": "Sign Up Rewards",
-      "usersTrust": "310,524,324 Users Trust Binance",
-      "tradingVolume": "No.1 in Trading Volume & Customer Asset",
-      "safuFund": "1,000,000,000 USD SAFU Fund"
-    }
+      "usersTrust": "Thousands of investors trust ETG RIDE",
+      "tradingVolume": "No.1 in Smart E-Mobility Fleet Returns",
+      "fleetFund": "Smart Fleet Security & Protection Reserve"
+    },
+    "title": "Create Your ETG RIDE Account",
+    "subtitle": "Join thousands of investors leasing smart electric scooter fleets."
   },
   "login": {
     "welcome": "Welcome back",
@@ -267,7 +269,7 @@
     },
     "milestones": {
       "title": "Referral Deposit Milestone Rewards ($100 per 10 Referrals)",
-      "subtitle": "Earn a $100 cash bonus withdrawable instantly for every 10 members who register through your link and deposit/activate mining!",
+      "subtitle": "Earn an instant  cash bonus for every 10 referrals who sign up, deposit, and lease a scooter!",
       "rewardPerTen": "$100 for every 10 active depositing members",
       "qualifiedCount": "Active Depositing Referrals",
       "unclaimedTitle": "Milestone Rewards Ready to Claim!",
@@ -289,7 +291,7 @@
       "rule1Title": "1. Share Your Referral Link",
       "rule1Desc": "Copy your referral link or code and share it with friends, family, or social media.",
       "rule2Title": "2. Register & Deposit",
-      "rule2Desc": "Your referred member must register and complete a deposit or activate an active mining plan.",
+      "rule2Desc": "Referred users must register through your link, deposit USDT, and lease an active scooter.",
       "rule3Title": "3. Claim $100 & Withdraw Anytime",
       "rule3Desc": "Every 10 depositing members unlocks $100 cash added directly to your wallet balance with no withdrawal limits!"
     }
@@ -339,69 +341,70 @@
     "join": "Lease Scooter Now"
   },
   "mining_plans": {
-    "title": "Cloud Mining Plans",
-    "intro": "Choose the perfect hashrate power for your investment goals. All plans include automated maintenance and guaranteed uptime.",
+    "title": "Smart E-Scooter Energy Fleet",
+    "intro": "Select your preferred e-scooter model (E1 to E6). All models include GPS tracking, one-click power control, and daily USDT yields.",
     "labels": {
-      "hashrate": "Hashrate",
-      "estRoi": "Est. ROI",
-      "duration": "Duration"
+      "hashrate": "Device Count",
+      "estRoi": "Daily Yield",
+      "duration": "Term"
     },
-    "popular": "MOST POPULAR",
-    "purchase": "Purchase Plan",
+    "popular": "Popular",
+    "purchase": "Lease Scooter",
     "plans": {
-      "basicMiner": "Basic Miner",
-      "proAsic": "Pro ASIC",
-      "premiumCluster": "Premium Cluster"
+      "basicMiner": "E1 Commuter",
+      "proAsic": "E2 Pro Scooter",
+      "premiumCluster": "E6 Sovereign Fleet"
     },
     "roi": {
-      "8_10": "8–10% Monthly",
-      "12_15": "12–15% Monthly",
-      "18_22": "18–22% Monthly"
+      "8_10": "Daily Yield",
+      "12_15": "High Return",
+      "18_22": "Maximum Fleet ROI"
     },
     "duration": {
       "30d": "30 Days"
     },
     "features": {
-      "instantActivation": "Instant Activation",
-      "dailyPayouts": "Daily Payouts",
-      "hourlyPayouts": "Hourly Payouts",
-      "standardSupport": "Standard Support",
-      "prioritySupport": "Priority 24/7 Support",
-      "advancedAnalytics": "Advanced Analytics",
-      "basicAnalytics": "Basic Analytics",
-      "vipAnalytics": "VIP Analytics",
-      "freeReinvestment": "Free Reinvestment",
-      "bonusHashrateDays": "Bonus Hashrate Days",
-      "dedicatedManager": "Dedicated Account Manager"
+      "instantActivation": "Instant One-Click Activation",
+      "dailyPayouts": "Daily USDT Payouts",
+      "hourlyPayouts": "Live Cycle Countdown",
+      "standardSupport": "24/7 Tech Support",
+      "prioritySupport": "Priority Device Telematics",
+      "advancedAnalytics": "Real-Time GPS Route Tracking",
+      "basicAnalytics": "Daily Analytics",
+      "vipAnalytics": "Fleet Operations Hub",
+      "freeReinvestment": "Instant BEP-20 Wallet Payouts",
+      "bonusHashrateDays": " Bonus Per 10 Referrals",
+      "dedicatedManager": "Dedicated Fleet Concierge"
     }
   },
   "faq": {
     "title": "FAQ",
     "items": {
       "q1": {
-        "q": "Are profits guaranteed?",
-        "a": "No. Mining/investment involves risk. Platform designed professionally without unrealistic promises."
+        "q": "How do I get started with ETG RIDE?",
+        "a": "Create an account, deposit USDT via BEP-20, select your preferred scooter model from (Energy), and power your ride to begin collecting daily earnings."
       },
       "q2": {
         "q": "How to connect real data?",
         "a": "Use API integration to fetch live metrics and counters securely."
       },
       "q3": {
-        "q": "More plan options?",
-        "a": "Plans are illustrative. Future options may be added based on demand."
+        "q": "When and how are scooter earnings paid?",
+        "a": "Scooter profits are credited daily to your wallet upon starting the ride cycle with the Power button (⏻). You can withdraw anytime with zero lockup."
       },
       "q4": {
-        "q": "How is Binance Mining different from other cryptocurrencies?",
-        "a": "Focus on operational transparency, simple plans, and API-ready stats."
+        "q": "What makes ETG RIDE different from other investment platforms?",
+        "a": "ETG RIDE is backed by real smart electric micro-mobility assets connected via IoT, generating verified daily cashflow with instant withdrawals."
       },
       "q5": {
-        "q": "Is Binance Mining safe?",
-        "a": "We prioritize security, but all investments carry risk."
+        "q": "How does the  referral milestone work?",
+        "a": "Share your invitation link. Whenever 10 referred members register and fund their account, you unlock an instant  cash bonus."
       }
-    }
+    },
+    "subtitle": "Common questions and answers regarding ETG RIDE smart fleet operations and profits"
   },
   "deposit": {
-    "subtitle": "Add funds to your account to purchase mining plans.",
+    "subtitle": "Add funds to your wallet to lease smart e-scooters and unlock daily profits.",
     "labels": {
       "network": "Network",
       "amount": "Deposit Amount (USDT)",
@@ -413,7 +416,7 @@
     },
     "notice": {
       "title": "Important Notice",
-      "text": "Send only USDT to this deposit address using the selected network. Sending other coins or tokens to this address may result in loss of your deposit."
+      "text": "Send USDT only via BNB Smart Chain (BEP-20) network to ensure instant automated confirmation."
     },
     "actions": {
       "check": "Check the payment"
@@ -426,7 +429,7 @@
   },
   "withdraw": {
     "title": "Withdraw Funds",
-    "subtitle": "Withdraw your mining earnings to your external wallet.",
+    "subtitle": "Withdraw your daily scooter profits directly to your external BEP-20 wallet.",
     "balance": {
       "label": "Available Balance"
     },
@@ -475,7 +478,7 @@
   },
   "footer": {
     "newsletterTitle": "Join our newsletter",
-    "newsletterSubtitle": "Are you ready to experience the freedom of mining?",
+    "newsletterSubtitle": "Are you ready to power your e-scooter and earn daily returns?",
     "emailPlaceholder": "Enter your email",
     "subscribe": "Subscribe",
     "privacyAgree": "By subscribing, you agree with our",

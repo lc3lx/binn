@@ -14,7 +14,7 @@ const platformSettingSchema = new mongoose.Schema(
     },
     contactEmail: {
       type: String,
-      default: 'support@binancecoins.com',
+      default: 'support@etg-ride.com',
       trim: true,
     },
     contactPhone: {

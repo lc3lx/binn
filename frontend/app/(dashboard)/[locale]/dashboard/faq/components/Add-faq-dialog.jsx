@@ -49,7 +49,7 @@ export default function AddFaqDialog({ open, onOpenChange, isArabic = false }) {
   const onSubmit = (values) => {
     mutate({
       ...values,
-      category: "mining",
+      category: "general",
     });
   };
 

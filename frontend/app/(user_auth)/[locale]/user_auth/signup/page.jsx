@@ -207,7 +207,7 @@ export default function SignupPage() {
             transition={{ type: "spring", stiffness: 300 }}
           >
             <Shield className="w-5 h-5 text-primary" />
-            {t("signup.rewards.safuFund")}
+            {t("signup.rewards.fleetFund")}
           </motion.div>
         </motion.div>
       </motion.div>

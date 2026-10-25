@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import Image from "next/image";
@@ -16,7 +16,7 @@ import {
   YAxis,
 } from "recharts";
 import { usePathname } from "next/navigation";
-import { User, Headphones, Clock3, DollarSign, ArrowUpRight, Pickaxe, Shield } from "lucide-react";
+import { User, Headphones, Clock3, DollarSign, ArrowUpRight, Zap, Shield } from "lucide-react";
 import {
   useDepositsWithdrawalsChartQuery,
   useRecentTransactionsQuery,
@@ -57,7 +57,7 @@ export default function DashboardPage() {
           totalUsers: "إجمالي المستخدمين",
           totalDeposits: "إجمالي الإيداعات",
           totalWithdrawals: "إجمالي السحوبات",
-          activeMiningPlans: "الخطط النشطة",
+          activeMiningPlans: "سكوترات RIDE النشطة",
           pendingKyc: "طلبات التوثيق المعلقة",
           pendingWithdrawals: "السحوبات المعلقة",
           openSupportTickets: "تذاكر الدعم المفتوحة",
@@ -105,7 +105,7 @@ export default function DashboardPage() {
           totalUsers: "Total Users",
           totalDeposits: "Total Deposits",
           totalWithdrawals: "Total Withdrawals",
-          activeMiningPlans: "Active Mining Plans",
+          activeMiningPlans: "Active RIDE Scooters",
           pendingKyc: "Pending KYC",
           pendingWithdrawals: "Pending Withdrawals",
           openSupportTickets: "Open Support Tickets",
@@ -273,7 +273,7 @@ export default function DashboardPage() {
       value: formatCount(cards.activeMiningPlans?.value),
       delta: formatDelta(cards.activeMiningPlans?.changePercent),
       note: text.vsLastMonth,
-      icon: Pickaxe,
+      icon: Zap,
       iconClass: "h-4 w-4 text-[#a855f7]",
       accent: "bg-[#24193d]",
       deltaClass: "text-[#22c55e]",
