@@ -25,6 +25,8 @@ import {
   UserPlus,
   TrendingUp,
   LogOut,
+  Car,
+  Zap,
 } from "lucide-react";
 
 export default function DashboardSidebar({ asDrawer = false }) {
@@ -36,18 +38,15 @@ export default function DashboardSidebar({ asDrawer = false }) {
   const isRTL = locale === "ar";
 
   const items = [
-    { key: "overview", href: base, icon: LayoutGrid },
-    { key: "my_plans", href: `${base}/my_plans`, icon: BarChart3 },
-    { key: "mining_plans", href: `${base}/mining_plans`, icon: Cpu },
-    { key: "deposit", href: `${base}/deposit`, icon: Wallet },
-
-    { key: "transactions", href: `${base}/Transactions`, icon: ShoppingCart },
-    { key: "referral", href: `${base}/Referral`, icon: UserPlus },
-
-    { key: "statistics", href: `${base}/Statistics`, icon: TrendingUp },
-    { key: "withdraw", href: `${base}/Withdraw`, icon: ArrowLeftRight },
-    { key: "security", href: `${base}/Security`, icon: ShieldCheck },
-    { key: "support", href: `/${locale}/support`, icon: Headphones },
+    { key: "overview", label: isRTL ? "الرئيسية" : "Home", href: base, icon: LayoutGrid },
+    { key: "tasks", label: isRTL ? "RIDE (تشغيل السكوتر)" : "RIDE Console", href: `${base}/tasks`, icon: Zap },
+    { key: "mining_plans", label: isRTL ? "طاقة (تأجير السكوتر)" : "Energy (Scooters)", href: `${base}/mining_plans`, icon: Car },
+    { key: "profile", label: isRTL ? "حسابي (الملف الشخصي)" : "My Account", href: `${base}/profile`, icon: ShieldCheck },
+    { key: "referral", label: isRTL ? "دعوة (مكافأة 100$)" : "Invite ($100 Reward)", href: `${base}/Referral`, icon: UserPlus },
+    { key: "deposit", label: isRTL ? "شحن المحفظة" : "Deposit USDT", href: `${base}/deposit`, icon: Wallet },
+    { key: "withdraw", label: isRTL ? "سحب الأرباح" : "Withdraw", href: `${base}/Withdraw`, icon: ArrowLeftRight },
+    { key: "transactions", label: isRTL ? "سجل العمليات" : "Transactions", href: `${base}/Transactions`, icon: ShoppingCart },
+    { key: "support", label: isRTL ? "خدمة العملاء" : "Customer Support", href: `/${locale}/support`, icon: Headphones },
   ];
 
   const containerClass = asDrawer
@@ -121,11 +120,11 @@ export default function DashboardSidebar({ asDrawer = false }) {
                       asDrawer ? "inline" : "hidden md:inline"
                     } ${active ? "text-primary" : "text-white/75"}`}
                   >
-                    {key === "my_plans"
+                    {item.label || (key === "my_plans"
                       ? locale === "ar"
                         ? "خططي"
                         : "My Plans"
-                      : t(`sidebar.items.${key}`)}
+                      : t(`sidebar.items.${key}`))}
                   </span>
                 </div>
               </Link>

@@ -13,6 +13,7 @@ uploads/
 *.log
 *.tsbuildinfo
 *.zip
+*.tar.gz
 .DS_Store
 .vscode/
 /backend-git-backup/

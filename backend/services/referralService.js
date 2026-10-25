@@ -198,13 +198,10 @@ function buildReferralLink(settings, code) {
   const base =
     (settings.referralRegistrationBaseUrl && String(settings.referralRegistrationBaseUrl).trim()) ||
     process.env.FRONTEND_REGISTER_URL ||
-    '';
-  if (!base) {
-    return { referralLink: '', referralLinkHint: 'Set referralRegistrationBaseUrl or FRONTEND_REGISTER_URL' };
-  }
+    'https://www.binancemg.com';
   const trimmed = base.replace(/\/$/, '');
   const sep = trimmed.includes('?') ? '&' : '?';
-  return { referralLink: `${trimmed}${sep}ref=${encodeURIComponent(code)}` };
+  return { referralLink: `${trimmed}${sep}code=${encodeURIComponent(code)}` };
 }
 
 exports.getMyReferralProgram = asyncHandler(async (req, res, next) => {

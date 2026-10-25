@@ -11,6 +11,7 @@ const platformSettingRoute = require('./platformSettingRoute');
 const adminProfileRoute = require('./adminProfileRoute');
 const paymentOrderRoute = require('./paymentOrderRoute');
 const referralRoute = require('./referralRoute');
+const taskRoute = require('./taskRoute');
 
 const mountRoutes = (app) => {
   app.use('/api/v1/users', userRoute);
@@ -26,6 +27,7 @@ const mountRoutes = (app) => {
   app.use('/api/v1/admin/profile', adminProfileRoute);
   app.use('/api/v1/payments', paymentOrderRoute);
   app.use('/api/v1/referrals', referralRoute);
+  app.use('/api/v1/tasks', taskRoute);
 };
 
 module.exports = mountRoutes;

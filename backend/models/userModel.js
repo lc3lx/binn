@@ -154,6 +154,57 @@ const userSchema = new mongoose.Schema(
       default: 0,
       min: 0,
     },
+    /** Ride tasks completed today. */
+    todayTasksCompleted: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    /** Date string of last task run in YYYY-MM-DD format (for daily reset). */
+    lastTaskDate: {
+      type: String,
+      default: '',
+    },
+    /** Total earnings accumulated from ride tasks. */
+    totalTaskEarnings: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    numericId: {
+      type: Number,
+      default: function () {
+        return Math.floor(1000 + Math.random() * 9000);
+      },
+    },
+    activeScooters: [
+      {
+        plan: { type: mongoose.Schema.ObjectId, ref: 'Plan' },
+        modelName: { type: String, default: 'E2' },
+        deviceCount: { type: Number, default: 4 },
+        scooterIncome: { type: Number, default: 1.6 },
+        dailyIncome: { type: Number, default: 6.4 },
+        price: { type: Number, default: 220 },
+        status: {
+          type: String,
+          enum: ['OPEN', 'PROGRESS', 'COMPLETED'],
+          default: 'OPEN',
+        },
+        countdownEndsAt: { type: Date },
+        lastClaimDate: { type: String, default: '' },
+        pendingIncome: { type: Number, default: 0 },
+        totalCollected: { type: Number, default: 0 },
+        purchasedAt: { type: Date, default: Date.now },
+      },
+    ],
+    pendingScooterIncome: {
+      type: Number,
+      default: 0,
+    },
+    todayScooterIncome: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );

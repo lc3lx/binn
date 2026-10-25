@@ -75,6 +75,21 @@ exports.subscribeToPlan = asyncHandler(async (req, res, next) => {
   user.planSubscriptions = user.planSubscriptions || [];
   user.planSubscriptions.push(subscriptionEntry);
 
+  user.activeScooters = user.activeScooters || [];
+  user.activeScooters.push({
+    plan: plan._id,
+    modelName: plan.modelName || plan.name,
+    deviceCount: plan.deviceCount || 4,
+    scooterIncome: plan.scooterIncome || 1.6,
+    dailyIncome: plan.dailyIncome || 6.4,
+    price: plan.price,
+    status: 'OPEN',
+    countdownEndsAt: new Date(Date.now() + 5 * 3600 * 1000),
+    purchasedAt: subscribedAt,
+    pendingIncome: 0,
+    totalCollected: 0,
+  });
+
   // Backward compatibility: keep currentPlan as the most recently created subscription
   user.currentPlan = subscriptionEntry;
   await user.save();

@@ -47,6 +47,43 @@ const planSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+    dailyTasks: {
+      type: Number,
+      default: 1,
+      min: 1,
+    },
+    modelName: {
+      type: String,
+      default: 'E2',
+    },
+    deviceCount: {
+      type: Number,
+      default: 4,
+    },
+    scooterIncome: {
+      type: Number,
+      default: 1.6,
+    },
+    vehicleType: {
+      type: String,
+      default: 'Electric Scooter',
+    },
+    vipTier: {
+      type: Number,
+      default: 1,
+    },
+    dailyIncome: {
+      type: Number,
+      default: 0,
+    },
+    vehicleImage: {
+      type: String,
+      default: '/scooter_transparent.png',
+    },
+    scooterImage: {
+      type: String,
+      default: '/scooter_transparent.png',
+    },
     isPopular: {
       type: Boolean,
       default: false,

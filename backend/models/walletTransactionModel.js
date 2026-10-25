@@ -16,6 +16,7 @@ const walletTransactionSchema = new mongoose.Schema(
         'plan_purchase',
         'referral_commission',
         'referral_milestone_reward',
+        'ride_task_profit',
       ],
       required: [true, 'transaction type is required'],
     },

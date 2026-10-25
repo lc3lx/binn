@@ -112,13 +112,13 @@ export default function Footer() {
           <motion.div className="md:col-span-1" variants={itemVar}>
             <div className={`text-white ${align}`}>
               <div className="flex items-center gap-2">
-                <span className="text-xl font-extrabold text-primary">Binance</span>
-                <span className="text-xl font-bold text-white">Mining</span>
+                <span className="text-xl font-extrabold text-primary">ETG</span>
+                <span className="text-xl font-bold text-white">Ride</span>
               </div>
               <p className="mt-3 text-xs leading-relaxed text-white/60">
                 {isAr
-                  ? "منصة التعدين السحابي الذكية لعملة USDT عبر شبكة BEP-20، توفر عوائد يومية مستقرة مع أمان وسرعة في السحب."
-                  : "Next-generation cloud mining platform for USDT on BEP-20 network with stable daily profits, fast withdrawals, and high security."}
+                  ? "المنصة الذكية لاستئجار أساطيل النقل الفاخر والتنفيذي. أنجز مهام الرحلات اليومية لتحقيق أرباح USDT مستمرة وسحب فوري عبر شبكة BEP-20."
+                  : "Leading smart executive mobility & luxury fleet leasing platform. Dispatch daily ride tasks for instant USDT earnings and fast BEP-20 withdrawals."}
               </p>
             </div>
           </motion.div>

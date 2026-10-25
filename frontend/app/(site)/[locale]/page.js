@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic";
 import Hero from "./landing/Hero";
 import SupportButton from "@/components/site/SupportButton";
+import ReferralCodeCapture from "@/components/ReferralCodeCapture";
 
 const StatisticsPlan = dynamic(
   () => import("./landing/Statistics_plan/Statistics_plan"),
@@ -20,6 +21,7 @@ const Footer = dynamic(() => import("./landing/Footer"), {
 export default function Page() {
   return (
     <div className="relative w-full overflow-x-hidden bg-black">
+      <ReferralCodeCapture />
       <SupportButton className="fixed bottom-6 z-40 ltr:right-6 rtl:left-6" />
       <Hero />
       <StatisticsPlan />

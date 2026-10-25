@@ -9,28 +9,29 @@
     "logout": "Logout"
   },
   "hero": {
-    "title": "Binance Mining",
+    "title": "ETG Ride",
     "titleParts": {
-      "prefix": "Binance",
-      "mining": "Mining",
-      "management": "Management"
+      "prefix": "ETG",
+      "mining": "Ride",
+      "management": "Mobility"
     },
-    "subtitle1": " Platform for Mining &",
-    "subtitle2": "Yield Management",
+    "subtitle1": "Smart Executive Mobility & VIP Fleet",
+    "subtitle2": "Daily Ride Yields & Guaranteed USDT Payouts",
     "description": {
-      "line1": "Powerful interface, live counters, and clear unit plan.",
-      "line2": "No guaranteed profits — investment involves risk."
+      "line1": "Lease your VIP executive vehicle, dispatch daily rides, and withdraw instantly.",
+      "line2": "3-Tier partnership program with a $100 bonus for every 10 active referrals."
     },
-    "viewStats": "View Stats",
-    "viewPlan": "View Plan"
+    "viewStats": "VIP Fleet",
+    "viewPlan": "Ride Tasks"
   },
   "sidebar": {
     "title": "Dashboard",
-    "subtitle": "Financial Services Management",
+    "subtitle": "Fleet & Profit Management",
     "items": {
-      "overview": "Overview",
-      "mining_plans": "Mining Plans",
-      "deposit": "Deposit",
+      "overview": "Home",
+      "tasks": "Daily Ride Tasks",
+      "mining_plans": "VIP Fleet Vehicles",
+      "deposit": "Deposit USDT",
       "withdraw": "Withdraw",
       "transactions": "Transactions",
       "referral": "Referral",
@@ -294,32 +295,32 @@
     }
   },
   "stats": {
-    "title": "Live Statistics",
-    "subtitle": "Real-time mining metrics — ready for API integration.",
+    "title": "Live Fleet Statistics",
+    "subtitle": "Real-time executive mobility metrics and instant dividend dispatches.",
     "btc": {
-      "title": "BTC Mined",
-      "value": "142.87+",
-      "desc": "Total Bitcoin successfully mined by the platform, representing cumulative mining output generated over time."
+      "title": "Total Fleet Rides",
+      "value": "284,520+",
+      "desc": "Total VIP executive rides dispatched globally across ETG Ride fleets."
     },
     "target": {
-      "title": "Daily Target",
-      "desc": "The projected daily growth target based on planned resource allocation and mining performance."
+      "title": "Daily Trip Yield",
+      "desc": "Average daily yield on leased executive fleet vehicles."
     },
     "hashrate": {
-      "title": "Total Hashrate",
-      "desc": "Combined computational power currently used to process the mining network."
+      "title": "Active Fleet Capacity",
+      "desc": "Active luxury vehicles currently deployed on smart dispatch routes."
     },
     "miners": {
-      "title": "Active Miners",
-      "desc": "Total number of miners currently participating and contributing hashing power to the mining pool."
+      "title": "Active Fleet Partners",
+      "desc": "Total global investors and partners active in the ETG Ride network."
     }
   },
   "plan": {
-    "title": "Mining Plan Clear & Simple",
-    "subtitle": "No guaranteed profits — estimates only.",
-    "name": "Mining Plan • Pro",
-    "rate": "1.5%",
-    "dailyTargetLabel": "Daily Target (Not Guaranteed)",
+    "title": "VIP Fleet Vehicles & Daily Tasks",
+    "subtitle": "Daily payouts and instant withdrawals via audited smart escrow.",
+    "name": "VIP Vehicle • Executive",
+    "rate": "10% - 18%",
+    "dailyTargetLabel": "Daily Ride Return",
     "meta": {
       "duration": "Duration",
       "durationValue": "Up to 30 days",

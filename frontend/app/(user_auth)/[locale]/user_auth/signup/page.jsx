@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -66,6 +66,24 @@ export default function SignupPage() {
 
   const agreed = watch("agreed");
   const referralCodeValue = watch("referralCode");
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const code =
+        params.get("code") ||
+        params.get("ref") ||
+        params.get("referralCode") ||
+        localStorage.getItem("etg_referral_code");
+      if (code) {
+        const cleanCode = String(code).trim().toUpperCase();
+        setValue("referralCode", cleanCode);
+        setShowReferralField(true);
+        localStorage.setItem("etg_referral_code", cleanCode);
+      }
+    } catch {}
+  }, [setValue]);
 
   const getReferralCode = (value) => {
     const trimmed = String(value || "").trim();

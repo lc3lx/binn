@@ -1,7 +1,15 @@
-const BACKEND_ORIGIN = "https://binn-oxar.onrender.com";
+export const BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  (typeof window !== "undefined"
+    ? "/api/v1/"
+    : "http://127.0.0.1:8000/api/v1/");
 
-export const BASE_URL = `${BACKEND_ORIGIN}/api/v1/`;
-export const IMAGEURL = `${BACKEND_ORIGIN}/kyc/`;
+export const IMAGEURL =
+  process.env.NEXT_PUBLIC_IMAGE_URL ||
+  (typeof window !== "undefined"
+    ? "/kyc/"
+    : "http://127.0.0.1:8000/kyc/");
+
 export const USER_AUTH_TOKEN_COOKIE = "user_token";
 export const ADMIN_AUTH_TOKEN_COOKIE = "admin_token";
 export const AUTH_TOKEN_COOKIE = USER_AUTH_TOKEN_COOKIE;
