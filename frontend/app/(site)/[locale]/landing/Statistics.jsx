@@ -1,172 +1,146 @@
 "use client";
 
-import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { useTranslations } from "@/hooks/useTranslations";
+import {
+  Zap,
+  Power,
+  ShieldCheck,
+  Users,
+  Award,
+  ArrowUpRight,
+  Sparkles,
+  Navigation,
+  Clock,
+  Radio,
+} from "lucide-react";
 
 export default function Statistics() {
   const { t, locale } = useTranslations();
-  const align = locale === "ar" ? "text-right" : "text-left";
-  const prefersReducedMotion = useReducedMotion();
-  const shouldAnimateHover = !prefersReducedMotion;
+  const isAr = locale === "ar";
+  const align = isAr ? "text-right" : "text-left";
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.08,
-        delayChildren: 0.06,
-        duration: 0.35,
-        ease: "easeOut",
-      },
+  const features = [
+    {
+      id: "fleet",
+      title: isAr ? "أسطول سكوترات ذكي (E1 إلى E6)" : "Smart E-Scooter Fleet (E1 - E6)",
+      desc: isAr
+        ? "سكوترات كهربائية متطورة متصلة بإنترنت الأشياء (IoT) ومزودة بنظام تتبع GPS دقيق لتوليد عوائد مستقرة."
+        : "Next-gen electric scooters connected via IoT and GPS telematics delivering reliable daily yields.",
+      icon: Zap,
+      badge: isAr ? "تقنية ذكية" : "Smart Tech",
+      color: "from-blue-600/20 to-cyan-500/20",
+      border: "border-blue-500/30",
+      iconColor: "text-cyan-400",
     },
-  };
-
-  const itemVariants = {
-    hidden: {
-      opacity: 0,
-      y: 16,
-      scale: 0.98,
+    {
+      id: "power",
+      title: isAr ? "تشغيل بنقرة واحدة (⏻) وعد تنازلي" : "One-Click Power (⏻) & Timer",
+      desc: isAr
+        ? "اضغط زر الطاقة لتفعيل دورة الرحلة اليومية 04:59:50 واستلام أرباحك بالـ USDT بنقرة واحدة."
+        : "Power up your active scooter with a single click, track real-time cycle countdowns, and claim USDT earnings.",
+      icon: Power,
+      badge: isAr ? "تحكم فوري" : "Instant Control",
+      color: "from-cyan-600/20 to-blue-500/20",
+      border: "border-cyan-500/30",
+      iconColor: "text-blue-400",
     },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        duration: 0.28,
-        ease: "easeOut",
-      },
+    {
+      id: "referral",
+      title: isAr ? "مكافأة 100$ لكل 10 أعضاء" : "$100 Reward Per 10 Referrals",
+      desc: isAr
+        ? "شارك كود إحالتك واكسب 100 USDT قابلة للسحب الفوري مع كل 10 أعضاء يسجلون ويشحنون من خلالك بلا حدود."
+        : "Share your invite code and earn an instant $100 withdrawable USDT reward for every 10 active referrals.",
+      icon: Award,
+      badge: isAr ? "مكافأة فورية" : "Instant Cash",
+      color: "from-amber-600/20 to-yellow-500/20",
+      border: "border-amber-500/30",
+      iconColor: "text-amber-400",
     },
-  };
-
-  const cardHover = {
-    y: -2,
-    scale: 1.004,
-    borderColor: "rgba(255, 209, 0, 0.35)",
-    transition: { duration: 0.07, ease: "linear" },
-  };
+    {
+      id: "security",
+      title: isAr ? "سحب وإيداع فوري BEP-20" : "Instant BEP-20 Deposits & Payouts",
+      desc: isAr
+        ? "تأكيدات آلية فورية للإيداع وسحب أرباحك بضغطة زر إلى محفظتك الخاصة دون أي تأخير أو رسوم مخفية."
+        : "Automated instant blockchain verification and 24/7 direct withdrawals to your BEP-20 crypto wallet.",
+      icon: ShieldCheck,
+      badge: isAr ? "أمان مشفر" : "Military Grade",
+      color: "from-emerald-600/20 to-teal-500/20",
+      border: "border-emerald-500/30",
+      iconColor: "text-emerald-400",
+    },
+  ];
 
   return (
-    <section
-      id="stats"
-      dir={locale === "ar" ? "rtl" : "ltr"}
-      className="w-full py-16"
-    >
-      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="z-50 mb-12 text-center">
-          <h2 className="mb-5 text-4xl font-bold text-white">{t("stats.title")}</h2>
-          <p className="text-sm text-white">{t("stats.subtitle")}</p>
+    <section id="stats" className="w-full py-16 sm:py-24 relative overflow-hidden">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+        {/* Section Header */}
+        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16 space-y-3">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-cyan-400 text-xs font-bold">
+            <Radio className="w-3.5 h-3.5 animate-pulse" />
+            <span>{isAr ? "مزايا منصة ETG RIDE" : "ETG Ride Advantages"}</span>
+          </div>
+
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight">
+            {isAr
+              ? "لماذا تختار الاستثمار في أسطول ETG Ride؟"
+              : "Why Choose ETG Ride Smart Fleet Investment?"}
+          </h2>
+
+          <p className="text-sm sm:text-base text-slate-400">
+            {isAr
+              ? "نجمع بين أحدث تقنيات التنقل الصديقة للبيئة والذكاء الاصطناعي لتقديم أعلى عوائد أرباح يومية مؤكدة."
+              : "Combining eco-friendly micro-mobility infrastructure with automated smart contracts for verified daily returns."}
+          </p>
         </div>
 
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={containerVariants}
-          className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:auto-rows-[190px] xl:grid-cols-3"
-        >
-          <motion.div
-            variants={itemVariants}
-            whileHover={shouldAnimateHover ? cardHover : undefined}
-            className="relative flex min-h-[230px] flex-col items-start justify-start rounded-2xl border border-gray-600/40 bg-card p-4 sm:min-h-[420px] sm:justify-between xl:row-span-2 xl:min-h-0"
-          >
-            <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-xl">
-              <div className="absolute -left-20 -top-20 h-64 w-52 rounded-full bg-yellow-500/20 blur-3xl" />
-            </div>
-
-            <div
-              className={`absolute -top-5 ${
-                locale === "ar" ? "-left-1" : "-left-1"
-              } hidden h-36 w-28 sm:h-44 sm:w-36 md:block md:h-60 md:w-48`}
+        {/* 4 Feature Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {features.map((item, idx) => (
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: idx * 0.1 }}
+              className={`relative overflow-hidden rounded-3xl bg-slate-900/80 border ${item.border} backdrop-blur-2xl p-6 shadow-2xl flex flex-col justify-between group hover:-translate-y-1.5 transition-all duration-300`}
             >
-              <Image src="/hammer.png" alt="hammer" fill className="object-contain" />
-            </div>
-
-            <div className={`pt-0 sm:pt-44 ${align}`}>
-              <p className="text-lg font-bold text-white">{t("stats.btc.title")}</p>
-              <h3 className="mt-1 text-3xl font-bold text-primary">
-                {t("stats.btc.value", { defaultValue: "142.87+" })}
-              </h3>
-              <p className="mt-3 text-xs leading-relaxed text-gray-400">
-                {t("stats.btc.desc")}
-              </p>
-            </div>
-          </motion.div>
-
-          <motion.div
-            variants={itemVariants}
-            whileHover={shouldAnimateHover ? cardHover : undefined}
-            className="relative flex min-h-[230px] gap-4 rounded-2xl border border-gray-600/40 bg-card p-4 sm:min-h-[190px] xl:min-h-0"
-          >
-            <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-xl">
-              <div className="absolute -top-10 h-44 w-44 rounded-full bg-primary/10 blur-2xl ltr:-left-10 rtl:-right-10" />
-            </div>
-
-            <div
-              className={`absolute -top-8 ${
-                locale === "ar" ? "left-0 md:-left-14" : "right-0 md:-right-14"
-              } z-0 hidden h-24 w-24 shrink-0 pointer-events-none sm:h-32 sm:w-32 md:block md:h-44 md:w-44`}
-            >
-              <Image src="/roket.png" alt="rocket" fill className="object-contain" />
-            </div>
-
-            <div className={`relative z-10 w-full pt-0 sm:w-[62%] ${align}`}>
-              <p className="text-lg font-bold text-white">{t("stats.target.title")}</p>
-              <h3 className="text-3xl font-bold text-primary">1.50%</h3>
-              <p className="mt-2 text-xs text-gray-400">{t("stats.target.desc")}</p>
-            </div>
-          </motion.div>
-
-          <motion.div
-            variants={itemVariants}
-            whileHover={shouldAnimateHover ? cardHover : undefined}
-            className="relative flex min-h-[230px] flex-col items-start justify-start rounded-2xl border border-gray-600/40 bg-card p-4 sm:min-h-[420px] sm:justify-between xl:row-span-2 xl:min-h-0"
-          >
-            <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-xl">
-              <div className="absolute -top-20 h-64 w-64 rounded-full bg-primary/10 blur-3xl ltr:-left-10 rtl:-left-10" />
-            </div>
-
-            <div className="absolute -right-2 -top-2 hidden h-28 w-28 sm:h-36 sm:w-36 md:block md:h-52 md:w-52">
-              <Image src="/users.png" alt="users" fill className="object-contain" />
-            </div>
-
-            <div className={`pt-0 sm:pt-48 ${align}`}>
-              <p className="text-lg font-bold text-white">{t("stats.miners.title")}</p>
-              <h3 className="mt-1 text-3xl font-bold text-primary">2843+</h3>
-              <p className="mt-3 text-xs text-gray-400">{t("stats.miners.desc")}</p>
-            </div>
-          </motion.div>
-
-          <motion.div
-            variants={itemVariants}
-            whileHover={shouldAnimateHover ? cardHover : undefined}
-            className="relative min-h-[230px] rounded-2xl border border-gray-600/40 bg-card sm:min-h-[190px] xl:min-h-0"
-          >
-            <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-xl">
-              <div className="absolute -top-10 h-40 w-40 rounded-full bg-primary/10 blur-2xl ltr:-left-10 rtl:-right-10" />
-            </div>
-
-            <div
-              className={`absolute -top-2 ${
-                locale === "ar" ? "-left-7 md:-left-10" : "-right-7 md:-right-6.5"
-              } z-0 hidden h-24 w-24 shrink-0 pointer-events-none sm:h-28 sm:w-28 md:block md:h-36 md:w-36`}
-            >
-              <Image
-                src="/lightning.png"
-                alt="lightning"
-                fill
-                className="object-contain"
+              {/* Subtle card glow */}
+              <div
+                className={`absolute inset-0 bg-gradient-to-br ${item.color} opacity-40 group-hover:opacity-70 transition-opacity pointer-events-none`}
               />
-            </div>
 
-            <div className={`relative z-10 w-full p-4 pt-4 sm:w-[72%] ${align}`}>
-              <p className="text-lg font-bold text-white">{t("stats.hashrate.title")}</p>
-              <h3 className="text-3xl font-bold text-primary">1248 TH/s</h3>
-              <p className="mt-2 text-xs text-gray-400">{t("stats.hashrate.desc")}</p>
-            </div>
-          </motion.div>
-        </motion.div>
+              <div className="relative z-10 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div
+                    className={`w-12 h-12 rounded-2xl bg-slate-950/80 border border-slate-800 flex items-center justify-center ${item.iconColor} shadow-inner`}
+                  >
+                    <item.icon className="w-6 h-6 stroke-[2.2]" />
+                  </div>
+
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full bg-slate-950/60 border border-slate-800 text-slate-300">
+                    {item.badge}
+                  </span>
+                </div>
+
+                <div className="space-y-2">
+                  <h3 className="text-lg font-bold text-white group-hover:text-cyan-300 transition-colors">
+                    {item.title}
+                  </h3>
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    {item.desc}
+                  </p>
+                </div>
+              </div>
+
+              {/* Bottom decorative bar */}
+              <div className="relative z-10 pt-4 mt-4 border-t border-slate-800/80 flex items-center justify-between text-[11px] font-semibold text-slate-400">
+                <span>{isAr ? "نظام أوتوماتيكي" : "Automated"}</span>
+                <span className="text-cyan-400">24/7 Live</span>
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   );

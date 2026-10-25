@@ -55,8 +55,8 @@ export default function SiteLoadingScreen({ isVisible = true }) {
                 className="relative z-10"
               >
                 <Image
-                  src="/loading-logo.png"
-                  alt="Loading"
+                  src="/logo.svg"
+                  alt="ETG RIDE Loading"
                   width={170}
                   height={170}
                   priority

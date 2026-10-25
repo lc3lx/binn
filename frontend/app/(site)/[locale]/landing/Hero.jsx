@@ -1,279 +1,229 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
+import { motion } from "framer-motion";
 import { useTranslations } from "@/hooks/useTranslations";
-import { ChevronDown, Play, FastForward } from "lucide-react";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { Button } from "@/components/ui/button";
+import {
+  Zap,
+  Power,
+  ChevronRight,
+  ShieldCheck,
+  Award,
+  ArrowUpRight,
+  Sparkles,
+  TrendingUp,
+} from "lucide-react";
 
-function Hero() {
+export default function Hero() {
   const { t, locale } = useTranslations();
+  const { canAccessUserDashboard } = useAuth();
   const isAr = locale === "ar";
-  const [showContent, setShowContent] = useState(false);
-  const videoRef = useRef(null);
-
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0, y: 25, scale: 0.98 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.1,
-        duration: 0.6,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.5,
-        ease: "easeOut",
-      },
-    },
-  };
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    const tryPlay = async () => {
-      try {
-        video.currentTime = 0;
-        await video.play();
-      } catch {
-        // Fallback if browser policy delays autoplay
-      }
-    };
-
-    tryPlay();
-
-    const fallbackTimer = window.setTimeout(() => {
-      setShowContent(true);
-    }, 14000);
-
-    return () => window.clearTimeout(fallbackTimer);
-  }, []);
-
-  const handleSkipVideo = () => {
-    setShowContent(true);
-  };
+  const base = `/${locale}`;
 
   return (
-    <>
-      <section
-        className={`relative flex sm:h-screen w-full items-center justify-center overflow-hidden bg-black ${
-          showContent ? "pt-18" : "pt-0"
-        }`}
-      >
-        <Image
-          src="/yallow.svg"
-          alt="logo"
-          aria-hidden="true"
-          width={300}
-          height={300}
-          className="pointer-events-none absolute -left-10 -top-16 z-[3] h-[220px] w-[220px] opacity-75 sm:-left-12 sm:-top-20 sm:h-[300px] sm:w-[300px]"
-        />
+    <section className="relative min-h-[90vh] lg:min-h-screen w-full overflow-hidden pt-24 sm:pt-28 pb-16 flex items-center justify-center">
+      {/* Background Cyber Glowing Accents */}
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-blue-600/15 via-cyan-500/15 to-transparent rounded-full blur-3xl" />
+        <div className="absolute bottom-10 right-10 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl" />
+        <div className="absolute top-20 left-10 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl" />
+      </div>
 
-        {/* The 3D Animation Video */}
-        <div className="relative h-full w-full pt-16 sm:pt-0">
-          <video
-            ref={videoRef}
-            className="block h-full w-full object-cover object-center"
-            muted
-            playsInline
-            autoPlay
-            preload="auto"
-            poster="/dashboard.png"
-            onEnded={() => setShowContent(true)}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          {/* Left Text / Info Column (7 cols) */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className={`lg:col-span-7 space-y-6 ${isAr ? "text-right" : "text-left"}`}
           >
-            <source src="/video_2026-03-19_15-36-44.mp4" type="video/mp4" />
-          </video>
+            {/* Top pill badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/90 border border-cyan-500/30 text-cyan-400 text-xs sm:text-sm font-bold shadow-lg shadow-cyan-950/40 backdrop-blur-xl">
+              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_#22d3ee]" />
+              <span>
+                {isAr
+                  ? "⚡ الجيل الجديد من التنقل الكهربائي والاستثمار اليومي"
+                  : "⚡ Next-Gen Smart E-Scooter Mobility & Daily Income"}
+              </span>
+            </div>
 
-          {/* Quick Skip Button while video is playing */}
-          {!showContent && (
-            <button
-              onClick={handleSkipVideo}
-              type="button"
-              className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 rounded-full border border-white/20 bg-black/60 px-4 py-2 text-xs font-semibold text-white/90 backdrop-blur-md hover:bg-black/80 hover:text-primary transition cursor-pointer"
-            >
-              <span>{isAr ? "تخطي ومتابعة للموقع" : "Skip to Website"}</span>
-              <FastForward className="h-3.5 w-3.5 text-primary" />
-            </button>
-          )}
-        </div>
+            {/* Main Title */}
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-200 to-blue-400">
+                ETG RIDE
+              </span>
+              <br />
+              <span className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-200 mt-2 block">
+                {isAr
+                  ? "استأجر سكوترك الكهربائي، شغّل رحلتك، واكسب USDT يومياً"
+                  : "Lease your smart e-scooter, power your ride, and earn USDT daily"}
+              </span>
+            </h1>
 
-        {/* Content revealed after animation or skip */}
-        <AnimatePresence>
-          {showContent && (
-            <>
-              {/* Corner decorative coins */}
-              <div className="pointer-events-none absolute inset-0 z-[3]">
-                <div className="absolute bottom-8 ltr:-left-8 rtl:-right-8 h-44 w-44 sm:h-80 sm:w-80">
-                  <Image
-                    src="/left.png"
-                    alt="left coin"
-                    fill
-                    className="object-contain opacity-70"
-                  />
+            {/* Description */}
+            <p className="text-sm sm:text-base lg:text-lg text-slate-300 leading-relaxed max-w-2xl">
+              {isAr
+                ? "منصة متطورة لتشغيل واستثمار أساطيل السكوترات الكهربائية الذكية (E1 إلى E6). تفعيل الرحلة بنقرة واحدة عبر زر الطاقة (⏻)، عد تنازلي ذكي، أرباح يومية مؤكدة، وسحب فوري BEP-20 مع مكافأة 100$ لكل 10 إحالات مفعلة."
+                : "Advanced smart micro-mobility investment platform. Power rides with one-click (⏻), track real-time countdowns, collect daily USDT profits, and enjoy instant BEP-20 payouts with $100 referral rewards."}
+            </p>
+
+            {/* Primary Action Buttons */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
+              <Link
+                href={
+                  canAccessUserDashboard
+                    ? `${base}/user_dashboard/tasks`
+                    : `${base}/user_auth/signup`
+                }
+              >
+                <Button className="w-full sm:w-auto px-8 py-6 rounded-2xl bg-gradient-to-r from-blue-600 via-cyan-600 to-blue-500 hover:from-blue-500 hover:to-cyan-500 text-white font-black text-base shadow-xl shadow-blue-900/40 border border-cyan-400/40 transition-all active:scale-95">
+                  <Power className="w-5 h-5 mr-2 text-cyan-200" />
+                  <span>
+                    {isAr ? "ابدأ تشغيل السكوتر (RIDE)" : "Start Ride Console (RIDE)"}
+                  </span>
+                </Button>
+              </Link>
+
+              <a href="#scooter-plans">
+                <Button
+                  variant="outline"
+                  className="w-full sm:w-auto px-8 py-6 rounded-2xl border-slate-700 bg-slate-900/60 hover:bg-slate-800 text-white font-bold text-base transition-all"
+                >
+                  <Zap className="w-4 h-4 mr-2 text-cyan-400" />
+                  <span>
+                    {isAr ? "تصفح أسطول السكوترات (طاقة)" : "Explore Scooters (Energy)"}
+                  </span>
+                </Button>
+              </a>
+            </div>
+
+            {/* Live Platform Mini Stats Bar */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6 border-t border-slate-800/80">
+              <div className="p-3 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl">
+                <span className="text-[11px] text-slate-400 block mb-0.5">
+                  {isAr ? "الرحلات المكتملة" : "Dispatched Rides"}
+                </span>
+                <span className="text-lg font-black text-white font-mono">
+                  348,200+
+                </span>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl">
+                <span className="text-[11px] text-slate-400 block mb-0.5">
+                  {isAr ? "طرازات السكوتر" : "Scooter Fleet"}
+                </span>
+                <span className="text-lg font-black text-cyan-400 font-mono">
+                  E1 - E6
+                </span>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl">
+                <span className="text-[11px] text-slate-400 block mb-0.5">
+                  {isAr ? "مكافأة الإحالة" : "Referral Bonus"}
+                </span>
+                <span className="text-lg font-black text-amber-400 font-mono">
+                  $100 / 10
+                </span>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl">
+                <span className="text-[11px] text-slate-400 block mb-0.5">
+                  {isAr ? "سرعة السحب" : "Withdrawal Speed"}
+                </span>
+                <span className="text-lg font-black text-emerald-400 font-mono">
+                  {isAr ? "فوري BEP-20" : "Instant"}
+                </span>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Right Showcase Column (5 cols) - Features Real Scooter Graphic */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.7, delay: 0.15 }}
+            className="lg:col-span-5 relative flex items-center justify-center py-6"
+          >
+            {/* Glowing Backdrop Circle */}
+            <div className="absolute w-72 sm:w-96 h-72 sm:h-96 rounded-full bg-gradient-to-br from-blue-600/25 via-cyan-500/20 to-transparent blur-3xl pointer-events-none" />
+
+            {/* Central Scooter Card */}
+            <div className="relative w-full max-w-sm sm:max-w-md rounded-3xl bg-slate-900/80 border border-slate-700/60 backdrop-blur-2xl p-6 shadow-2xl space-y-4">
+              {/* Header inside card */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-semibold text-slate-400 block">
+                    {isAr ? "طراز السكوتر الأكثر شعبية" : "Most Popular Model"}
+                  </span>
+                  <h3 className="text-2xl font-black text-white">E2 Pro Scooter</h3>
                 </div>
-                <div className="absolute bottom-36 ltr:-right-8 rtl:-left-8 h-44 w-44 sm:h-80 sm:w-80">
-                  <Image
-                    src="/right.png"
-                    alt="right coin"
-                    fill
-                    className="object-contain opacity-70"
-                  />
+
+                <div className="px-3 py-1 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>{isAr ? "حالة: بنشاط" : "Active"}</span>
                 </div>
               </div>
 
-              {/* Black backdrop overlay */}
-              <motion.div
-                className="absolute inset-0 z-[1] bg-black/90"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
-              />
-
-              {/* Hardware-accelerated soft radial glow (Zero GPU Stall on Scroll) */}
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0 z-[2] flex items-center justify-center overflow-hidden"
-              >
-                <div className="h-[55vh] w-[85vw] max-w-[1000px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(240,185,11,0.18)_0%,transparent_65%)]" />
+              {/* Scooter Cutout Image */}
+              <div className="relative py-2 flex items-center justify-center">
+                <img
+                  src="/scooter_transparent.png"
+                  alt="ETG Electric Scooter"
+                  className="w-56 h-56 sm:w-64 sm:h-64 object-contain drop-shadow-[0_20px_30px_rgba(0,0,0,0.8)] transform hover:scale-105 transition-transform duration-300"
+                />
               </div>
 
-              {/* Main Titles and Hero CTAs */}
-              <motion.div
-                key="hero-content"
-                className="absolute inset-0 z-10 grid place-items-center text-center"
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-                exit={{ opacity: 0 }}
-              >
-                <div className="mx-auto flex w-full max-w-4xl -translate-y-4 flex-col items-center justify-center px-4 text-center sm:translate-y-0 sm:gap-1 pt-24 sm:pt-12 z-50 sm:px-6">
-                  <motion.h1
-                    className="text-3xl md:text-8xl font-extrabold"
-                    variants={itemVariants}
-                  >
-                    <span className="text-primary">
-                      {t("hero.titleParts.prefix") || "Binance"}
-                    </span>{" "}
-                    <span className="text-white">
-                      {t("hero.titleParts.mining") || "Mining"}
-                    </span>
-                  </motion.h1>
-
-                  <motion.h2
-                    className="mt-1 sm:mt-4 text-xl font-bold text-white md:text-5xl"
-                    variants={itemVariants}
-                  >
-                    {t("hero.subtitle1")}
-                  </motion.h2>
-
-                  <motion.h2
-                    className="mt-1 sm:mt-4 text-2xl font-bold text-white md:text-5xl"
-                    variants={itemVariants}
-                  >
-                    {t("hero.subtitle2")}
-                  </motion.h2>
-
-                  <motion.p
-                    className="mt-1 sm:mt-4 text-xs text-white/90 md:text-2xl"
-                    variants={itemVariants}
-                  >
-                    {t("hero.description.line1")}
-                    <br />
-                    {t("hero.description.line2")}
-                  </motion.p>
-
-                  <motion.div
-                    className="mt-5 sm:mt-8 flex flex-wrap justify-center gap-3 sm:gap-4"
-                    variants={itemVariants}
-                  >
-                    <Button
-                      size="sm"
-                      className="sm:hidden font-bold"
-                      variant="secondary"
-                      asChild
-                    >
-                      <Link href={`/${locale}#stats`}>
-                        {t("hero.viewStats")}
-                      </Link>
-                    </Button>
-                    <Button
-                      size="lg"
-                      className="hidden sm:flex font-bold"
-                      variant="secondary"
-                      asChild
-                    >
-                      <Link href={`/${locale}#stats`}>
-                        {t("hero.viewStats")}
-                      </Link>
-                    </Button>
-                    <Button size="sm" className="sm:hidden font-extrabold bg-primary text-black hover:bg-primary/90" asChild>
-                      <Link href={`/${locale}#plan`}>{t("hero.viewPlan") || (isAr ? "احسب أرباحك" : "Calculate Yield")}</Link>
-                    </Button>
-                    <Button size="lg" className="hidden sm:flex font-extrabold bg-primary text-black hover:bg-primary/90" asChild>
-                      <Link href={`/${locale}#plan`}>{t("hero.viewPlan") || (isAr ? "احسب أرباحك" : "Calculate Yield")}</Link>
-                    </Button>
-                  </motion.div>
+              {/* Specs pill badges */}
+              <div className="grid grid-cols-2 gap-2 text-center text-xs">
+                <div className="p-2.5 rounded-2xl bg-slate-800/60 border border-slate-700/50">
+                  <span className="text-[10px] text-slate-400 block mb-0.5">
+                    {isAr ? "عدد الأجهزة" : "Devices"}
+                  </span>
+                  <span className="text-sm font-extrabold text-white">4 أجهزة</span>
                 </div>
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>
-      </section>
 
-      {/* Showcase Section: Moon & Dashboard Preview (Optimized for 60/120fps Scroll) */}
-      <section className="relative overflow-hidden pb-8 sm:pb-36 bg-black">
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black to-transparent" />
-        <div className="relative z-10 mx-auto flex w-full flex-col items-center px-0 text-center">
-          <div className="relative mt-8 flex w-full items-center justify-center sm:mt-12">
-            {/* Smooth static radial glow behind moon (No re-rasterization during scroll) */}
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute h-[70vw] max-h-[600px] w-[70vw] max-w-[600px] rounded-full bg-[radial-gradient(circle_at_center,rgba(240,185,11,0.22)_0%,transparent_68%)] -z-10"
-            />
+                <div className="p-2.5 rounded-2xl bg-slate-800/60 border border-slate-700/50">
+                  <span className="text-[10px] text-slate-400 block mb-0.5">
+                    {isAr ? "الدخل اليومي" : "Daily Income"}
+                  </span>
+                  <span className="text-sm font-extrabold text-cyan-400">
+                    6.40 USDT
+                  </span>
+                </div>
+              </div>
 
-            {/* Moon Image (Hardware accelerated) */}
-            <div className="relative aspect-square w-[100vw] max-w-[820px] sm:w-[80vw] transform-gpu">
-              <Image
-                src="/moon.png"
-                alt="Moon"
-                fill
-                priority={false}
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 820px"
-                className="object-contain opacity-85"
-              />
+              {/* Simulated active countdown bar */}
+              <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-xs">
+                <span className="text-slate-400 font-medium">
+                  {isAr ? "العد التنازلي للرحلة:" : "Cycle Countdown:"}
+                </span>
+                <span className="font-mono text-cyan-400 font-bold tracking-wider text-sm">
+                  04:59:50
+                </span>
+              </div>
+
+              {/* Direct CTA inside card */}
+              <Link
+                href={
+                  canAccessUserDashboard
+                    ? `${base}/user_dashboard/tasks`
+                    : `${base}/user_auth/signup`
+                }
+                className="block"
+              >
+                <Button className="w-full py-5 rounded-2xl bg-[#0c2a54] hover:bg-[#103569] text-white font-extrabold text-xs sm:text-sm border border-blue-500/40 shadow-lg shadow-blue-950/60">
+                  <Power className="w-4 h-4 mr-1 text-cyan-300" />
+                  <span>{isAr ? "تشغيل السكوتر الآن (⏻)" : "Power On Scooter (⏻)"}</span>
+                </Button>
+              </Link>
             </div>
-
-            {/* Dashboard Mockup - Clean CSS Transform */}
-            <div className="absolute left-1/2 top-1/2 z-20 w-[86vw] max-w-[680px] aspect-[16/10] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-xl border border-white/10 shadow-2xl bg-[#0b0e11] sm:w-[62vw] md:w-[56vw]">
-              <Image
-                src="/dashboard.png"
-                alt="Dashboard preview"
-                fill
-                priority={false}
-                sizes="(max-width: 640px) 86vw, (max-width: 1024px) 62vw, 56vw"
-                className="object-contain"
-              />
-            </div>
-          </div>
+          </motion.div>
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }
-
-export default Hero;

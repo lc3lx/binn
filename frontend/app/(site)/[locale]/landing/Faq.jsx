@@ -1,9 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useTranslations } from "@/hooks/useTranslations";
-import Image from "next/image";
-import { useFaqListQuery } from "@/api/services/admin/faq/faq.query";
 import {
   Accordion,
   AccordionContent,
@@ -13,147 +11,86 @@ import {
 import { HelpCircle } from "lucide-react";
 
 export default function FAQ() {
-  const { t, locale } = useTranslations();
+  const { locale } = useTranslations();
   const isAr = locale === "ar";
   const align = isAr ? "text-right" : "text-left";
 
-  const { data: faqResponse } = useFaqListQuery();
-
-  const [open, setOpen] = useState("");
-
-  // Default bilingual FAQs in case DB is loading or empty
-  const defaultFaqs = useMemo(
-    () => [
-      {
-        q: isAr
-          ? "كيف أبدأ التعدين في منصة Binance Mining؟"
-          : "How do I start mining on Binance Mining?",
-        a: isAr
-          ? "قم بإنشاء حساب جديد، وتأكيد هويتك، ثم قم بإيداع رصيد USDT عبر شبكة BEP-20، واختر خطة التعدين المناسبة لتبدأ أرباحك بالنزول كل 10 أيام."
-          : "Simply create an account, complete your basic KYC verification, deposit USDT (BEP-20) to your allocated wallet address, and choose your preferred mining plan to start earning profits every 10 days.",
-      },
-      {
-        q: isAr
-          ? "ما هي الشبكات المدعومة للإيداع والسحب؟"
-          : "Which deposit networks are supported?",
-        a: isAr
-          ? "المنصة تدعم عملة USDT عبر شبكة BNB Smart Chain (BEP-20) لضمان سرعة المعاملات ورسوم تحويل شبه معدومة وتأكيدات آلية فورية."
-          : "We support USDT exclusively over the BNB Smart Chain (BEP-20) network, ensuring instant confirmations and near-zero network fees.",
-      },
-      {
-        q: isAr
-          ? "متى وكيف يتم توزيع أرباح التعدين؟"
-          : "When and how are mining profits distributed?",
-        a: isAr
-          ? "تُحسب وتُوزع أرباح التعدين بشكل آلي تماماً كل 10 أيام مباشرة إلى رصيد محفظتك بنسبة 30% من قيمة الخطة، ويمكنك سحب أرباحك أو إعادة استثمارها في أي وقت."
-          : "Mining profits are calculated automatically and credited directly to your account wallet balance every 10 days at 30% of the plan price. You can withdraw or reinvest at any time.",
-      },
-      {
-        q: isAr
-          ? "ما هو الحد الأدنى للسحب وكم يستغرق؟"
-          : "What is the minimum withdrawal limit and how long does it take?",
-        a: isAr
-          ? "الحد الأدنى للسحب هو 10 USDT فقط، وتتم مراجعة ومعالجة طلبات السحب بأمان وسرعة عالية."
-          : "The minimum withdrawal is 10 USDT. Withdrawal requests are processed securely, typically within minutes to a few hours.",
-      },
-      {
-        q: isAr
-          ? "كيف يعمل نظام عمولات الإحالة والشركاء؟"
-          : "How does the Referral & Affiliate program work?",
-        a: isAr
-          ? "يمكنك مشاركة رابط إحالتك مع أصدقائك، وستحصل على عمولات يومية مجزية (10% إلى 20% للمستوى الأول و 5% للمستوى الثاني) تضاف لرصيدك مباشرة من عوائد تعدين فريقك."
-          : "Share your unique referral link with friends. When they subscribe to mining plans, you receive multi-tier commissions (10%-20% for Level 1, 5% for Level 2) credited daily.",
-      },
-    ],
-    [isAr],
-  );
-
-  // Transform API data to accordion items with automatic fallback
-  const faqItems = useMemo(() => {
-    if (faqResponse?.data && Array.isArray(faqResponse.data)) {
-      const activeFromApi = faqResponse.data
-        .filter((item) => item.isActive)
-        .map((item) => ({
-          q: item.question,
-          a: item.answer,
-        }));
-
-      if (activeFromApi.length > 0) {
-        return activeFromApi;
-      }
-    }
-    return defaultFaqs;
-  }, [faqResponse, defaultFaqs]);
+  const faqs = [
+    {
+      q: isAr
+        ? "ما هي منصة ETG RIDE وكيف تعمل؟"
+        : "What is ETG RIDE and how does it work?",
+      a: isAr
+        ? "ETG RIDE هي منصة ذكية لتشغيل واستثمار أساطيل السكوترات الكهربائية (Smart E-Scooters). تتيح للمستخدمين استئجار طرازات السكوتر (من E1 إلى E6) وتشغيلها يومياً بنقرة واحدة لتحقيق عوائد أرباح يومية مؤكدة بالـ USDT مباشرة إلى محفظتهم."
+        : "ETG RIDE is a smart micro-mobility investment platform. Members lease smart electric scooters (E1 through E6) and power daily dispatches with a single click to generate consistent daily USDT returns credited to their wallets.",
+    },
+    {
+      q: isAr
+        ? "كيف أستأجر سكوتر كهربائي وأبدأ الكسب؟"
+        : "How do I lease an e-scooter and start earning?",
+      a: isAr
+        ? "قم بإنشاء حسابك، واشحن رصيدك بالـ USDT عبر شبكة BEP-20، ثم توجه لقسم (طاقة) واختر طراز السكوتر المناسب لميزانيتك واضغط (تأكيد الاستئجار). ستظهر أجهزتك فوراً في شاشة RIDE لتشغيلها."
+        : "Register your account, deposit USDT via BEP-20, then visit the (Energy) fleet section to choose your scooter model and confirm lease. Your devices immediately activate in your RIDE console.",
+    },
+    {
+      q: isAr
+        ? "كيف يعمل زر الطاقة (⏻) والعد التنازلي في شاشة RIDE؟"
+        : "How does the Power button (⏻) and countdown timer work in RIDE?",
+      a: isAr
+        ? "في شاشة RIDE، اضغط على زر الطاقة الأزرق (⏻) لبدء جولة العمل. ستتحول حالة السكوتر إلى PROGRESS ويبدأ العداد التنازلي الذكي 04:59:50. عند اكتمال الجولة أو جاهزية العائد، يمكنك الضغط على زر الجمع الماروني ($) لتحويل الأرباح مباشرة إلى رصيدك."
+        : "In the RIDE screen, press the Blue Power button (⏻) to start the ride cycle. Scooter status changes to PROGRESS and the live 04:59:50 timer activates. Press the maroon ($) button or One-Click Collect to claim earnings to your wallet balance.",
+    },
+    {
+      q: isAr
+        ? "ما هو نظام مكافأة الـ 100$ لكل 10 أعضاء؟"
+        : "What is the $100 referral reward for every 10 members?",
+      a: isAr
+        ? "لكل مستخدم كود ورابط إحالة خاص به. عندما يقوم 10 أشخاص بالتسجيل من خلال رابطك وشحن رصيدهم، تمنحك المنصة مكافأة 100 USDT فورية قابلة للسحب، وتتكرر هذه المكافأة بلا حدود مع كل 10 أعضاء جدد."
+        : "Each member receives a unique referral link. Whenever 10 referred members register and fund their account, you automatically receive a $100 USDT cash reward, recurring with every additional 10 active referrals without limit.",
+    },
+    {
+      q: isAr
+        ? "ما هي الشبكة المدعومة للإيداع والسحب والحد الأدنى؟"
+        : "Which network is supported for deposits/withdrawals and what is the minimum?",
+      a: isAr
+        ? "تدعم المنصة عملة USDT عبر شبكة BNB Smart Chain (BEP-20) مع تأكيد آلي فوري. الحد الأدنى للسحب هو 10 USDT فقط ويتم تحويله مباشرة إلى محفظتك الخاصة في دقائق معدودة."
+        : "We exclusively support USDT via BNB Smart Chain (BEP-20) for instant automated processing and ultra-low fees. The minimum withdrawal is just 10 USDT, sent directly to your wallet in minutes.",
+    },
+  ];
 
   return (
-    <section
-      id="how-it-works"
-      dir={isAr ? "rtl" : "ltr"}
-      className="relative w-full overflow-hidden py-16"
-    >
-      <div className="pointer-events-none absolute inset-0 z-0">
-        <div className="absolute bottom-8 ltr:-left-16 rtl:-right-16 w-80 h-80">
-          <Image
-            src="/left.png"
-            alt="left coin"
-            fill
-            className="object-contain opacity-40"
-          />
-        </div>
-        <div className="absolute bottom-36 ltr:-right-16 rtl:-left-16 w-80 h-80">
-          <Image
-            src="/right.png"
-            alt="right coin"
-            fill
-            className="object-contain opacity-40"
-          />
-        </div>
-      </div>
-
-      <div className="relative z-10 mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-semibold text-primary mb-3">
-            <HelpCircle className="h-3.5 w-3.5" />
-            <span>{isAr ? "إجابات لجميع استفساراتك" : "Frequently Asked Questions"}</span>
+    <section id="faq" className="w-full py-16 sm:py-24 relative overflow-hidden">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
+        {/* Header */}
+        <div className="text-center max-w-2xl mx-auto mb-12 space-y-3">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-cyan-400 text-xs font-bold">
+            <HelpCircle className="w-3.5 h-3.5" />
+            <span>{isAr ? "الأسئلة الشائعة" : "Frequently Asked Questions"}</span>
           </div>
-          <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
-            {t("faq.title") || (isAr ? "الأسئلة الشائعة" : "Frequently Asked Questions")}
+
+          <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+            {isAr
+              ? "كل ما تحتاج معرفته عن ETG RIDE"
+              : "Everything You Need to Know About ETG Ride"}
           </h2>
-          <p className="mt-2 text-sm text-gray-400">
-            {t("faq.subtitle") || (isAr ? "إليك أهم الأسئلة والإجابات حول منصة التعدين وآلية عملها" : "Find quick answers to common questions about mining and profits")}
-          </p>
         </div>
 
-        <Accordion
-          type="single"
-          collapsible
-          value={open}
-          onValueChange={setOpen}
-          className="mx-auto w-full space-y-3"
-        >
-          {faqItems.map((it, i) => {
-            const value = `faq-${i}`;
-
-            return (
-              <AccordionItem
-                key={i}
-                value={value}
-                className="relative rounded-xl border border-white/10 bg-[#121316]/90 backdrop-blur-md overflow-hidden transition hover:border-white/20"
-              >
-                <div className="px-5">
-                  <AccordionTrigger
-                    className={`py-4 ${align} text-white hover:no-underline text-sm font-bold hover:text-primary transition`}
-                  >
-                    {it.q}
-                  </AccordionTrigger>
-                </div>
-
-                <AccordionContent className="text-xs text-gray-300 leading-relaxed border-t border-white/5 bg-black/30">
-                  <div className="px-5 py-4">{it.a}</div>
-                </AccordionContent>
-              </AccordionItem>
-            );
-          })}
+        {/* Accordion */}
+        <Accordion type="single" collapsible className="space-y-3">
+          {faqs.map((faq, idx) => (
+            <AccordionItem
+              key={idx}
+              value={`faq-${idx}`}
+              className="rounded-3xl bg-slate-900/80 border border-slate-700/60 backdrop-blur-2xl px-6 py-2 shadow-xl data-[state=open]:border-cyan-500/40"
+            >
+              <AccordionTrigger className={`text-base sm:text-lg font-bold text-white hover:text-cyan-400 transition-colors ${align}`}>
+                {faq.q}
+              </AccordionTrigger>
+              <AccordionContent className={`text-xs sm:text-sm text-slate-300 leading-relaxed pt-2 pb-4 ${align}`}>
+                {faq.a}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
         </Accordion>
       </div>
     </section>

@@ -7,7 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { Menu, X, DollarSign, LogOut } from "lucide-react";
+import { Menu, X, Power, LogOut, Zap, LayoutDashboard } from "lucide-react";
 import { Button } from "./ui/button";
 import { logout } from "@/api/instance";
 
@@ -17,23 +17,24 @@ function Navbar() {
   const router = useRouter();
   const { canAccessUserDashboard } = useAuth();
 
-  const currentLocale = pathname.split("/")[1];
+  const currentLocale = pathname.split("/")[1] || "ar";
   const isArabic = currentLocale === "ar";
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState(null);
-  const [pendingSection, setPendingSection] = useState(null);
+
   const links = [
-    { path: `/${currentLocale}#stats`, label: t("nav.stats") },
-    { path: `/${currentLocale}#plan`, label: t("nav.plan") },
-    { path: `/${currentLocale}#how-it-works`, label: t("nav.howItWorks") },
+    { path: `/${currentLocale}#scooter-plans`, label: isArabic ? "أسطول السكوترات" : "Scooter Fleet" },
+    { path: `/${currentLocale}#stats`, label: isArabic ? "المميزات" : "Features" },
+    { path: `/${currentLocale}#how-it-works`, label: isArabic ? "كيف تعمل" : "How It Works" },
+    { path: `/${currentLocale}#faq`, label: isArabic ? "الأسئلة الشائعة" : "FAQ" },
   ];
 
   if (canAccessUserDashboard) {
     links.push({
       path: `/${currentLocale}/user_dashboard`,
-      label: t("nav.dashboard"),
+      label: isArabic ? "لوحة التحكم" : "Dashboard",
+      isDashboard: true,
     });
   }
 
@@ -44,28 +45,13 @@ function Navbar() {
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
   };
-  const handleSectionClick = (hash) => {
-    const el =
-      typeof document !== "undefined" ? document.getElementById(hash) : null;
-    if (!el) return;
-    const offset = 80;
-    const y = el.getBoundingClientRect().top + window.pageYOffset - offset;
-    setPendingSection(hash);
-    setActiveSection(hash);
-    window.scrollTo({ top: y, behavior: "smooth" });
-  };
 
   const handleStartNow = () => {
-    const homePath = `/${currentLocale}`;
-    if (pathname === homePath || pathname === `${homePath}/`) {
-      handleSectionClick("plan");
-      return;
+    if (canAccessUserDashboard) {
+      router.push(`/${currentLocale}/user_dashboard/tasks`);
+    } else {
+      router.push(`/${currentLocale}/user_auth/signup`);
     }
-    router.push(`${homePath}#plan`);
-  };
-
-  const handleWithdraw = () => {
-    router.push(`/${currentLocale}/user_dashboard/Withdraw`);
   };
 
   const handleLogout = () => {
@@ -74,7 +60,7 @@ function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 24);
+      setIsScrolled(window.scrollY > 20);
     };
 
     handleScroll();
@@ -82,154 +68,75 @@ function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  useEffect(() => {
-    const ids = ["plan", "stats", "how-it-works"];
-    const els = ids
-      .map((id) =>
-        typeof document !== "undefined" ? document.getElementById(id) : null,
-      )
-      .filter(Boolean);
-    if (els.length === 0) return;
-
-    const firstSection = els[0];
-    const resetActiveSection = () => {
-      const resetPoint = Math.max(firstSection.offsetTop - 160, 0);
-      if (window.scrollY < resetPoint) {
-        setActiveSection(null);
-        setPendingSection(null);
-      }
-    };
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visibleEntries = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-
-        if (visibleEntries.length > 0) {
-          setActiveSection(visibleEntries[0].target.id);
-          setPendingSection(null);
-        }
-      },
-      { rootMargin: "-90px 0px -35% 0px", threshold: 0.22 },
-    );
-
-    window.addEventListener("scroll", resetActiveSection, { passive: true });
-    resetActiveSection();
-
-    els.forEach((el) => observer.observe(el));
-    return () => {
-      window.removeEventListener("scroll", resetActiveSection);
-      observer.disconnect();
-    };
-  }, [pathname]);
-
   return (
     <nav
-      className={`fixed inset-x-0 top-0 overflow-hidden z-50 sm:pt-5 transition-colors duration-300 ${
-        isScrolled ? "bg-card" : "bg-card md:!bg-transparent"
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
+        isScrolled
+          ? "bg-[#060a12]/95 border-b border-slate-800/80 backdrop-blur-2xl shadow-xl py-3"
+          : "bg-transparent py-4 sm:py-5"
       }`}
     >
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative z-10 flex h-16 items-center justify-between gap-3 lg:gap-6">
-          {/* Left side - Logo */}
-          <div className="flex shrink-0 items-center">
-            <Link href="/">
-              <Image
-                src="/logo.svg"
-                alt="Logo"
-                width={176}
-                height={176}
-                className="h-28 w-28 sm:h-36 sm:w-36 lg:h-44 lg:w-44"
-              />
-            </Link>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+        <div className="flex items-center justify-between gap-4">
+          {/* Brand Logo */}
+          <Link href={`/${currentLocale}`} className="flex items-center gap-3">
+            <Image
+              src="/logo.svg"
+              alt="ETG RIDE Logo"
+              width={160}
+              height={44}
+              priority
+              className="h-9 sm:h-11 w-auto"
+            />
+          </Link>
+
+          {/* Desktop Navigation Links */}
+          <div className="hidden lg:flex items-center gap-1 xl:gap-2">
+            {links.map((link) => (
+              <Link
+                key={link.path}
+                href={link.path}
+                className="rounded-xl px-3 py-2 text-xs sm:text-sm font-semibold text-slate-300 hover:text-cyan-400 hover:bg-slate-800/50 transition-all"
+              >
+                {link.label}
+              </Link>
+            ))}
           </div>
 
-          {/* Center - Navigation Links */}
-          <div className="hidden flex-1 items-center justify-center gap-1 lg:flex xl:gap-2">
-            {links.map((link) => {
-              const isDashboard = link.path.includes("/user_dashboard");
-              const hash = link.path.split("#")[1];
-              const isActive = isDashboard
-                ? pathname.includes("/user_dashboard")
-                : (pendingSection ?? activeSection) === hash;
-              return (
-                <Link
-                  key={link.path}
-                  href={link.path}
-                  onClick={(e) => {
-                    if (!isDashboard && hash) {
-                      e.preventDefault();
-                      handleSectionClick(hash);
-                    }
-                  }}
-                  className={`rounded-md px-2 py-2 text-sm font-medium transition-all duration-300 xl:px-3 ${
-                    isActive
-                      ? "text-primary "
-                      : "text-white hover:text-primary "
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-          </div>
+          {/* Desktop Right Action & Language Switch */}
+          <div className="hidden md:flex items-center gap-3">
+            <LanguageSwitcher />
 
-          {/* Right side - Buttons and Language Switch */}
-          <div className="hidden items-center gap-2 md:flex lg:gap-3">
             <Button
-              className="px-3 md:h-9 md:text-sm lg:px-4"
               onClick={handleStartNow}
+              className="px-5 py-5 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-extrabold text-xs sm:text-sm shadow-lg shadow-blue-900/30 border border-cyan-300/30 transition-all active:scale-95"
             >
-              {t("nav.startNow")}
+              <Power className="w-4 h-4 mr-1.5 text-cyan-200" />
+              <span>{isArabic ? "تشغيل السكوتر (RIDE)" : "Start Ride (RIDE)"}</span>
             </Button>
 
             {canAccessUserDashboard && (
-              <>
-                <div className="hidden h-8 border-l border-gray-300 lg:mx-2 lg:block"></div>
-                <Button
-                  variant="ghost"
-                  className="px-3 md:h-9 md:text-sm lg:px-4 text-white hover:text-primary"
-                  onClick={handleLogout}
-                >
-                  <LogOut className="w-4 h-4 mr-2" />
-                  {t("nav.logout")}
-                </Button>
-              </>
+              <Button
+                variant="ghost"
+                onClick={handleLogout}
+                className="text-slate-400 hover:text-red-400 hover:bg-red-950/20 rounded-xl"
+              >
+                <LogOut className="w-4 h-4" />
+              </Button>
             )}
-
-            <div className="hidden h-8 border-l border-gray-300 lg:mx-2 lg:block"></div>
-            <div className="hidden lg:block">
-              <LanguageSwitcher />
-            </div>
           </div>
 
-          {/* Tablet / Mobile actions */}
+          {/* Mobile Right Controls */}
           <div className="flex items-center gap-2 md:hidden">
             <LanguageSwitcher />
 
             <button
               onClick={toggleMobileMenu}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-primary hover:bg-gray-100 focus:outline-none"
-              aria-expanded={isMobileMenuOpen}
+              className="p-2 rounded-xl bg-slate-900 border border-slate-700 text-white"
+              aria-label="Toggle Menu"
             >
               {isMobileMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6 text-white" />
-              )}
-            </button>
-          </div>
-
-          <div className="hidden items-center gap-2 md:flex lg:hidden">
-            <LanguageSwitcher />
-            <button
-              onClick={toggleMobileMenu}
-              className="inline-flex items-center justify-center rounded-md border border-white/10 bg-white/5 p-2 text-white transition-colors hover:border-primary/40 hover:text-primary"
-              aria-expanded={isMobileMenuOpen}
-            >
-              {isMobileMenuOpen ? (
-                <X className="h-5 w-5" />
+                <X className="h-5 w-5 text-cyan-400" />
               ) : (
                 <Menu className="h-5 w-5" />
               )}
@@ -237,66 +144,47 @@ function Navbar() {
           </div>
         </div>
 
-        {/* Mobile Navigation Menu */}
+        {/* Mobile Dropdown Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              {links.map((link) => {
-                const isDashboard = link.path.includes("/user_dashboard");
-                const hash = link.path.split("#")[1];
-                const isActive = isDashboard
-                  ? pathname.includes("/user_dashboard")
-                  : (pendingSection ?? activeSection) === hash;
-                return (
-                  <Link
-                    key={link.path}
-                    href={link.path}
-                    onClick={(e) => {
-                      if (!isDashboard && hash) {
-                        e.preventDefault();
-                        handleSectionClick(hash);
-                        closeMobileMenu();
-                      } else {
-                        closeMobileMenu();
-                      }
-                    }}
-                    className={`block rounded-md px-3 py-2 text-base font-medium transition-all duration-300 ${
-                      isActive
-                        ? "text-primary bg-primary/10"
-                        : "text-white hover:text-primary hover:bg-white/5"
-                    }`}
-                  >
-                    {link.label}
-                  </Link>
-                );
-              })}
-              <div className="border-t border-gray-100/40 pt-4">
-                <div className="flex flex-col space-y-3 md:flex-row md:items-center md:justify-between md:space-y-0">
-                  <div className="flex flex-col space-y-2 md:w-full md:flex-row md:items-center md:gap-2 md:space-y-0">
-                    <Button className="md:flex-1" onClick={handleStartNow}>
-                      {t("nav.startNow")}
-                    </Button>
-                    {canAccessUserDashboard ? (
-                      <button
-                        onClick={handleWithdraw}
-                        className="flex w-full items-center justify-center gap-2 rounded-lg border border-primary/20 bg-primary/5 p-2 text-primary md:flex-1"
-                      >
-                        <DollarSign className="w-4 h-4" />
-                        <span>{t("nav.withdraw")}</span>
-                      </button>
-                    ) : null}
-                    {canAccessUserDashboard ? (
-                      <button
-                        onClick={handleLogout}
-                        className="flex w-full items-center justify-center gap-2 rounded-lg border border-red-500/20 bg-red-500/5 p-2 text-red-500 hover:bg-red-500/10 md:flex-1"
-                      >
-                        <LogOut className="w-4 h-4" />
-                        <span>{t("nav.logout")}</span>
-                      </button>
-                    ) : null}
-                  </div>
-                </div>
-              </div>
+          <div className="md:hidden mt-3 rounded-2xl bg-slate-900/95 border border-slate-700/80 p-4 space-y-3 backdrop-blur-2xl shadow-2xl">
+            <div className="flex flex-col space-y-1">
+              {links.map((link) => (
+                <Link
+                  key={link.path}
+                  href={link.path}
+                  onClick={closeMobileMenu}
+                  className="rounded-xl px-3 py-2.5 text-sm font-bold text-slate-200 hover:text-cyan-400 hover:bg-slate-800 transition-all"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+
+            <div className="pt-2 border-t border-slate-800 space-y-2">
+              <Button
+                onClick={() => {
+                  closeMobileMenu();
+                  handleStartNow();
+                }}
+                className="w-full py-5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm"
+              >
+                <Power className="w-4 h-4 mr-1 text-cyan-200" />
+                <span>{isArabic ? "تشغيل السكوتر (RIDE)" : "Start Ride"}</span>
+              </Button>
+
+              {canAccessUserDashboard && (
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    closeMobileMenu();
+                    handleLogout();
+                  }}
+                  className="w-full border-red-500/30 text-red-400 hover:bg-red-950/20 rounded-xl"
+                >
+                  <LogOut className="w-4 h-4 mr-1" />
+                  <span>{isArabic ? "تسجيل الخروج" : "Log Out"}</span>
+                </Button>
+              )}
             </div>
           </div>
         )}

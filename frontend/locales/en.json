@@ -1,28 +1,28 @@
 {
   "nav": {
-    "plan": "Plan",
-    "stats": "Stats",
-    "howItWorks": "How it Works",
+    "plan": "Scooter Fleet (Energy)",
+    "stats": "Features & Stats",
+    "howItWorks": "How It Works",
     "dashboard": "Dashboard",
-    "startNow": "Start Now",
+    "startNow": "Start Ride (RIDE)",
     "withdraw": "Withdraw",
-    "logout": "Logout"
+    "logout": "Log Out"
   },
   "hero": {
-    "title": "ETG Ride",
+    "title": "ETG RIDE",
     "titleParts": {
       "prefix": "ETG",
-      "mining": "Ride",
+      "mining": "RIDE",
       "management": "Mobility"
     },
-    "subtitle1": "Smart Executive Mobility & VIP Fleet",
-    "subtitle2": "Daily Ride Yields & Guaranteed USDT Payouts",
+    "subtitle1": "Smart Electric Scooter Fleet Mobility & Investment",
+    "subtitle2": "Lease your scooter, power your ride, and earn USDT daily",
     "description": {
-      "line1": "Lease your VIP executive vehicle, dispatch daily rides, and withdraw instantly.",
-      "line2": "3-Tier partnership program with a $100 bonus for every 10 active referrals."
+      "line1": "Lease your smart electric scooter (E1 to E6), press the Power button (⏻) to start the countdown, and collect daily profits directly into your wallet.",
+      "line2": "Earn an instant  bonus for every 10 active depositing referrals with instant BEP-20 payouts."
     },
-    "viewStats": "VIP Fleet",
-    "viewPlan": "Ride Tasks"
+    "viewStats": "Features & Overview",
+    "viewPlan": "Browse Scooters (Energy)"
   },
   "sidebar": {
     "title": "Dashboard",
@@ -295,48 +295,48 @@
     }
   },
   "stats": {
-    "title": "Live Fleet Statistics",
-    "subtitle": "Real-time executive mobility metrics and instant dividend dispatches.",
+    "title": "ETG Ride Micro-Mobility Performance",
+    "subtitle": "Next-generation smart micro-mobility fleet generating daily verified yields.",
     "btc": {
-      "title": "Total Fleet Rides",
-      "value": "284,520+",
-      "desc": "Total VIP executive rides dispatched globally across ETG Ride fleets."
+      "title": "Total Dispatched Rides",
+      "value": "348,200+",
+      "desc": "Total successful smart electric scooter ride cycles completed worldwide."
     },
     "target": {
-      "title": "Daily Trip Yield",
-      "desc": "Average daily yield on leased executive fleet vehicles."
+      "title": "Daily Scooter Yield",
+      "desc": "Verified daily income for each scooter model (E1 to E6) reaching up to 275 USDT/day."
     },
     "hashrate": {
-      "title": "Active Fleet Capacity",
-      "desc": "Active luxury vehicles currently deployed on smart dispatch routes."
+      "title": "Active Fleet Devices",
+      "desc": "GPS-monitored electric scooters in continuous active urban operation."
     },
     "miners": {
-      "title": "Active Fleet Partners",
-      "desc": "Total global investors and partners active in the ETG Ride network."
+      "title": "Fleet Investors",
+      "desc": "Thousands of active members earning automated daily USDT returns."
     }
   },
   "plan": {
-    "title": "VIP Fleet Vehicles & Daily Tasks",
-    "subtitle": "Daily payouts and instant withdrawals via audited smart escrow.",
-    "name": "VIP Vehicle • Executive",
-    "rate": "10% - 18%",
-    "dailyTargetLabel": "Daily Ride Return",
+    "title": "Smart Electric Scooter Fleet Models",
+    "subtitle": "Select your scooter tier and begin generating instant daily USDT profits.",
+    "name": "Electric Scooter E2 Pro",
+    "rate": "6.40 USDT / day",
+    "dailyTargetLabel": "Total Daily Profit",
     "meta": {
-      "duration": "Duration",
-      "durationValue": "Up to 30 days",
-      "minimum": "Minimum",
-      "minimumValue": "100$",
-      "withdrawal": "Withdrawal",
-      "withdrawalValue": "Per Policy",
-      "transparency": "Transparency",
-      "transparencyValue": "Reports + Counter"
+      "duration": "Lease Term",
+      "durationValue": "30 Days",
+      "minimum": "Lease Price",
+      "minimumValue": "220 USDT",
+      "withdrawal": "Payouts",
+      "withdrawalValue": "Instant BEP-20",
+      "transparency": "Control",
+      "transparencyValue": "Power ⏻ + Timer"
     },
-    "amountLabel": "Enter Amount ($)",
+    "amountLabel": "Select Scooter Model",
     "rangeMin": "1",
     "rangeMax": "30",
-    "at7": "At 7d",
-    "at30": "At 30d",
-    "join": "Join Plan"
+    "at7": "In 7 Days",
+    "at30": "In 30 Days",
+    "join": "Lease Scooter Now"
   },
   "mining_plans": {
     "title": "Cloud Mining Plans",
