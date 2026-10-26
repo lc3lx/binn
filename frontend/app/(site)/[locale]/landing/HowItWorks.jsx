@@ -38,10 +38,10 @@ export default function HowItWorks() {
     },
     {
       num: "04",
-      title: isAr ? "جمع الأرباح والسحب الفوري" : "Collect & Withdraw Earnings",
+      title: isAr ? "جمع الأرباح وطلب السحب" : "Collect & Withdraw Earnings",
       desc: isAr
-        ? "اضغط زر ($) أو زر (جمع في نقرة واحدة) لتحويل أرباحك لمحفظتك وسحبها فوراً دون قيود."
-        : "Click the ($) button or (One-Click Collect) to credit profits and withdraw to your private wallet.",
+        ? "اضغط زر ($) لتحويل أرباحك لمحفظتك وطلب السحب بحد أدنى 2.50$ لتصلك لمحفظتك خلال 48 ساعة كحد أقصى."
+        : "Click the ($) button to credit profits and request withdrawal (min $2.50) processed within 48 hours.",
       icon: DollarSign,
       color: "from-amber-400 to-emerald-400",
     },

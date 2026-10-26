@@ -75,13 +75,33 @@ exports.subscribeToPlan = asyncHandler(async (req, res, next) => {
   user.planSubscriptions = user.planSubscriptions || [];
   user.planSubscriptions.push(subscriptionEntry);
 
+  const computedDailyIncome = Number(plan.dailyIncome || (plan.price * 0.05).toFixed(2));
+  const computedDevices = Number(
+    plan.deviceCount ||
+      (plan.price === 50
+        ? 1
+        : plan.price === 100
+        ? 2
+        : plan.price === 200
+        ? 4
+        : plan.price === 500
+        ? 10
+        : plan.price === 1000
+        ? 20
+        : plan.price === 2000
+        ? 40
+        : plan.price === 5000
+        ? 100
+        : Math.max(1, Math.round(plan.price / 50)))
+  );
+
   user.activeScooters = user.activeScooters || [];
   user.activeScooters.push({
     plan: plan._id,
     modelName: plan.modelName || plan.name,
-    deviceCount: plan.deviceCount || 4,
-    scooterIncome: plan.scooterIncome || 1.6,
-    dailyIncome: plan.dailyIncome || 6.4,
+    deviceCount: computedDevices,
+    scooterIncome: Number(plan.scooterIncome || 2.5),
+    dailyIncome: computedDailyIncome,
     price: plan.price,
     status: 'OPEN',
     countdownEndsAt: new Date(Date.now() + 5 * 3600 * 1000),

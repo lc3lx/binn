@@ -107,16 +107,19 @@ exports.getTodayTaskStatus = asyncHandler(async (req, res, next) => {
       countdownStr = '04:59:50';
     }
 
+    const calculatedDaily = scooter.dailyIncome || (scooter.price ? Number((scooter.price * 0.05).toFixed(2)) : 5.0);
+    const calculatedDevices = scooter.deviceCount || (scooter.price ? Math.max(1, Math.round(scooter.price / 50)) : 2);
+
     return {
       id: scooter._id,
       modelName: scooter.modelName || 'E2',
-      deviceCount: scooter.deviceCount || 4,
+      deviceCount: calculatedDevices,
       countdown: countdownStr,
       remainingSeconds,
-      dailyIncome: scooter.dailyIncome || 6.4,
-      scooterIncome: scooter.scooterIncome || 1.6,
+      dailyIncome: calculatedDaily,
+      scooterIncome: scooter.scooterIncome || 2.5,
       status: scooter.status || 'OPEN',
-      price: scooter.price || 220,
+      price: scooter.price || 100,
       purchasedAt: formatDateTime(scooter.purchasedAt),
       currentIncome: scooter.pendingIncome || 0,
       image: '/scooter_transparent.png',
@@ -125,11 +128,11 @@ exports.getTodayTaskStatus = asyncHandler(async (req, res, next) => {
 
   const activeScooter = scooters[0] || {
     modelName: 'E2',
-    deviceCount: 4,
-    dailyIncome: 6.4,
-    scooterIncome: 1.6,
+    deviceCount: 2,
+    dailyIncome: 5.0,
+    scooterIncome: 2.5,
     status: 'OPEN',
-    price: 220,
+    price: 100,
   };
 
   res.status(200).json({
@@ -140,9 +143,9 @@ exports.getTodayTaskStatus = asyncHandler(async (req, res, next) => {
       activeTier: activeScooter.modelName || 'E2',
       activeStatus: 'بنشاط',
       progress: 72,
-      totalIncome: user.totalTaskEarnings || 6.4,
-      availableToClaim: user.pendingScooterIncome ?? 6.53,
-      todayIncome: user.todayScooterIncome ?? 6.4,
+      totalIncome: user.totalTaskEarnings || 5.0,
+      availableToClaim: user.pendingScooterIncome ?? 5.0,
+      todayIncome: user.todayScooterIncome ?? 5.0,
       walletBalance: user.walletBalance || 0,
       activeScooters: scooters,
       completedScooters: [],
@@ -150,11 +153,11 @@ exports.getTodayTaskStatus = asyncHandler(async (req, res, next) => {
       hasActiveVehicle: true,
       vehicleName: `ETG Scooter ${activeScooter.modelName}`,
       vipTier: 2,
-      totalTasks: 4,
+      totalTasks: 2,
       tasksCompleted: user.todayTasksCompleted || 0,
-      tasksRemaining: Math.max(0, 4 - (user.todayTasksCompleted || 0)),
-      dailyIncome: activeScooter.dailyIncome || 6.4,
-      totalTaskEarnings: user.totalTaskEarnings || 6.4,
+      tasksRemaining: Math.max(0, 2 - (user.todayTasksCompleted || 0)),
+      dailyIncome: activeScooter.dailyIncome || 5.0,
+      totalTaskEarnings: user.totalTaskEarnings || 5.0,
     },
   });
 });
@@ -234,7 +237,9 @@ exports.collectScooterEarnings = asyncHandler(async (req, res, next) => {
     return next(new ApiError('No scooter found to collect earnings', 400));
   }
 
-  const rewardAmount = targetScooter.dailyIncome || 6.4;
+  const rewardAmount =
+    targetScooter.dailyIncome ||
+    (targetScooter.price ? Number((targetScooter.price * 0.05).toFixed(2)) : 5.0);
   const balanceBefore = user.walletBalance || 0;
   const balanceAfter = Number((balanceBefore + rewardAmount).toFixed(2));
 
@@ -290,11 +295,11 @@ exports.collectAllScooters = asyncHandler(async (req, res, next) => {
   let totalReward = 0;
   if (user.activeScooters && user.activeScooters.length > 0) {
     user.activeScooters.forEach((sc) => {
-      totalReward += sc.dailyIncome || 6.4;
+      totalReward += sc.dailyIncome || (sc.price ? Number((sc.price * 0.05).toFixed(2)) : 5.0);
       sc.status = 'OPEN';
     });
   } else {
-    totalReward = 6.4;
+    totalReward = 5.0;
   }
 
   totalReward = Number(totalReward.toFixed(2));

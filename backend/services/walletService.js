@@ -190,7 +190,8 @@ exports.requestWithdraw = asyncHandler(async (req, res, next) => {
 
   res.status(201).json({
     status: 'Success',
-    message: 'Withdrawal request submitted and waiting for admin review',
+    message:
+      'تم تقديم طلب السحب بنجاح، ستتم المعالجة والتحويل لمحفظتك خلال 48 ساعة كحد أقصى / Withdrawal request submitted successfully and will be processed within 48 hours',
     data: transaction,
   });
 });

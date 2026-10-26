@@ -59,10 +59,10 @@ export default function Statistics() {
     },
     {
       id: "security",
-      title: isAr ? "سحب وإيداع فوري BEP-20" : "Instant BEP-20 Deposits & Payouts",
+      title: isAr ? "إيداع فوري وسحب آمن خلال 48 ساعة" : "Instant Deposits & 48h Withdrawals",
       desc: isAr
-        ? "تأكيدات آلية فورية للإيداع وسحب أرباحك بضغطة زر إلى محفظتك الخاصة دون أي تأخير أو رسوم مخفية."
-        : "Automated instant blockchain verification and 24/7 direct withdrawals to your BEP-20 crypto wallet.",
+        ? "تأكيدات آلية فورية للإيداع عبر BEP-20، ومعالجة سحب أرباحك بأمان إلى محفظتك خلال 48 ساعة كحد أقصى."
+        : "Automated instant BEP-20 deposits and verified withdrawal payouts processed within 48 hours.",
       icon: ShieldCheck,
       badge: isAr ? "أمان مشفر" : "Military Grade",
       color: "from-emerald-600/20 to-teal-500/20",

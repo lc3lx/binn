@@ -24,8 +24,8 @@ export default function Footer() {
             </div>
             <p className="text-xs text-slate-400 leading-relaxed max-w-xs">
               {isAr
-                ? "المنصة الرائدة لتأجير وتشغيل أساطيل السكوترات الكهربائية الذكية. عوائد يومية مؤكدة وسحب فوري BEP-20."
-                : "Next-gen smart electric scooter fleet leasing platform. Consistent daily yields and instant BEP-20 payouts."}
+                ? "المنصة الرائدة لتأجير وتشغيل أساطيل السكوترات الكهربائية الذكية. عوائد يومية بنسبة 5% وسحب BEP-20 آمن خلال 48 ساعة."
+                : "Next-gen smart electric scooter fleet leasing platform. Consistent 5% daily yields and secure BEP-20 payouts within 48 hours."}
             </p>
           </div>
 

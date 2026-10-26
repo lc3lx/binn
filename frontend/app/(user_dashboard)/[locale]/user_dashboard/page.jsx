@@ -43,9 +43,9 @@ export default function UserDashboardPage() {
 
   const walletBalance = Number(taskData.walletBalance ?? summary.walletBalance ?? 0);
   const activeTier = taskData.activeTier || "E2";
-  const dailyIncome = taskData.dailyIncome ?? 6.4;
-  const totalIncome = taskData.totalIncome ?? 6.4;
-  const availableToClaim = taskData.availableToClaim ?? 6.53;
+  const dailyIncome = taskData.dailyIncome ?? 5.0;
+  const totalIncome = taskData.totalIncome ?? 5.0;
+  const availableToClaim = taskData.availableToClaim ?? 5.0;
   const referralCode = user?.referralCode || "AK2X5M4Y6";
 
   const handleCopyInviteLink = () => {

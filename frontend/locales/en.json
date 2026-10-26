@@ -429,7 +429,7 @@
   },
   "withdraw": {
     "title": "Withdraw Funds",
-    "subtitle": "Withdraw your daily scooter profits directly to your external BEP-20 wallet.",
+    "subtitle": "Withdraw your daily scooter profits to your BEP-20 wallet (processed within 48 hours).",
     "balance": {
       "label": "Available Balance"
     },

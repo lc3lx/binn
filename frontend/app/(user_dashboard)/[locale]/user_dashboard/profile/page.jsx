@@ -54,9 +54,9 @@ export default function UserProfilePage() {
     (user?.phone ? `***${user.phone.slice(-4)}` : `***9742`);
   const activeTier = taskData.activeTier || "E2";
   const progressValue = taskData.progress || 72;
-  const totalIncome = taskData.totalIncome ?? 6.4;
-  const availableToClaim = taskData.availableToClaim ?? 6.53;
-  const todayIncome = taskData.todayIncome ?? 6.4;
+  const totalIncome = taskData.totalIncome ?? 5.0;
+  const availableToClaim = taskData.availableToClaim ?? 5.0;
+  const todayIncome = taskData.todayIncome ?? 5.0;
 
   const handleReviewSubmit = () => {
     setSubmittingReview(true);

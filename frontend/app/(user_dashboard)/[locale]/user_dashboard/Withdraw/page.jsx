@@ -5,7 +5,7 @@ import { useTranslations } from "@/hooks/useTranslations";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Wallet, Info, AlertTriangle } from "lucide-react";
+import { Wallet, Info, AlertTriangle, Clock, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { useRequestWithdrawMutation } from "@/api/services/user/Withdraw/withdraw.query";
 import { useDashboardSummaryQuery } from "@/api/services/user/Statistics/statistics.query";
@@ -73,8 +73,8 @@ export default function WithdrawPage() {
       });
       toast.success(
         locale === "ar"
-          ? "تم إرسال طلب السحب بنجاح"
-          : "Withdraw request submitted successfully",
+          ? "تم إرسال طلب السحب بنجاح. ستتم معالجة الطلب وتحويل الرصيد لمحفظتك خلال 48 ساعة كحد أقصى."
+          : "Withdrawal request submitted successfully. It will be processed and transferred within 48 hours.",
       );
       setAmount("");
       setAddress("");
@@ -96,6 +96,23 @@ export default function WithdrawPage() {
           <p className="text-white/70 text-xs sm:text-sm mt-1">
             {t("withdraw.subtitle")}
           </p>
+        </div>
+
+        {/* 48-Hour Processing Notice */}
+        <div className="mb-6 p-4 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs sm:text-sm flex items-start gap-3 shadow-lg">
+          <Clock className="w-5 h-5 flex-shrink-0 text-cyan-400 mt-0.5" />
+          <div>
+            <p className="font-bold text-white">
+              {locale === "ar"
+                ? "مدة معالجة وتنفيذ السحب: خلال 48 ساعة كحد أقصى"
+                : "Withdrawal Processing Time: Within 48 Hours"}
+            </p>
+            <p className="mt-1 text-slate-300 leading-relaxed text-xs">
+              {locale === "ar"
+                ? "تتم مراجعة كافة طلبات السحب والتحقق منها وإرسالها إلى محفظة BEP-20 الخاصة بك خلال 48 ساعة من وقت الطلب (أيام العمل: من الإثنين إلى الجمعة)."
+                : "All withdrawal requests are verified and disbursed to your BEP-20 wallet within 48 hours of submission (business days: Monday through Friday)."}
+            </p>
+          </div>
         </div>
 
         {isWeekend && (
