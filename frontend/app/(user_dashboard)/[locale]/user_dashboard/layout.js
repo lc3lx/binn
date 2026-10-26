@@ -31,7 +31,7 @@ export default async function UserDashboardLayout({ children, params }) {
       <div
         dir={locale === "ar" ? "rtl" : "ltr"}
         data-locale={locale}
-        className={`min-h-screen flex flex-col border-2 border-accent bg-background ${getLocaleFontClass(locale)}`}
+        className={`min-h-screen flex flex-col bg-background ${getLocaleFontClass(locale)}`}
       >
         <div className="flex flex-1">
           <DashboardSidebar />

@@ -4,40 +4,40 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --background: #2a2b2d;
-  --foreground: #171717;
-  --card: #100f0f;
-  --card-foreground: #171717;
-  --sidebar: #1c1c1c;
-  --popover: #ffffff;
-  --popover-foreground: #171717;
-  /* Primary color - #2067F3 */
-  --primary: #ffd100;
+  --background: #060a12;
+  --foreground: #f8fafc;
+  --card: #091120;
+  --card-foreground: #f8fafc;
+  --sidebar: #060a14;
+  --popover: #091120;
+  --popover-foreground: #f8fafc;
+  
+  /* ETG RIDE High-Tech Electric Cyan Theme */
+  --primary: #0ea5e9;
   --primary-foreground: #ffffff;
 
-  /* New colors */
-  --success: #a4b465;
+  --success: #10b981;
   --success-foreground: #ffffff;
-  --warning: #d9931c;
+  --warning: #f59e0b;
   --warning-foreground: #ffffff;
 
-  --secondary: #27548a;
-  --secondary-foreground: #171717;
+  --secondary: #1e293b;
+  --secondary-foreground: #f8fafc;
 
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
 
-  --accent: #f0b90b;
-  --accent-foreground: #171717;
+  --accent: #0284c7;
+  --accent-foreground: #ffffff;
 
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
 
-  --border: #e2e8f0;
-  --input: #e2e8f0;
-  --ring: #db8f0e; /* Using primary color for ring */
+  --border: #1e293b;
+  --input: #1e293b;
+  --ring: #38bdf8;
 
-  --radius: 0.5rem;
+  --radius: 0.75rem;
 }
 
 @theme inline {
