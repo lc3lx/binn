@@ -1,14 +1,45 @@
-export const BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  (typeof window !== "undefined"
-    ? "/api/v1/"
-    : "http://127.0.0.1:8000/api/v1/");
+export const DEFAULT_BACKEND_ORIGIN = "https://binn-oxar.onrender.com";
 
-export const IMAGEURL =
-  process.env.NEXT_PUBLIC_IMAGE_URL ||
-  (typeof window !== "undefined"
-    ? "/kyc/"
-    : "http://127.0.0.1:8000/kyc/");
+const resolveBaseUrl = () => {
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    const url = process.env.NEXT_PUBLIC_API_URL;
+    return url.endsWith("/") ? url : `${url}/`;
+  }
+
+  if (typeof window !== "undefined") {
+    const isLocal =
+      window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1";
+    if (isLocal) {
+      return "http://127.0.0.1:8000/api/v1/";
+    }
+    return `${DEFAULT_BACKEND_ORIGIN}/api/v1/`;
+  }
+
+  return `${DEFAULT_BACKEND_ORIGIN}/api/v1/`;
+};
+
+const resolveImageUrl = () => {
+  if (process.env.NEXT_PUBLIC_IMAGE_URL) {
+    const url = process.env.NEXT_PUBLIC_IMAGE_URL;
+    return url.endsWith("/") ? url : `${url}/`;
+  }
+
+  if (typeof window !== "undefined") {
+    const isLocal =
+      window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1";
+    if (isLocal) {
+      return "http://127.0.0.1:8000/kyc/";
+    }
+    return `${DEFAULT_BACKEND_ORIGIN}/kyc/`;
+  }
+
+  return `${DEFAULT_BACKEND_ORIGIN}/kyc/`;
+};
+
+export const BASE_URL = resolveBaseUrl();
+export const IMAGEURL = resolveImageUrl();
 
 export const USER_AUTH_TOKEN_COOKIE = "user_token";
 export const ADMIN_AUTH_TOKEN_COOKIE = "admin_token";
