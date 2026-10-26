@@ -50,11 +50,11 @@ export default function FAQ() {
     },
     {
       q: isAr
-        ? "ما هي الشبكة المدعومة للإيداع والسحب والحد الأدنى؟"
-        : "Which network is supported for deposits/withdrawals and what is the minimum?",
+        ? "ما هي الشبكة المدعومة للإيداع والسحب ومواعيد السحب؟"
+        : "Which network is supported for deposits/withdrawals and schedule?",
       a: isAr
-        ? "تدعم المنصة عملة USDT عبر شبكة BNB Smart Chain (BEP-20) مع تأكيد آلي فوري. الحد الأدنى للسحب هو 10 USDT فقط ويتم تحويله مباشرة إلى محفظتك الخاصة في دقائق معدودة."
-        : "We exclusively support USDT via BNB Smart Chain (BEP-20) for instant automated processing and ultra-low fees. The minimum withdrawal is just 10 USDT, sent directly to your wallet in minutes.",
+        ? "تدعم المنصة عملة USDT عبر شبكة BNB Smart Chain (BEP-20) مع تأكيد آلي فوري. الحد الأدنى للسحب هو 2.50 USDT فقط، ويمكنك سحب أرباحك يومياً من الإثنين إلى الجمعة (السبت والأحد عطلة أسبوعية رسمية لقسم السحوبات)."
+        : "We exclusively support USDT via BNB Smart Chain (BEP-20) with automated instant verification. The minimum withdrawal is just 2.50 USDT, and you can withdraw your daily earnings Monday through Friday (Saturday & Sunday are official weekend holidays).",
     },
   ];
 

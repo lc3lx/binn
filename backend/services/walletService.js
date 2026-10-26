@@ -126,6 +126,17 @@ exports.requestDeposit = asyncHandler(async (req, res, next) => {
 });
 
 exports.requestWithdraw = asyncHandler(async (req, res, next) => {
+  // Check Weekend Rule: Saturday (6) and Sunday (0) are holidays (no withdrawals)
+  const currentDay = new Date().getUTCDay(); // 0: Sunday, 6: Saturday
+  if (currentDay === 0 || currentDay === 6) {
+    return next(
+      new ApiError(
+        'طلبات السحب غير متاحة خلال عطلة نهاية الأسبوع (السبت والأحد). يمكنك تقديم طلب السحب من الإثنين إلى الجمعة. / Withdrawals are closed on weekends (Saturday & Sunday). Submissions are open Monday to Friday.',
+        400
+      )
+    );
+  }
+
   const { amount, walletAddress, withdrawalFee = 0, note } = req.body;
   const user = await User.findById(req.user._id);
 

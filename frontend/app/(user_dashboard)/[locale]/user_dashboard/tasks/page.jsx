@@ -32,13 +32,13 @@ export default function RideScootersPage() {
   const taskData = statusResponse?.data || {};
   const activeScooters = taskData.activeScooters || [];
   const primaryScooter = activeScooters[0] || {
-    modelName: "E2",
+    modelName: "E3",
     deviceCount: 4,
     countdown: "04:59:50",
-    dailyIncome: 6.4,
-    scooterIncome: 1.6,
+    dailyIncome: 10.0,
+    scooterIncome: 2.5,
     status: "OPEN",
-    price: 220,
+    price: 200,
     purchasedAt: "09-06-2026 10:34:33",
     currentIncome: 0,
     image: "/scooter_transparent.png",

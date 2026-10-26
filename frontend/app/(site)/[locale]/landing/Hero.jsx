@@ -159,7 +159,7 @@ export default function Hero() {
                   <span className="text-xs font-semibold text-slate-400 block">
                     {isAr ? "طراز السكوتر الأكثر شعبية" : "Most Popular Model"}
                   </span>
-                  <h3 className="text-2xl font-black text-white">E2 Pro Scooter</h3>
+                  <h3 className="text-2xl font-black text-white">E3 Pro Scooter</h3>
                 </div>
 
                 <div className="px-3 py-1 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold flex items-center gap-1.5">
@@ -183,7 +183,9 @@ export default function Hero() {
                   <span className="text-[10px] text-slate-400 block mb-0.5">
                     {isAr ? "عدد الأجهزة" : "Devices"}
                   </span>
-                  <span className="text-sm font-extrabold text-white">4 أجهزة</span>
+                  <span className="text-sm font-extrabold text-white">
+                    {isAr ? "4 أجهزة" : "4 Devices"}
+                  </span>
                 </div>
 
                 <div className="p-2.5 rounded-2xl bg-slate-800/60 border border-slate-700/50">
@@ -191,7 +193,7 @@ export default function Hero() {
                     {isAr ? "الدخل اليومي" : "Daily Income"}
                   </span>
                   <span className="text-sm font-extrabold text-cyan-400">
-                    6.40 USDT
+                    10.00 USDT
                   </span>
                 </div>
               </div>

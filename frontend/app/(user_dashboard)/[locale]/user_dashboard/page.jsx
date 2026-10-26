@@ -149,10 +149,10 @@ export default function UserDashboardPage() {
             {isArabic ? "طرازات السكوتر الذكي" : "Smart Scooter"}
           </span>
           <h3 className="text-lg font-black text-white">
-            {isArabic ? "سكوتر كهربائي متطور E2" : "Electric Scooter E2 Pro"}
+            {isArabic ? "سكوتر كهربائي متطور E3 Pro" : "Electric Scooter E3 Pro"}
           </h3>
           <p className="text-xs text-slate-400">
-            {isArabic ? "دخل يومي 6.4 USDT | 4 أجهزة" : "Daily 6.4 USDT | 4 Devices"}
+            {isArabic ? "دخل يومي 10.0 USDT | 4 أجهزة" : "Daily 10.0 USDT | 4 Devices"}
           </p>
 
           <div className="pt-2">

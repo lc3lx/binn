@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Shield, Users, Award } from "lucide-react";
+import { Zap, User, Mail, Lock, Gift, ArrowRight, ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "@/hooks/useTranslations";
@@ -14,59 +14,51 @@ import * as z from "zod";
 import { toast } from "sonner";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import SupportButton from "@/components/site/SupportButton";
-import useComingSoonToast from "@/components/site/useComingSoonToast";
 import { useRouter } from "next/navigation";
 import { signUpUser } from "@/api/services/user/auth/sign_up/sign_up.api";
-import GoogleAuthButton from "@/components/auth/GoogleAuthButton";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { applyAuthResponse } from "@/lib/auth-session";
 
-// Zod validation schema
-const signupSchema = z
-  .object({
-    name: z.string().min(2, { message: "Name is required" }),
-    email: z
-      .string()
-      .min(1, { message: "Email is required" })
-      .email({ message: "Please enter a valid email address" }),
-    password: z.string().min(6, { message: "Minimum 6 characters" }),
-    passwordConfirm: z.string().min(6, { message: "Minimum 6 characters" }),
-    referralCode: z.string().optional(),
-    agreed: z.boolean().refine((val) => val === true, {
-      message: "You must agree to the Privacy Notice",
-    }),
-  })
-  .refine((data) => data.password === data.passwordConfirm, {
-    message: "Passwords do not match",
-    path: ["passwordConfirm"],
-  });
+// Simplified fast signup schema
+const signupSchema = z.object({
+  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
+  email: z
+    .string()
+    .min(1, { message: "Email is required" })
+    .email({ message: "Please enter a valid email address" }),
+  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  referralCode: z.string().optional(),
+});
 
-export default function SignupPage() {
+export default function FastSignupPage() {
   const { t, locale } = useTranslations();
   const router = useRouter();
   const { setAuthUser } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  const [showReferralField, setShowReferralField] = useState(false);
-  const showComingSoonToast = useComingSoonToast();
+  const [showReferralInput, setShowReferralInput] = useState(false);
   const isArabic = locale === "ar";
+  const ArrowIcon = isArabic ? ArrowLeft : ArrowRight;
 
   const {
     register,
     handleSubmit,
-    watch,
     setValue,
+    watch,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(signupSchema),
     mode: "onChange",
     defaultValues: {
+      name: "",
+      email: "",
+      password: "",
       referralCode: "",
     },
   });
 
-  const agreed = watch("agreed");
   const referralCodeValue = watch("referralCode");
 
+  // Auto-capture referral code from URL or localStorage
   useEffect(() => {
     if (typeof window === "undefined") return;
     try {
@@ -76,58 +68,66 @@ export default function SignupPage() {
         params.get("ref") ||
         params.get("referralCode") ||
         localStorage.getItem("etg_referral_code");
+
       if (code) {
         const cleanCode = String(code).trim().toUpperCase();
         setValue("referralCode", cleanCode);
-        setShowReferralField(true);
+        setShowReferralInput(true);
         localStorage.setItem("etg_referral_code", cleanCode);
       }
     } catch {}
   }, [setValue]);
 
-  const getReferralCode = (value) => {
-    const trimmed = String(value || "").trim();
-    if (!trimmed) return "";
-    if (!trimmed.includes("http")) return trimmed;
+  const cleanReferralCode = (val) => {
+    const raw = String(val || "").trim();
+    if (!raw) return "";
+    if (!raw.includes("http")) return raw;
     try {
-      const parsed = new URL(trimmed);
+      const parsed = new URL(raw);
       return (
-        parsed.searchParams.get("referralCode") ||
-        parsed.searchParams.get("ref") ||
         parsed.searchParams.get("code") ||
-        trimmed
+        parsed.searchParams.get("ref") ||
+        parsed.searchParams.get("referralCode") ||
+        raw
       );
     } catch {
-      return trimmed;
+      return raw;
     }
   };
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (values) => {
     try {
       setIsLoading(true);
 
-      const response = await signUpUser({
-        name: data.name,
-        email: data.email,
-        password: data.password,
-        passwordConfirm: data.passwordConfirm,
-        ...(showReferralField && data.referralCode
-          ? { referralCode: getReferralCode(data.referralCode) }
-          : {}),
-      });
+      const refCode = cleanReferralCode(values.referralCode);
+      const payload = {
+        name: values.name.trim(),
+        email: values.email.trim().toLowerCase(),
+        password: values.password,
+        passwordConfirm: values.password, // auto-matches password
+        ...(refCode ? { referralCode: refCode } : {}),
+      };
+
+      const response = await signUpUser(payload);
 
       if (response?.token) {
         applyAuthResponse(response, setAuthUser);
-        toast.success("Account created successfully");
-        window.location.replace(`/${locale}/user_dashboard`);
+        toast.success(
+          isArabic ? "تم إنشاء حسابك وتفعيله بنجاح!" : "Account created successfully!"
+        );
+        window.location.replace(`/${locale}/user_dashboard/tasks`);
         return;
       }
 
-      toast.success("Account created successfully");
+      toast.success(
+        isArabic ? "تم إنشاء الحساب بنجاح، جاري الدخول..." : "Account created successfully!"
+      );
       router.push(`/${locale}/user_auth/login`);
     } catch (error) {
       toast.error(
-        error?.response?.data?.message || error?.message || "Signup failed",
+        error?.response?.data?.message ||
+          error?.message ||
+          (isArabic ? "فشل إنشاء الحساب، يرجى المحاولة ثانية" : "Signup failed")
       );
     } finally {
       setIsLoading(false);
@@ -136,416 +136,172 @@ export default function SignupPage() {
 
   return (
     <div
-      className="min-h-screen flex text-white bg-gradient-to-br from-black via-[#0b0e11] to-black overflow-hidden"
+      className="min-h-screen flex items-center justify-center text-white bg-gradient-to-br from-[#04070e] via-[#091120] to-[#04070e] p-4 sm:p-6 relative overflow-hidden"
       dir={isArabic ? "rtl" : "ltr"}
     >
-      {/* LEFT SIDE - ANIMATED */}
+      {/* Background Cyber Glow */}
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-tr from-blue-600/15 via-cyan-500/15 to-transparent rounded-full blur-3xl" />
+        <div className="absolute bottom-10 right-10 w-72 h-72 bg-blue-600/10 rounded-full blur-3xl" />
+      </div>
+
+      <SupportButton className="fixed bottom-6 z-40 ltr:right-6 rtl:left-6" />
+
       <motion.div
-        className="hidden lg:flex w-1/2 flex-col justify-center  items-center  space-y-8 relative"
-        initial={{ opacity: 0, x: -50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
+        className="w-full max-w-md bg-slate-900/90 border border-slate-700/60 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-2xl"
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5 }}
       >
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-        >
-          <h2 className="text-3xl font-bold leading-tight">
-            <div className="flex items-center gap-2">
-              <div className="text-white">{t("signup.rewards.upTo")}</div>
-              <div className="text-primary">{t("signup.rewards.amount")}</div>
-            </div>
-
-            <div className="text-white">
-              {t("signup.rewards.signUpRewards")}
-            </div>
-          </h2>
-        </motion.div>
-
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-        >
-          <Image
-            src="/sign.svg"
-            alt="gift"
-            width={220}
-            height={220}
-            className="drop-shadow-2xl"
-          />
-        </motion.div>
-
-        <motion.div
-          className="space-y-3 text-sm text-gray-400"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
-        >
-          <motion.div
-            className="flex items-center gap-3"
-            whileHover={{ x: 5 }}
-            transition={{ type: "spring", stiffness: 300 }}
-          >
-            <Users className="w-5 h-5 text-primary" />
-            {t("signup.rewards.usersTrust")}
-          </motion.div>
-
-          <motion.div
-            className="flex items-center gap-3"
-            whileHover={{ x: 5 }}
-            transition={{ type: "spring", stiffness: 300 }}
-          >
-            <Award className="w-5 h-5 text-primary" />
-            {t("signup.rewards.tradingVolume")}
-          </motion.div>
-
-          <motion.div
-            className="flex items-center gap-3"
-            whileHover={{ x: 5 }}
-            transition={{ type: "spring", stiffness: 300 }}
-          >
-            <Shield className="w-5 h-5 text-primary" />
-            {t("signup.rewards.fleetFund")}
-          </motion.div>
-        </motion.div>
-      </motion.div>
-
-      {/* RIGHT SIDE - ANIMATED FORM */}
-      <motion.div
-        className="flex w-full lg:w-1/2 items-center justify-center p-6"
-        initial={{ opacity: 0, x: 50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
-      >
-        <motion.div
-          className="w-full max-w-md bg-ard border border-gray-800 rounded-2xl p-8 shadow-xl"
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-        >
-          {/* Logo with animation */}
-          <motion.div className="relative mb-6 flex min-h-10 items-center justify-end">
+        {/* Top Header with Logo and Language Switcher */}
+        <div className="mb-6 flex items-center justify-between">
+          <Link href={`/${locale}`} className="block">
             <Image
               src="/logo.svg"
-              alt="logo"
-              width={220}
+              alt="ETG RIDE Logo"
+              width={160}
               height={36}
-              className="absolute left-0 top-1/2 h-9 w-fit -translate-y-1/2 object-contain"
+              className="h-8 w-fit object-contain"
             />
-            <LanguageSwitcher className="bg-card text-white border border-gray-800 hover:border-primary" />
-          </motion.div>
+          </Link>
+          <LanguageSwitcher className="bg-slate-800/80 text-white border border-slate-700 hover:border-cyan-400 text-xs" />
+        </div>
 
-          <motion.h1
-            className={`mb-6 text-2xl font-semibold ${
-              isArabic ? "text-right" : "text-left"
-            }`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-          >
-            {t("signup.welcome")}
-          </motion.h1>
+        {/* Title & Quick Value Prop */}
+        <div className="mb-6 space-y-1">
+          <h1 className="text-2xl font-black text-white tracking-tight">
+            {isArabic ? "تسجيل حساب جديد" : "Create Account"}
+          </h1>
+          <p className="text-xs text-slate-400">
+            {isArabic
+              ? "تسجيل سريع خلال 10 ثوانٍ، تفعيل فوري وسحب يومي للأرباح"
+              : "Quick 10-second setup, instant activation & daily withdrawals"}
+          </p>
+        </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <motion.div>
-              <Button
+        {/* The Fast Form */}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {/* Full Name */}
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+              {isArabic ? "الاسم الكامل" : "Full Name"}
+            </label>
+            <div className="relative">
+              <User className="w-4 h-4 text-slate-400 absolute ltr:left-3.5 rtl:right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <Input
+                type="text"
+                placeholder={isArabic ? "أدخل اسمك الكامل" : "Enter your full name"}
+                {...register("name")}
+                className={`h-11 bg-slate-950/80 border-slate-700 text-white placeholder:text-slate-500 rounded-xl ltr:pl-10 rtl:pr-10 ${
+                  errors.name ? "border-red-500" : "focus:border-cyan-400"
+                }`}
+              />
+            </div>
+            {errors.name && (
+              <p className="mt-1 text-xs text-red-400 font-medium">{errors.name.message}</p>
+            )}
+          </div>
+
+          {/* Email Address */}
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+              {isArabic ? "البريد الإلكتروني" : "Email Address"}
+            </label>
+            <div className="relative">
+              <Mail className="w-4 h-4 text-slate-400 absolute ltr:left-3.5 rtl:right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <Input
+                type="email"
+                placeholder="name@example.com"
+                {...register("email")}
+                className={`h-11 bg-slate-950/80 border-slate-700 text-white placeholder:text-slate-500 rounded-xl ltr:pl-10 rtl:pr-10 ${
+                  errors.email ? "border-red-500" : "focus:border-cyan-400"
+                }`}
+              />
+            </div>
+            {errors.email && (
+              <p className="mt-1 text-xs text-red-400 font-medium">{errors.email.message}</p>
+            )}
+          </div>
+
+          {/* Password */}
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+              {isArabic ? "كلمة المرور" : "Password"}
+            </label>
+            <div className="relative">
+              <Lock className="w-4 h-4 text-slate-400 absolute ltr:left-3.5 rtl:right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <Input
+                type="password"
+                placeholder={isArabic ? "6 أحرف أو أرقام على الأقل" : "At least 6 characters"}
+                {...register("password")}
+                className={`h-11 bg-slate-950/80 border-slate-700 text-white placeholder:text-slate-500 rounded-xl ltr:pl-10 rtl:pr-10 ${
+                  errors.password ? "border-red-500" : "focus:border-cyan-400"
+                }`}
+              />
+            </div>
+            {errors.password && (
+              <p className="mt-1 text-xs text-red-400 font-medium">{errors.password.message}</p>
+            )}
+          </div>
+
+          {/* Referral Code (Collapsible / Auto-populated) */}
+          <div className="pt-1">
+            {!showReferralInput ? (
+              <button
                 type="button"
-                variant="outline"
-                onClick={() => {
-                  const nextValue = !showReferralField;
-                  setShowReferralField(nextValue);
-                  if (!nextValue) {
-                    setValue("referralCode", "");
-                  }
-                }}
-                className="w-full "
+                onClick={() => setShowReferralInput(true)}
+                className="text-xs font-bold text-cyan-400 hover:text-cyan-300 flex items-center gap-1.5 transition-colors"
               >
-                {isArabic ? "التسجيل بدعوة صديق" : "Sign up with referral"}
-              </Button>
-            </motion.div>
-
-            {showReferralField ? (
-              <motion.div>
-                <label
-                  className={`block text-sm text-gray-400 ${
-                    isArabic ? "text-right" : "text-left"
-                  }`}
-                >
-                  {isArabic ? "رابط/رمز الدعوة" : "Referral link/code"}
+                <Gift className="w-3.5 h-3.5" />
+                <span>{isArabic ? "هل لديك كود إحالة / دعوة صديق؟" : "Have a referral code?"}</span>
+              </button>
+            ) : (
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  {isArabic ? "كود أو رابط الإحالة" : "Referral Code"}
                 </label>
-                <div className="relative mt-2">
+                <div className="relative">
+                  <Gift className="w-4 h-4 text-amber-400 absolute ltr:left-3.5 rtl:right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                   <Input
                     type="text"
-                    placeholder={
-                      isArabic
-                        ? "ألصق رابط الدعوة أو الرمز"
-                        : "Paste referral link or code"
-                    }
+                    placeholder={isArabic ? "أدخل كود الإحالة (اختياري)" : "Enter referral code (optional)"}
                     {...register("referralCode")}
-                    className={`${isArabic ? "text-right" : "text-left"}`}
+                    className="h-11 bg-slate-950/80 border-slate-700 text-white placeholder:text-slate-500 rounded-xl ltr:pl-10 rtl:pr-10 uppercase tracking-wider font-mono text-xs focus:border-amber-400"
                   />
                 </div>
-              </motion.div>
-            ) : null}
-
-            <motion.div>
-              <label
-                className={`block text-sm text-gray-400 ${
-                  isArabic ? "text-right" : "text-left"
-                }`}
-              >
-                Full Name
-              </label>
-
-              <div className="relative mt-2">
-                <Input
-                  type="text"
-                  placeholder="Enter your full name"
-                  {...register("name")}
-                  className={`${isArabic ? "text-right" : "text-left"} ${
-                    errors.name ? "border-red-500" : ""
-                  }`}
-                />
-                {errors.name && (
-                  <p
-                    className={`mt-1 text-xs text-red-500 ${
-                      isArabic ? "text-right" : "text-left"
-                    }`}
-                  >
-                    {errors.name.message}
-                  </p>
-                )}
               </div>
-            </motion.div>
-
-            <motion.div>
-              <label
-                className={`block text-sm text-gray-400 ${
-                  isArabic ? "text-right" : "text-left"
-                }`}
-              >
-                {t("signup.emailPhone")}
-              </label>
-
-              <div className="relative mt-2">
-                <Input
-                  type="email"
-                  placeholder={t("signup.emailPlaceholder")}
-                  {...register("email")}
-                  className={`${isArabic ? "text-right" : "text-left"} ${
-                    errors.email ? "border-red-500" : ""
-                  }`}
-                />
-                {errors.email && (
-                  <p
-                    className={`mt-1 text-xs text-red-500 ${
-                      isArabic ? "text-right" : "text-left"
-                    }`}
-                  >
-                    {errors.email.message}
-                  </p>
-                )}
-              </div>
-            </motion.div>
-
-            <motion.div>
-              <label
-                className={`block text-sm text-gray-400 ${
-                  isArabic ? "text-right" : "text-left"
-                }`}
-              >
-                Password
-              </label>
-
-              <div className="relative mt-2">
-                <Input
-                  type="password"
-                  placeholder="Enter your password"
-                  {...register("password")}
-                  className={`${isArabic ? "text-right" : "text-left"} ${
-                    errors.password ? "border-red-500" : ""
-                  }`}
-                />
-                {errors.password && (
-                  <p
-                    className={`mt-1 text-xs text-red-500 ${
-                      isArabic ? "text-right" : "text-left"
-                    }`}
-                  >
-                    {errors.password.message}
-                  </p>
-                )}
-              </div>
-            </motion.div>
-
-            <motion.div>
-              <label
-                className={`block text-sm text-gray-400 ${
-                  isArabic ? "text-right" : "text-left"
-                }`}
-              >
-                Confirm Password
-              </label>
-
-              <div className="relative mt-2">
-                <Input
-                  type="password"
-                  placeholder="Confirm your password"
-                  {...register("passwordConfirm")}
-                  className={`${isArabic ? "text-right" : "text-left"} ${
-                    errors.passwordConfirm ? "border-red-500" : ""
-                  }`}
-                />
-                {errors.passwordConfirm && (
-                  <p
-                    className={`mt-1 text-xs text-red-500 ${
-                      isArabic ? "text-right" : "text-left"
-                    }`}
-                  >
-                    {errors.passwordConfirm.message}
-                  </p>
-                )}
-              </div>
-            </motion.div>
-
-            {/* Privacy Notice Checkbox */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.2 }}
-              className="flex items-start gap-2"
-            >
-              <input
-                type="checkbox"
-                id="privacy"
-                {...register("agreed")}
-                className="mt-1 w-4 h-4 rounded border-gray-600 bg-black text-primary focus:ring-primary focus:ring-offset-0"
-              />
-              <label
-                htmlFor="privacy"
-                className="text-xs text-gray-500 leading-relaxed"
-              >
-                {t("signup.privacyPart1")}{" "}
-                <Link
-                  href={`/${locale}/Privacy`}
-                  className="text-primary hover:underline"
-                >
-                  {t("signup.privacyNotice")}
-                </Link>
-              </label>
-              {errors.agreed && (
-                <p className="text-xs text-red-500 w-full">
-                  {errors.agreed.message}
-                </p>
-              )}
-            </motion.div>
-
-            {/* Continue button with loading state */}
-            <motion.div>
-              <Button
-                className="w-full"
-                type="submit"
-                size="lg"
-                disabled={isLoading || !agreed}
-              >
-                {isLoading ? (
-                  <motion.div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full" />
-                ) : (
-                  t("signup.continue")
-                )}
-              </Button>
-            </motion.div>
-
-            {/* Or Divider */}
-            <motion.div className="relative py-4">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-700"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-[#0b0e11] text-gray-500">
-                  {t("signup.or")}
-                </span>
-              </div>
-            </motion.div>
-
-            {/* Social buttons with icons */}
-            <motion.div className="space-y-3">
-              <GoogleAuthButton
-                locale={locale}
-                successMessage="Account created successfully"
-                label={
-                  showReferralField
-                    ? isArabic
-                      ? "التسجيل عبر Google مع إحالة"
-                      : "Continue with Google (Referral)"
-                    : t("signup.google")
-                }
-                extraPayload={
-                  showReferralField && referralCodeValue
-                    ? { referralCode: getReferralCode(referralCodeValue) }
-                    : {}
-                }
-              />
-
-              <button
-                type="button"
-                className="w-full border border-gray-700 rounded-xl py-2 hover:bg-[#1e2329] transition-all flex items-center justify-center gap-2"
-                onClick={() => showComingSoonToast()}
-              >
-                <svg
-                  className="w-5 h-5"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                >
-                  <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
-                </svg>
-                {t("signup.apple")}
-              </button>
-
-              <button
-                type="button"
-                className="w-full border border-gray-700 rounded-xl py-2 hover:bg-[#1e2329] transition-all flex items-center justify-center gap-2"
-                onClick={() => showComingSoonToast()}
-              >
-                <svg
-                  className="w-5 h-5"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                >
-                  <path
-                    fill="#0088cc"
-                    d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"
-                  />
-                </svg>
-                {t("signup.telegram")}
-              </button>
-            </motion.div>
-          </form>
-
-          {/* Footer */}
-          <motion.div
-            className="text-center mt-6 text-sm text-gray-400"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 2.0 }}
-          >
-            <span className="text-gray-400">{t("signup.haveAccount")}</span>{" "}
-            <Link
-              href={`/${locale}/user_auth/login`}
-              className="text-primary hover:underline"
-            >
-              {t("signup.login")}
-            </Link>
-          </motion.div>
-
-          <div className="mt-6 flex justify-center lg:hidden">
-            <SupportButton />
+            )}
           </div>
-        </motion.div>
+
+          {/* Direct CTA Submit Button */}
+          <div className="pt-3">
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-6 rounded-2xl bg-gradient-to-r from-blue-600 via-cyan-600 to-blue-500 hover:from-blue-500 hover:to-cyan-500 text-white font-black text-sm shadow-xl shadow-blue-950/60 border border-cyan-400/40 transition-all active:scale-[0.98]"
+            >
+              <Zap className="w-4 h-4 mr-1 text-cyan-200" />
+              <span>
+                {isLoading
+                  ? isArabic ? "جارٍ إنشاء الحساب وتفعيله..." : "Creating Account..."
+                  : isArabic ? "إنشاء الحساب وبدء الاستثمار الآن" : "Create Account & Start Earning"}
+              </span>
+              <ArrowIcon className="w-4 h-4 ml-1" />
+            </Button>
+          </div>
+        </form>
+
+        {/* Bottom Login Switcher */}
+        <div className="mt-6 pt-5 border-t border-slate-800/80 text-center text-xs text-slate-400">
+          <span>{isArabic ? "هل لديك حساب بالفعل؟" : "Already have an account?"}</span>{" "}
+          <Link
+            href={`/${locale}/user_auth/login`}
+            className="text-cyan-400 font-extrabold hover:underline ml-1"
+          >
+            {isArabic ? "تسجيل الدخول" : "Sign in here"}
+          </Link>
+        </div>
       </motion.div>
-    
     </div>
   );
 }

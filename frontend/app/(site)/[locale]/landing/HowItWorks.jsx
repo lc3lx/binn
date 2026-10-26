@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useTranslations } from "@/hooks/useTranslations";
-import { Wallet, Car, Power, DollarSign, CheckCircle2 } from "lucide-react";
+import { Wallet, Zap, Power, DollarSign, CheckCircle2 } from "lucide-react";
 
 export default function HowItWorks() {
   const { locale } = useTranslations();
@@ -24,7 +24,7 @@ export default function HowItWorks() {
       desc: isAr
         ? "اختر طراز السكوتر الكهربائي المناسب من E1 حتى E6، ليتم تفعيل أجهزتك فوراً في لوحة التحكم."
         : "Select your desired smart scooter tier from E1 to E6 to instantly activate your fleet devices.",
-      icon: Car,
+      icon: Zap,
       color: "from-cyan-500 to-teal-400",
     },
     {

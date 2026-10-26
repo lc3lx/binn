@@ -5,7 +5,7 @@ import { useTranslations } from "@/hooks/useTranslations";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Wallet, Info } from "lucide-react";
+import { Wallet, Info, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { useRequestWithdrawMutation } from "@/api/services/user/Withdraw/withdraw.query";
 import { useDashboardSummaryQuery } from "@/api/services/user/Statistics/statistics.query";
@@ -25,12 +25,18 @@ export default function WithdrawPage() {
 
   const summary = summaryResponse?.data || {};
   const balance = Number(summary?.walletBalance || 0);
-  const minWithdrawal = 10;
+  const minWithdrawal = 2.5;
+
+  // Weekend Rule: Saturday (6) and Sunday (0) are official holidays for withdrawals
+  const today = new Date();
+  const dayOfWeek = today.getUTCDay();
+  const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
   const networks = [
     {
       key: "bsc",
       label: t("withdraw.networks.bsc") || "BNB Smart Chain (BEP20)",
-      fee: 1,
+      fee: 0.5,
       placeholder: t("withdraw.address.placeholder.bsc") || "0x...",
     },
   ];
@@ -91,6 +97,24 @@ export default function WithdrawPage() {
             {t("withdraw.subtitle")}
           </p>
         </div>
+
+        {isWeekend && (
+          <div className="mb-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs sm:text-sm flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 flex-shrink-0 text-amber-400 mt-0.5" />
+            <div>
+              <p className="font-bold">
+                {locale === "ar"
+                  ? "عطلة نهاية الأسبوع (السبت والأحد) - قسم السحوبات مغلق"
+                  : "Weekend Holiday (Saturday & Sunday) - Withdrawals Closed"}
+              </p>
+              <p className="mt-1 text-amber-200/80 leading-relaxed">
+                {locale === "ar"
+                  ? "نلفت انتباهكم إلى أن يومي السبت والأحد هما عطلة رسمية لنظام السحب ومعالجة الحوالات. يستأنف استقبال ومعالجة طلبات السحب وسحب الأرباح يومياً من الإثنين إلى الجمعة."
+                  : "Please note that Saturday and Sunday are official platform holidays for withdrawals processing. Submissions reopen Monday through Friday."}
+              </p>
+            </div>
+          </div>
+        )}
 
         <Card className="bg-card border border-gray-600/40">
           <CardContent className="p-4 sm:p-6">
@@ -204,15 +228,19 @@ export default function WithdrawPage() {
 
             <div className="mt-6">
               <Button
-                className="w-full"
-                disabled={invalid || withdrawMutation.isPending}
+                className="w-full py-6 rounded-2xl font-bold text-sm"
+                disabled={invalid || isWeekend || withdrawMutation.isPending}
                 onClick={handleWithdraw}
               >
-                {withdrawMutation.isPending
+                {isWeekend
                   ? locale === "ar"
-                    ? "جاري الإرسال..."
-                    : "Submitting..."
-                  : t("withdraw.submit")}
+                    ? "السحب مغلق في عطلة نهاية الأسبوع (السبت والأحد)"
+                    : "Withdrawals Closed on Weekends (Sat & Sun)"
+                  : withdrawMutation.isPending
+                    ? locale === "ar"
+                      ? "جاري الإرسال..."
+                      : "Submitting..."
+                    : t("withdraw.submit")}
               </Button>
             </div>
           </CardContent>

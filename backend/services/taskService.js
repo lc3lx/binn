@@ -51,21 +51,21 @@ const ensureUserScooter = async (user) => {
       {
         plan: e2Plan ? e2Plan._id : null,
         modelName: 'E2',
-        deviceCount: 4,
-        scooterIncome: 1.6,
-        dailyIncome: 6.4,
-        price: 220,
+        deviceCount: 2,
+        scooterIncome: 2.5,
+        dailyIncome: 5.0,
+        price: 100,
         status: 'OPEN',
         countdownEndsAt: new Date(Date.now() + 5 * 3600 * 1000),
         lastClaimDate: '',
-        pendingIncome: 6.53,
-        totalCollected: 6.4,
+        pendingIncome: 5.0,
+        totalCollected: 5.0,
         purchasedAt: new Date(now.getTime() - 2 * 24 * 3600 * 1000),
       },
     ];
-    user.pendingScooterIncome = 6.53;
-    user.todayScooterIncome = 6.4;
-    user.totalTaskEarnings = (user.totalTaskEarnings || 0) + 6.4;
+    user.pendingScooterIncome = 5.0;
+    user.todayScooterIncome = 5.0;
+    user.totalTaskEarnings = (user.totalTaskEarnings || 0) + 5.0;
     modified = true;
   }
 
