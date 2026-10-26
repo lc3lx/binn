@@ -1,27 +1,64 @@
-<svg width="220" height="48" viewBox="0 0 220 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Automotive Luxury Shield / Emblem -->
-  <g id="emblem">
-    <path d="M8 12C8 9.79086 9.79086 8 12 8H36C38.2091 8 40 9.79086 40 12V26C40 33.732 32.5 39.5 24 42C15.5 39.5 8 33.732 8 26V12Z" fill="url(#gold_grad)" fill-opacity="0.15" stroke="url(#gold_grad)" stroke-width="2"/>
-    <!-- Sleek aerodynamic speed lines inside shield -->
-    <path d="M15 17L24 13L33 17" stroke="url(#gold_grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M15 23L24 19L33 23" stroke="url(#gold_grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    <!-- Stylized "E" / Speed fin -->
-    <path d="M20 28H28M24 23V35" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
-  </g>
-
-  <!-- Typography: ETG RIDE -->
-  <g id="text">
-    <text x="50" y="27" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="22" letter-spacing="1.5" fill="url(#gold_grad)">ETG</text>
-    <text x="105" y="27" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="22" letter-spacing="2" fill="#FFFFFF">RIDE</text>
-    <text x="51" y="39" font-family="system-ui, -apple-system, sans-serif" font-weight="600" font-size="7.5" letter-spacing="2.5" fill="#94A3B8">EXECUTIVE MOBILITY</text>
-  </g>
-
-  <!-- Gradients -->
+<svg width="240" height="52" viewBox="0 0 240 52" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="gold_grad" x1="8" y1="8" x2="40" y2="42" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#FCD34D"/>
-      <stop offset="50%" stop-color="#F59E0B"/>
-      <stop offset="100%" stop-color="#D97706"/>
+    <linearGradient id="etg_blue_cyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="50%" stop-color="#0EA5E9"/>
+      <stop offset="100%" stop-color="#2563EB"/>
     </linearGradient>
+    <linearGradient id="etg_neon_glow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#22D3EE"/>
+      <stop offset="100%" stop-color="#38BDF8"/>
+    </linearGradient>
+    <linearGradient id="badge_bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0c2340"/>
+      <stop offset="100%" stop-color="#061224"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="1.5" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
   </defs>
+
+  <!-- Modern Smart Scooter Emblem -->
+  <g id="emblem">
+    <!-- Rounded Squircle Badge -->
+    <rect x="4" y="5" width="42" height="42" rx="12" fill="url(#badge_bg)" stroke="url(#etg_blue_cyan)" stroke-width="1.8"/>
+    
+    <!-- Speed motion streaks behind scooter -->
+    <path d="M10 20H15M8 26H13M11 32H16" stroke="#0284C7" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+
+    <!-- Electric Scooter Vector -->
+    <!-- Back Wheel -->
+    <circle cx="16" cy="34" r="3.5" stroke="url(#etg_neon_glow)" stroke-width="2" fill="#030712"/>
+    <circle cx="16" cy="34" r="1.2" fill="#38BDF8"/>
+    
+    <!-- Front Wheel -->
+    <circle cx="35" cy="34" r="3.5" stroke="url(#etg_neon_glow)" stroke-width="2" fill="#030712"/>
+    <circle cx="35" cy="34" r="1.2" fill="#38BDF8"/>
+    
+    <!-- Deck Base -->
+    <path d="M19.5 34H31.5" stroke="#F8FAFC" stroke-width="2.2" stroke-linecap="round"/>
+    
+    <!-- Steering Stem -->
+    <path d="M32 33L26.5 16" stroke="url(#etg_neon_glow)" stroke-width="2.2" stroke-linecap="round"/>
+    
+    <!-- Handlebar & Headlight -->
+    <path d="M23.5 16H29.5" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"/>
+    <circle cx="28.5" cy="16" r="1" fill="#38BDF8" filter="url(#glow)"/>
+
+    <!-- Energy Lightning Bolt Accent -->
+    <path d="M26 23L23.5 27.5H27L25 31.5" stroke="#FCD34D" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Brand Typography -->
+  <g id="typography">
+    <!-- ETG -->
+    <text x="56" y="30" font-family="'Inter', 'Montserrat', -apple-system, sans-serif" font-weight="900" font-size="25" letter-spacing="1.5" fill="url(#etg_blue_cyan)">ETG</text>
+    
+    <!-- RIDE -->
+    <text x="123" y="30" font-family="'Inter', 'Montserrat', -apple-system, sans-serif" font-weight="800" font-size="25" letter-spacing="2.5" fill="#FFFFFF">RIDE</text>
+
+    <!-- Subtitle: SMART E-MOBILITY -->
+    <text x="57" y="43" font-family="'Inter', -apple-system, sans-serif" font-weight="700" font-size="8" letter-spacing="3" fill="#38BDF8" opacity="0.9">SMART E-MOBILITY</text>
+  </g>
 </svg>

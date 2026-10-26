@@ -18,7 +18,7 @@
     "subtitle1": "Smart Electric Scooter Fleet Mobility & Investment",
     "subtitle2": "Lease your scooter, power your ride, and earn USDT daily",
     "description": {
-      "line1": "Lease your smart electric scooter (E1 to E6), press the Power button (⏻) to start the countdown, and collect daily profits directly into your wallet.",
+      "line1": "Lease your smart electric scooter (E1 to E7,  to ,000), press the Power button (⏻) to start the countdown, and collect daily profits directly into your wallet.",
       "line2": "Earn an instant  bonus for every 10 active depositing referrals with instant BEP-20 payouts."
     },
     "viewStats": "Features & Overview",
@@ -342,7 +342,7 @@
   },
   "mining_plans": {
     "title": "Smart E-Scooter Energy Fleet",
-    "intro": "Select your preferred e-scooter model (E1 to E6). All models include GPS tracking, one-click power control, and daily USDT yields.",
+    "intro": "Select your preferred e-scooter model (E1 to E7,  to ,000). All models include GPS tracking, one-click power control, and daily USDT yields.",
     "labels": {
       "estRoi": "Daily Yield",
       "duration": "Term",

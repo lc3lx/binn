@@ -23,7 +23,7 @@ export default function Statistics() {
   const features = [
     {
       id: "fleet",
-      title: isAr ? "أسطول سكوترات ذكي (E1 إلى E6)" : "Smart E-Scooter Fleet (E1 - E6)",
+      title: isAr ? "أسطول سكوترات ذكي (E1 إلى E7)" : "Smart E-Scooter Fleet (E1 - E7)",
       desc: isAr
         ? "سكوترات كهربائية متطورة متصلة بإنترنت الأشياء (IoT) ومزودة بنظام تتبع GPS دقيق لتوليد عوائد مستقرة."
         : "Next-gen electric scooters connected via IoT and GPS telematics delivering reliable daily yields.",

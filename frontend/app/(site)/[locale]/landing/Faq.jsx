@@ -21,8 +21,8 @@ export default function FAQ() {
         ? "ما هي منصة ETG RIDE وكيف تعمل؟"
         : "What is ETG RIDE and how does it work?",
       a: isAr
-        ? "ETG RIDE هي منصة ذكية لتشغيل واستثمار أساطيل السكوترات الكهربائية (Smart E-Scooters). تتيح للمستخدمين استئجار طرازات السكوتر (من E1 إلى E6) وتشغيلها يومياً بنقرة واحدة لتحقيق عوائد أرباح يومية مؤكدة بالـ USDT مباشرة إلى محفظتهم."
-        : "ETG RIDE is a smart micro-mobility investment platform. Members lease smart electric scooters (E1 through E6) and power daily dispatches with a single click to generate consistent daily USDT returns credited to their wallets.",
+        ? "ETG RIDE هي منصة ذكية لتشغيل واستثمار أساطيل السكوترات الكهربائية (Smart E-Scooters). تتيح للمستخدمين استئجار طرازات السكوتر (من E1 إلى E7 بقيمة تبدأ من 50$ إلى 5,000$) وتشغيلها يومياً بنقرة واحدة لتحقيق عوائد أرباح يومية بنسبة 5% مؤكدة بالـ USDT مباشرة إلى محفظتهم."
+        : "ETG RIDE is a smart micro-mobility investment platform. Members lease smart electric scooters (E1 through E7, from $50 to $5,000) and power daily dispatches with a single click to generate consistent 5% daily USDT returns credited to their wallets.",
     },
     {
       q: isAr

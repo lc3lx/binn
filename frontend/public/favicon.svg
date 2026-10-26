@@ -1,0 +1,40 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="fav_blue_cyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="50%" stop-color="#0EA5E9"/>
+      <stop offset="100%" stop-color="#2563EB"/>
+    </linearGradient>
+    <linearGradient id="fav_neon" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#22D3EE"/>
+      <stop offset="100%" stop-color="#38BDF8"/>
+    </linearGradient>
+    <linearGradient id="fav_bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0c2340"/>
+      <stop offset="100%" stop-color="#061224"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Squircle Base -->
+  <rect x="2" y="2" width="60" height="60" rx="16" fill="url(#fav_bg)" stroke="url(#fav_blue_cyan)" stroke-width="2.5"/>
+  
+  <!-- Back Wheel -->
+  <circle cx="20" cy="46" r="5" stroke="url(#fav_neon)" stroke-width="2.5" fill="#030712"/>
+  <circle cx="20" cy="46" r="2" fill="#38BDF8"/>
+  
+  <!-- Front Wheel -->
+  <circle cx="45" cy="46" r="5" stroke="url(#fav_neon)" stroke-width="2.5" fill="#030712"/>
+  <circle cx="45" cy="46" r="2" fill="#38BDF8"/>
+  
+  <!-- Deck Base -->
+  <path d="M25 46H40" stroke="#F8FAFC" stroke-width="3" stroke-linecap="round"/>
+  
+  <!-- Stem -->
+  <path d="M41 45L33 21" stroke="url(#fav_neon)" stroke-width="3" stroke-linecap="round"/>
+  
+  <!-- Handlebars -->
+  <path d="M29 21H37" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round"/>
+
+  <!-- Energy Bolt -->
+  <path d="M33 30L29.5 36H34.5L32 41" stroke="#FCD34D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

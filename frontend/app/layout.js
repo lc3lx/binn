@@ -10,8 +10,8 @@ export const metadata = {
   title: "ETG RIDE - Smart E-Scooter Mobility & Fleet Investment",
   description: "Smart Electric Scooter Fleet Leasing & Automated Daily USDT Earnings",
   icons: {
-    icon: "/logo.svg",
-    apple: "/logo.svg",
+    icon: "/favicon.svg",
+    apple: "/favicon.svg",
   },
 };
 
@@ -33,8 +33,8 @@ export default async function RootLayout({ children }) {
       className={`scroll-smooth ${inter.variable} ${cairo.variable}`}
     >
       <head>
-        <link rel="icon" href="/logo.svg" type="image/svg+xml" />
-        <link rel="apple-touch-icon" href="/logo.svg" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/favicon.svg" />
       </head>
       <body className="min-h-full  bg-background text-foreground antialiased">
         <AuthProvider initialUser={initialUser}>

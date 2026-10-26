@@ -22,8 +22,8 @@ export default function HowItWorks() {
       num: "02",
       title: isAr ? "استئجار طراز السكوتر (طاقة)" : "Lease Scooter Model (Energy)",
       desc: isAr
-        ? "اختر طراز السكوتر الكهربائي المناسب من E1 حتى E6، ليتم تفعيل أجهزتك فوراً في لوحة التحكم."
-        : "Select your desired smart scooter tier from E1 to E6 to instantly activate your fleet devices.",
+        ? "اختر طراز السكوتر الكهربائي المناسب من E1 حتى E7، ليتم تفعيل أجهزتك فوراً في لوحة التحكم."
+        : "Select your desired smart scooter tier from E1 to E7 to instantly activate your fleet devices.",
       icon: Zap,
       color: "from-cyan-500 to-teal-400",
     },

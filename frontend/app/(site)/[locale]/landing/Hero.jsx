@@ -67,7 +67,7 @@ export default function Hero() {
             {/* Description */}
             <p className="text-sm sm:text-base lg:text-lg text-slate-300 leading-relaxed max-w-2xl">
               {isAr
-                ? "منصة متطورة لتشغيل واستثمار أساطيل السكوترات الكهربائية الذكية (E1 إلى E6). تفعيل الرحلة بنقرة واحدة عبر زر الطاقة (⏻)، عد تنازلي ذكي، أرباح يومية مؤكدة، وسحب فوري BEP-20 مع مكافأة 100$ لكل 10 إحالات مفعلة."
+                ? "منصة متطورة لتشغيل واستثمار أساطيل السكوترات الكهربائية الذكية (E1 إلى E7). تفعيل الرحلة بنقرة واحدة عبر زر الطاقة (⏻)، عد تنازلي ذكي، أرباح يومية مؤكدة، وسحب فوري BEP-20 مع مكافأة 100$ لكل 10 إحالات مفعلة."
                 : "Advanced smart micro-mobility investment platform. Power rides with one-click (⏻), track real-time countdowns, collect daily USDT profits, and enjoy instant BEP-20 payouts with $100 referral rewards."}
             </p>
 
@@ -117,7 +117,7 @@ export default function Hero() {
                   {isAr ? "طرازات السكوتر" : "Scooter Fleet"}
                 </span>
                 <span className="text-lg font-black text-cyan-400 font-mono">
-                  E1 - E6
+                  E1 - E7
                 </span>
               </div>
 

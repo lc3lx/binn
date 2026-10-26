@@ -71,7 +71,7 @@ export default function DashboardSidebar({ asDrawer = false }) {
       </div>
 
       <nav className="mt-2 flex-1 px-2 md:px-3 space-y-1">
-        {items.map(({ key, href, icon: Icon, badge }, index) => {
+        {items.map(({ key, label, href, icon: Icon, badge }, index) => {
           const isOverview = key === "overview";
           const active = isOverview
             ? pathname === href
@@ -105,7 +105,7 @@ export default function DashboardSidebar({ asDrawer = false }) {
                       asDrawer ? "inline" : "hidden md:inline"
                     } ${active ? "text-primary" : "text-white/75"}`}
                   >
-                    {item.label || (key === "my_plans"
+                    {label || (key === "my_plans"
                       ? locale === "ar"
                         ? "خططي"
                         : "My Plans"

@@ -208,16 +208,18 @@ const defaultPlans = [
     isPopular: false,
     isActive: true,
   },
-];\n\nconst defaultFaqs = [
+];
+
+const defaultFaqs = [
   {
     question: 'ما هي منصة ETG Ride وكيف تعمل؟',
-    answer: 'ETG Ride هي منصة استئجار وإدارة أساطيل النقل الفاخر والذكي. تتيح للمستخدمين استئجار مركبات VIP وتنفيذ مهام الرحلات اليومية للحصول على عوائد أرباح يومية بالـ USDT مباشرة إلى محفظتهم.',
+    answer: 'ETG RIDE هي منصة استثمار وتشغيل أساطيل السكوترات الكهربائية الذكية (Smart E-Scooters). تتيح للمستخدمين استئجار طرازات السكوتر (من E1 إلى E7 بقيمة 50$ إلى 5,000$) وتشغيلها يومياً بنقرة واحدة لتحقيق عوائد أرباح يومية بنسبة 5% بالـ USDT مباشرة إلى محفظتهم.',
     category: 'general',
     isActive: true,
   },
   {
     question: 'كيف أنفذ مهام الرحلات اليومية (Ride Tasks)؟',
-    answer: 'بعد استئجار مركبة VIP، توجه إلى صفحة "الرحلات اليومية"، واضغط على زر "بدء الرحلة". بمجرد اكتمال إرسال الرحلة، ستُضاف أرباح المهمة فوراً إلى رصيد محفظتك القابل للسحب.',
+    answer: 'بعد استئجار طراز السكوتر، توجه إلى شاشة RIDE، واضغط على زر الطاقة الأزرق (⏻). سيبدأ العد التنازلي الذكي 04:59:50، وعند اكتمال الدورة اضغط زر ($) أو زر "جمع في نقرة واحدة" لتحويل أرباحك لمحفظتك.',
     category: 'rides',
     isActive: true,
   },
@@ -235,7 +237,7 @@ const defaultPlans = [
   },
   {
     question: 'ما هو الحد الأدنى للسحب؟',
-    answer: 'الحد الأدنى للسحب هو 10 USDT فقط، وتتم معالجة الطلبات بأمان وسرعة مباشرة إلى محفظة BEP-20 الخاصة بك.',
+    answer: 'الحد الأدنى للسحب هو 2.50 USDT فقط لتمكين أصحاب باقة الـ 50$ من سحب ربحهم اليومي. يمكنك السحب يومياً من الإثنين إلى الجمعة (السبت والأحد عطلة أسبوعية لقسم السحوبات).',
     category: 'withdrawals',
     isActive: true,
   },
@@ -255,7 +257,7 @@ const runSeeder = async () => {
     setting = await PlatformSetting.create({
       bep20DepositWallet: '0x24EF9b2804C8a9550A28Ca35806d9D6B91ea6B19',
       minDepositAmount: 10,
-      minWithdrawalAmount: 10,
+      minWithdrawalAmount: 2.5,
       withdrawalFeePercent: 0,
       allowDeposits: true,
       allowWithdrawals: true,
