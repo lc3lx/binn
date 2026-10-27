@@ -20,6 +20,7 @@ import {
   useSubscribeToPlanMutation,
 } from "@/api/services/user/plans/plans.query";
 import { toast } from "sonner";
+import { formatApiError } from "@/lib/format-error";
 
 // Default fallback models if backend is cold
 const fallbackScooters = [
@@ -129,10 +130,7 @@ export default function ScooterPlansPage() {
       );
       setPlanToConfirm(null);
     } catch (err) {
-      toast.error(
-        err?.response?.data?.message ||
-          (isArabic ? "فشل الاستئجار: يرجى التأكد من توفر الرصيد الكافي" : "Lease failed: insufficient balance")
-      );
+      toast.error(formatApiError(err, locale));
     } finally {
       setSubscribingPlanId(null);
     }

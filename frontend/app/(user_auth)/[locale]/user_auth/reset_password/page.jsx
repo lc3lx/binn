@@ -17,6 +17,7 @@ import {
   clearResetPasswordEmail,
   getResetPasswordEmail,
 } from "@/lib/reset-password-flow";
+import { formatApiError } from "@/lib/format-error";
 
 export default function ResetPasswordPage() {
   const { t, locale } = useTranslations();
@@ -70,11 +71,7 @@ export default function ResetPasswordPage() {
       toast.success(t("forgotPassword.success.passwordReset"));
       router.push(`/${locale}/user_auth/login`);
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message ||
-          error?.message ||
-          t("forgotPassword.errors.resetFailed"),
-      );
+      toast.error(formatApiError(error, locale));
     } finally {
       setIsLoading(false);
     }

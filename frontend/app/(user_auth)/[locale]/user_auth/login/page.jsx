@@ -18,6 +18,7 @@ import { loginUser } from "@/api/services/user/auth/login/login.api";
 import GoogleAuthButton from "@/components/auth/GoogleAuthButton";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { applyAuthResponse } from "@/lib/auth-session";
+import { formatApiError } from "@/lib/format-error";
 
 export default function LoginPage() {
   const { t, locale } = useTranslations();
@@ -52,9 +53,7 @@ export default function LoginPage() {
       toast.success(isArabic ? "تم تسجيل الدخول بنجاح" : "Login successfully");
       window.location.replace(`/${locale}/${authUser?.role === "admin" ? "dashboard-x9cBqC12" : "user_dashboard"}`);
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message || error?.message || "Login failed",
-      );
+      toast.error(formatApiError(error, locale));
     } finally {
       setIsLoading(false);
     }

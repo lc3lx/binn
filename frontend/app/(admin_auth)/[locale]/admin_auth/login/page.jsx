@@ -15,6 +15,7 @@ import { adminLoginUser } from "@/api/services/admin/auth/login/login.api";
 import { clearAdminSession } from "@/api/instance";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { applyAuthResponse } from "@/lib/auth-session";
+import { formatApiError } from "@/lib/format-error";
 
 export default function AdminLoginPage() {
   const { t, locale } = useTranslations();
@@ -54,9 +55,7 @@ export default function AdminLoginPage() {
       toast.success("Admin login successful");
       window.location.assign(`/${locale}/dashboard-x9cBqC12`);
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message || error?.message || "Login failed",
-      );
+      toast.error(formatApiError(error, locale));
     } finally {
       setIsLoading(false);
     }

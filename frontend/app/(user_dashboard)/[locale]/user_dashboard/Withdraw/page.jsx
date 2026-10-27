@@ -9,6 +9,7 @@ import { Wallet, Info, AlertTriangle, Clock, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { useRequestWithdrawMutation } from "@/api/services/user/Withdraw/withdraw.query";
 import { useDashboardSummaryQuery } from "@/api/services/user/Statistics/statistics.query";
+import { formatApiError } from "@/lib/format-error";
 
 export default function WithdrawPage() {
   const { t, locale } = useTranslations();
@@ -79,10 +80,7 @@ export default function WithdrawPage() {
       setAmount("");
       setAddress("");
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message ||
-          (locale === "ar" ? "فشل إرسال طلب السحب" : "Failed to submit withdraw request"),
-      );
+      toast.error(formatApiError(error, locale));
     }
   };
 

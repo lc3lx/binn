@@ -11,6 +11,7 @@ import {
 } from "@/api/services/user/tasks/tasks.query";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { formatApiError } from "@/lib/format-error";
 import { motion, AnimatePresence } from "framer-motion";
 import { Power, DollarSign, Check, ChevronRight, Sparkles, Zap, ShieldCheck } from "lucide-react";
 
@@ -84,7 +85,7 @@ export default function RideScootersPage() {
       toast.success(res.message || (isArabic ? "تم تبديل حالة السكوتر" : "Scooter state toggled"));
       refetch();
     } catch (err) {
-      toast.error(err?.response?.data?.message || (isArabic ? "حدث خطأ" : "An error occurred"));
+      toast.error(formatApiError(err, locale));
     } finally {
       setIsPowering(false);
     }
@@ -98,7 +99,7 @@ export default function RideScootersPage() {
       toast.success(res.message || (isArabic ? "تم جمع الأرباح بنجاح!" : "Earnings collected!"));
       refetch();
     } catch (err) {
-      toast.error(err?.response?.data?.message || (isArabic ? "حدث خطأ أثناء الجمع" : "Collection error"));
+      toast.error(formatApiError(err, locale));
     } finally {
       setIsCollecting(false);
     }
@@ -112,7 +113,7 @@ export default function RideScootersPage() {
       toast.success(res.message || (isArabic ? "تم جمع كافة الأرباح بنجاح!" : "All earnings collected!"));
       refetch();
     } catch (err) {
-      toast.error(err?.response?.data?.message || (isArabic ? "حدث خطأ" : "Collection error"));
+      toast.error(formatApiError(err, locale));
     } finally {
       setIsCollecting(false);
     }

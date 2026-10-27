@@ -14,6 +14,7 @@ import { useTranslations } from "@/hooks/useTranslations";
 import AuthSimpleShell from "@/components/auth/AuthSimpleShell";
 import { forgotPassword } from "@/api/services/user/auth/forgot_password/forgot_password.api";
 import { setResetPasswordEmail } from "@/lib/reset-password-flow";
+import { formatApiError } from "@/lib/format-error";
 
 export default function ForgotPasswordPage() {
   const { t, locale } = useTranslations();
@@ -45,11 +46,7 @@ export default function ForgotPasswordPage() {
       toast.success(t("forgotPassword.success.emailSent"));
       router.push(`/${locale}/user_auth/verify_reset_code`);
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message ||
-          error?.message ||
-          t("forgotPassword.errors.requestFailed"),
-      );
+      toast.error(formatApiError(error, locale));
     } finally {
       setIsLoading(false);
     }

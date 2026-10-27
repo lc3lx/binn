@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import { formatApiError } from "@/lib/format-error";
 import { useTranslations } from "@/hooks/useTranslations";
 import {
   useReferralListQuery,
@@ -64,12 +65,7 @@ export default function ReferralPage() {
       );
     },
     onError: (err) => {
-      toast.error(
-        err?.response?.data?.message ||
-          (locale === "ar"
-            ? "تعذر استلام المكافأة في الوقت الحالي"
-            : "Failed to claim reward at this time"),
-      );
+      toast.error(formatApiError(err, locale));
     },
   });
 

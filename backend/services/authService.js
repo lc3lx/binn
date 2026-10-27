@@ -23,7 +23,12 @@ exports.signup = asyncHandler(async (req, res, next) => {
   if (req.body.referralCode) {
     const inviterId = await resolveInviterIdFromReferralCode(req.body.referralCode);
     if (!inviterId) {
-      return next(new ApiError("Invalid or inactive referral code", 400));
+      return next(
+        new ApiError(
+          "كود الإحالة غير صالح أو غير نشط / Invalid or inactive referral code",
+          400
+        )
+      );
     }
     referredBy = inviterId;
   }
@@ -58,7 +63,12 @@ exports.login = asyncHandler(async (req, res, next) => {
     !user.password ||
     !(await bcrypt.compare(req.body.password, user.password))
   ) {
-    return next(new ApiError("Incorrect email or password", 401));
+    return next(
+      new ApiError(
+        "البريد الإلكتروني أو كلمة المرور غير صحيحة / Incorrect email or password",
+        401
+      )
+    );
   }
 
   if (user.active === false) {
@@ -117,7 +127,12 @@ exports.googleLogin = asyncHandler(async (req, res, next) => {
     if (req.body.referralCode) {
       referredBy = await resolveInviterIdFromReferralCode(req.body.referralCode);
       if (!referredBy) {
-        return next(new ApiError("Invalid or inactive referral code", 400));
+        return next(
+        new ApiError(
+          "كود الإحالة غير صالح أو غير نشط / Invalid or inactive referral code",
+          400
+        )
+      );
       }
     }
     user = await User.create({

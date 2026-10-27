@@ -15,6 +15,7 @@ import {
   usePaymentOrderStatusQuery,
   useVerifyPaymentTxMutation,
 } from "@/api/services/user/deposit/deposit.query";
+import { formatApiError } from "@/lib/format-error";
 
 function pickPayload(payload) {
   return payload?.data || payload || {};
@@ -177,10 +178,7 @@ export default function DepositPage() {
         isArabic ? "تم إنشاء طلب الدفع بنجاح" : "Payment order created",
       );
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message ||
-          (isArabic ? "فشل إنشاء طلب الدفع" : "Failed to create payment order"),
-      );
+      toast.error(formatApiError(error, locale));
     }
   };
 
@@ -218,10 +216,7 @@ export default function DepositPage() {
         setOrder((prev) => ({ ...prev, ...payload }));
       }
     } catch (err) {
-      toast.error(
-        err?.response?.data?.message ||
-          (isArabic ? "فشل التحقق من المعاملة" : "Transaction verification failed")
-      );
+      toast.error(formatApiError(err, locale));
     }
   };
 

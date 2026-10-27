@@ -6,9 +6,9 @@ const User = require('../../models/userModel');
 exports.signupValidator = [
   check('name')
     .notEmpty()
-    .withMessage('User required')
-    .isLength({ min: 3 })
-    .withMessage('Too short User name')
+    .withMessage('يرجى إدخال الاسم / Name required')
+    .isLength({ min: 2 })
+    .withMessage('الاسم يجب أن يتكون من حرفين على الأقل / Name must be at least 2 characters')
     .custom((val, { req }) => {
       req.body.slug = slugify(val);
       return true;
@@ -16,37 +16,41 @@ exports.signupValidator = [
 
   check('email')
     .notEmpty()
-    .withMessage('Email required')
+    .withMessage('يرجى إدخال البريد الإلكتروني / Email required')
     .isEmail()
-    .withMessage('Invalid email address')
+    .withMessage('يرجى إدخال بريد إلكتروني صالح / Invalid email address')
     .custom((val) =>
       User.findOne({ email: val }).then((user) => {
         if (user) {
-          return Promise.reject(new Error('E-mail already in user'));
+          return Promise.reject(
+            new Error(
+              'البريد الإلكتروني مستخدم بالفعل، يرجى تسجيل الدخول أو استخدام بريد آخر / E-mail already registered'
+            )
+          );
         }
       })
     ),
 
   check('password')
     .notEmpty()
-    .withMessage('Password required')
+    .withMessage('يرجى إدخال كلمة المرور / Password required')
     .isLength({ min: 6 })
-    .withMessage('Password must be at least 6 characters')
+    .withMessage('كلمة المرور يجب أن تتكون من 6 خانات على الأقل / Password must be at least 6 characters')
     .custom((password, { req }) => {
       if (password !== req.body.passwordConfirm) {
-        throw new Error('Password Confirmation incorrect');
+        throw new Error('كلمتا المرور غير متطابقتين / Password confirmation does not match');
       }
       return true;
     }),
 
   check('passwordConfirm')
     .notEmpty()
-    .withMessage('Password confirmation required'),
+    .withMessage('يرجى تأكيد كلمة المرور / Password confirmation required'),
 
   check('referralCode')
     .optional()
     .isString()
-    .withMessage('referralCode must be a string')
+    .withMessage('كود الإحالة غير صالح / Invalid referral code')
     .trim()
     .custom(async (val) => {
       if (!val) return true;
@@ -55,7 +59,7 @@ exports.signupValidator = [
         active: true,
       }).select('_id');
       if (!inviter) {
-        throw new Error('Invalid or inactive referral code');
+        throw new Error('كود الإحالة غير صالح أو غير نشط / Invalid or inactive referral code');
       }
       return true;
     }),
@@ -66,15 +70,15 @@ exports.signupValidator = [
 exports.loginValidator = [
   check('email')
     .notEmpty()
-    .withMessage('Email required')
+    .withMessage('يرجى إدخال البريد الإلكتروني / Email required')
     .isEmail()
-    .withMessage('Invalid email address'),
+    .withMessage('يرجى إدخال بريد إلكتروني صالح / Invalid email address'),
 
   check('password')
     .notEmpty()
-    .withMessage('Password required')
+    .withMessage('يرجى إدخال كلمة المرور / Password required')
     .isLength({ min: 6 })
-    .withMessage('Password must be at least 6 characters'),
+    .withMessage('كلمة المرور يجب أن تتكون من 6 خانات على الأقل / Password must be at least 6 characters'),
 
   validatorMiddleware,
 ];

@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import { signUpUser } from "@/api/services/user/auth/sign_up/sign_up.api";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { applyAuthResponse } from "@/lib/auth-session";
+import { formatApiError } from "@/lib/format-error";
 
 // Simplified fast signup schema
 const signupSchema = z.object({
@@ -124,11 +125,7 @@ export default function FastSignupPage() {
       );
       router.push(`/${locale}/user_auth/login`);
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message ||
-          error?.message ||
-          (isArabic ? "فشل إنشاء الحساب، يرجى المحاولة ثانية" : "Signup failed")
-      );
+      toast.error(formatApiError(error, locale));
     } finally {
       setIsLoading(false);
     }
