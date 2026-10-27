@@ -16,7 +16,6 @@ const navLabels = {
   en: {
     overview: "Overview",
     users: "Users",
-    kyc: "KYC",
     deposit: "Deposit",
     withdraw: "Withdraw",
     transactions: "Transactions",
@@ -31,7 +30,6 @@ const navLabels = {
   ar: {
     overview: "نظرة عامة",
     users: "المستخدمون",
-    kyc: "التوثيق",
     deposit: "الإيداع",
     withdraw: "السحب",
     transactions: "المعاملات",
@@ -98,7 +96,6 @@ export default function AdminHeader({ locale = "en", onOpenSidebar }) {
     return [
       { key: "overview", href: base, label: labels.overview },
       { key: "users", href: `${base}/users`, label: labels.users },
-      { key: "kyc", href: `${base}/kyc`, label: labels.kyc },
       { key: "deposit", href: `${base}/deposit`, label: labels.deposit },
       { key: "withdraw", href: `${base}/Withdraw`, label: labels.withdraw },
       {

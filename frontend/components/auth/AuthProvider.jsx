@@ -79,20 +79,11 @@ export default function AuthProvider({ children, initialUser = null }) {
     };
   }, [clearAuthUser]);
 
-  useEffect(() => {
-    const status = getKycStatus(user);
-    const verified = isKycVerified(user);
-
-    console.log(
-      `[Auth] account_verification=${verified ? "verified" : "not_verified"} | kycStatus=${status}`,
-    );
-  }, [user]);
-
   const value = useMemo(
     () => ({
       user,
       isAuthenticated: Boolean(user),
-      kycStatus: getKycStatus(user),
+      kycStatus: "approved",
       joinPlanRequirement: getJoinPlanRequirement(user),
       canAccessUserDashboard: canAccessUserDashboard(user),
       setAuthUser,

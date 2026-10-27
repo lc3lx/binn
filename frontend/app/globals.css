@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 @plugin "tailwindcss-animate";
 @import "tailwindcss/theme";
@@ -68,15 +69,18 @@
 }
 
 :root {
-  --app-font-family: var(--font-latin), system-ui, sans-serif;
+  --font-latin: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-arabic: 'Cairo', 'Segoe UI', Tahoma, Arial, sans-serif;
+  --app-font-family: var(--font-latin);
   --font-sans: var(--app-font-family);
 }
 
 html[dir="rtl"],
 html[lang="ar"],
-html[data-locale="ar"] {
-  --app-font-family: var(--font-arabic), system-ui, sans-serif;
-  --font-sans: var(--app-font-family);
+html[data-locale="ar"],
+[data-locale="ar"] {
+  --app-font-family: var(--font-arabic);
+  --font-sans: var(--font-arabic);
 }
 
 html,
@@ -93,6 +97,10 @@ body {
   background-attachment: fixed;
   color: #f8fafc;
   min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6, p, span, a, button, input, label, select, textarea {
+  font-family: inherit;
 }
 
 button,

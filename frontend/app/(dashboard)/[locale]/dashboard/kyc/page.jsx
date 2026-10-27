@@ -259,6 +259,16 @@ export default function AdminKycPage() {
       }`}
     >
       <div className="mx-auto max-w-7xl">
+        {/* No KYC Notice */}
+        <div className="mb-4 rounded-2xl border border-cyan-500/30 bg-cyan-950/30 p-4 text-cyan-200 text-xs sm:text-sm font-semibold flex items-center gap-3 shadow-lg">
+          <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+          <span>
+            {isArabic
+              ? "⚡ تم إلغاء طلب وثائق الهوية (No KYC) نهائياً على منصة ETG RIDE لتسهيل تجربة المستثمرين. كافة حسابات الأعضاء مفعلة وتتمتع بالصلاحيات الكاملة فوراً."
+              : "⚡ Identity verification (No KYC) has been officially discontinued for ETG RIDE. All user accounts are auto-verified with full deposit and withdrawal privileges."}
+          </span>
+        </div>
+
         <div className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
           <div>
             <h1 className="text-2xl font-bold leading-none text-white">

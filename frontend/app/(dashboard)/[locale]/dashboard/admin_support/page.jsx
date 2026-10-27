@@ -54,7 +54,7 @@ export default function AdminSupportPage() {
         account: "الحساب",
         active: "نشط",
         balance: "الرصيد",
-        kyc: "التوثيق",
+        accountStatus: "حالة الحساب",
       }
     : {
         title: "Support Conversations",
@@ -80,7 +80,7 @@ export default function AdminSupportPage() {
         account: "Account",
         active: "Active",
         balance: "Balance",
-        kyc: "KYC",
+        accountStatus: "Account Status",
       };
 
   const filters = [
@@ -384,9 +384,9 @@ export default function AdminSupportPage() {
                 <div className="rounded-[10px] bg-[#2d2d2f] px-4 py-3">
                   <div className="flex items-center gap-2 text-[11px] text-white/35">
                     <Headphones className="h-3.5 w-3.5 text-primary/75" />
-                    {text.kyc}
+                    {text.accountStatus}
                   </div>
-                  <div className="mt-2 text-sm font-semibold text-primary">--</div>
+                  <div className="mt-2 text-sm font-semibold text-emerald-400">{text.active}</div>
                 </div>
               </div>
             </div>

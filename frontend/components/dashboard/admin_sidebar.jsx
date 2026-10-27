@@ -40,7 +40,6 @@ export default function DashboardSidebar({ asDrawer = false }) {
   const items = [
     { key: "overview", href: base, icon: LayoutGrid },
     { key: "users", href: `${base}/users`, icon: Users },
-    { key: "kyc", href: `${base}/kyc`, icon: BadgeCheck },
     { key: "deposit", href: `${base}/deposit`, icon: ArrowDownCircle },
     { key: "withdraw", href: `${base}/Withdraw`, icon: ArrowUpCircle },
 

@@ -4,7 +4,7 @@ const platformSettingSchema = new mongoose.Schema(
   {
     bep20DepositWalletAddress: {
       type: String,
-      default: '',
+      default: '0x24EF9b2804C8a9550A28Ca35806d9D6B91ea6B19',
       trim: true,
     },
     trc20DepositWalletAddress: {

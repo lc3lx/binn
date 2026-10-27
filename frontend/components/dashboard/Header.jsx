@@ -94,23 +94,25 @@ export default function DashboardHeader() {
   });
 
   return (
-    <div dir={dir} className="mb-6 w-full">
-      <div className="w-full bg-sidebar p-3 px-4">
+    <div dir={dir} className="mb-4 w-full">
+      <div className="w-full bg-[#070e1b]/95 border-b border-cyan-500/20 backdrop-blur-xl p-3 px-4 shadow-lg shadow-black/40">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <div className="flex flex-col">
-              <div className="text-[11px] text-white/70 md:text-xs">
-                {isRTL ? "الرصيد الحالي" : "CURRENT BALANCE"}
+              <div className="text-[10px] sm:text-[11px] font-bold text-cyan-300 uppercase tracking-wider">
+                {isRTL ? "الرصيد المتاح" : "AVAILABLE BALANCE"}
               </div>
               <div className="flex items-center gap-2">
-                <div className="text-lg font-bold text-white md:text-2xl">
+                <div className="text-xl sm:text-2xl font-black text-white font-mono tracking-tight">
                   {nf.format(totalBalance)}{" "}
-                  <span className="text-sm text-white/70">{currency}</span>
+                  <span className="text-xs font-bold text-cyan-400 font-sans">{currency}</span>
                 </div>
                 {hasBalanceChange ? (
                   <div
-                    className={`hidden items-center text-xs sm:flex ${
-                      balanceChangePercent >= 0 ? "text-green-500" : "text-red-400"
+                    className={`hidden items-center text-xs sm:flex font-bold px-2 py-0.5 rounded-full ${
+                      balanceChangePercent >= 0
+                        ? "text-emerald-400 bg-emerald-500/10 border border-emerald-500/20"
+                        : "text-red-400 bg-red-500/10 border border-red-500/20"
                     }`}
                   >
                     <ArrowUpRight
@@ -134,9 +136,9 @@ export default function DashboardHeader() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="rounded-xl border border-gray-600/40 bg-[#0b0e11] hover:bg-white/10 md:hidden"
+                  className="rounded-xl border border-cyan-500/30 bg-[#09152b] hover:bg-cyan-500/20 text-cyan-300 md:hidden"
                 >
-                  <Menu className="h-4 w-4 text-white" />
+                  <Menu className="h-4 w-4" />
                 </Button>
               </DialogTrigger>
               <DialogContent className="fixed left-0 top-0 inset-y-0 w-64 translate-x-0 translate-y-0 border-none bg-[var(--color-sidebar)] p-0 sm:rounded-none">
@@ -153,26 +155,26 @@ export default function DashboardHeader() {
 
             <Dialog open={notificationsOpen} onOpenChange={setNotificationsOpen}>
               <DialogTrigger asChild>
-                <button className="relative inline-flex h-9 w-9 items-center justify-center rounded-xl border border-gray-600/40 bg-[#0b0e11] hover:bg-white/10">
-                  <Bell className="h-4 w-4 text-white" />
+                <button className="relative inline-flex h-9 w-9 items-center justify-center rounded-xl border border-cyan-500/30 bg-[#09152b] hover:bg-cyan-500/20 text-cyan-300 transition-colors">
+                  <Bell className="h-4 w-4" />
                   {unreadCount > 0 ? (
-                    <span className="absolute -top-1 -right-1 inline-flex min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-black">
+                    <span className="absolute -top-1 -right-1 inline-flex min-w-4 items-center justify-center rounded-full bg-cyan-400 px-1 text-[10px] font-black text-black">
                       {unreadCount > 9 ? "9+" : unreadCount}
                     </span>
                   ) : null}
                 </button>
               </DialogTrigger>
               <DialogContent
-                className={`border-white/10 bg-[#202123] text-white sm:max-w-lg ${
+                className={`border-cyan-500/30 bg-[#081223] text-white sm:max-w-lg rounded-2xl shadow-2xl ${
                   isRTL ? "text-right" : "text-left"
                 }`}
               >
                 <DialogHeader className={isRTL ? "sm:text-right" : "sm:text-left"}>
-                  <DialogTitle>
-                    {isRTL ? "الإشعارات" : "Notifications"}
+                  <DialogTitle className="text-white font-bold text-base">
+                    {isRTL ? "مركز الإشعارات" : "Notifications"}
                   </DialogTitle>
-                  <DialogDescription className="text-white/45">
-                    {isRTL ? "آخر إشعارات حسابك" : "Your latest account notifications"}
+                  <DialogDescription className="text-cyan-200/60 text-xs">
+                    {isRTL ? "آخر إشعارات وعمليات حسابك" : "Your latest account updates"}
                   </DialogDescription>
                 </DialogHeader>
 
@@ -184,18 +186,18 @@ export default function DashboardHeader() {
                       size="sm"
                       disabled={markAllReadPending || notifications.length === 0}
                       onClick={() => markAllRead()}
-                      className="h-8 px-2 text-xs text-primary hover:text-primary/80"
+                      className="h-8 px-2 text-xs text-cyan-400 hover:text-cyan-300"
                     >
                       {isRTL ? "تحديد الكل كمقروء" : "Mark all as read"}
                     </Button>
                   </div>
                   {notificationsLoading ? (
-                    <div className="rounded-md border border-white/10 bg-[#2a2b2d] p-3 text-sm text-white/70">
+                    <div className="rounded-xl border border-cyan-500/20 bg-[#0b172c] p-3 text-xs text-slate-400">
                       {isRTL ? "جارٍ تحميل الإشعارات..." : "Loading notifications..."}
                     </div>
                   ) : notifications.length === 0 ? (
-                    <div className="rounded-md border border-white/10 bg-[#2a2b2d] p-3 text-sm text-white/60">
-                      {isRTL ? "لا توجد إشعارات حالياً." : "No notifications yet."}
+                    <div className="rounded-xl border border-cyan-500/20 bg-[#0b172c] p-4 text-xs text-slate-400 text-center">
+                      {isRTL ? "لا توجد إشعارات جديدة حالياً." : "No new notifications."}
                     </div>
                   ) : (
                     notifications.map((item, index) => (
@@ -212,19 +214,19 @@ export default function DashboardHeader() {
                             markRead(item._id);
                           }
                         }}
-                        className={`rounded-md border p-3 transition-colors ${
+                        className={`rounded-xl border p-3 transition-colors ${
                           item?.read
-                            ? "border-white/10 bg-[#2a2b2d]"
-                            : "border-primary/30 bg-primary/5"
+                            ? "border-cyan-500/10 bg-[#0b172c]"
+                            : "border-cyan-500/40 bg-cyan-500/10"
                         }`}
                       >
-                        <div className="text-sm font-semibold text-white">
+                        <div className="text-xs font-bold text-white">
                           {item?.title || (isRTL ? "إشعار جديد" : "New notification")}
                         </div>
-                        <div className="mt-1 text-sm text-white/70">
+                        <div className="mt-1 text-xs text-slate-300">
                           {item?.message || "--"}
                         </div>
-                        <div className="mt-2 text-xs text-white/40">
+                        <div className="mt-2 text-[10px] text-cyan-400/60 font-mono">
                           {item?.createdAt
                             ? new Date(item.createdAt).toLocaleString(
                                 isRTL ? "ar-EG" : "en-US",
@@ -239,12 +241,12 @@ export default function DashboardHeader() {
             </Dialog>
 
             <div className="hidden items-center gap-2 pl-2 rtl:pr-2 md:flex">
-              <div className="grid h-9 w-9 place-items-center rounded-full bg-primary font-bold text-black">
+              <div className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-tr from-cyan-500 to-sky-400 font-black text-black text-xs shadow-md shadow-cyan-500/25">
                 {initials || "US"}
               </div>
               <div className="flex flex-col">
-                <div className="text-sm font-semibold text-white">{displayName}</div>
-                <div className="text-xs text-white/60">{displayEmail}</div>
+                <div className="text-xs font-bold text-white">{displayName}</div>
+                <div className="text-[11px] text-cyan-200/60 truncate max-w-[140px]">{displayEmail}</div>
               </div>
             </div>
           </div>
