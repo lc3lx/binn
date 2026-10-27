@@ -1,4 +1,4 @@
-﻿import axios from "axios";
+import axios from "axios";
 import { BASE_URL } from "@/api/config";
 import api from "@/api/instance";
 
@@ -34,6 +34,38 @@ export async function sendSupportMessage(ticketId, payload) {
       return data;
     }
 
+    throw error;
+  }
+}
+
+/**
+ * Send a message to ETG RIDE AI Support Concierge.
+ * Automatically tries backend route first (/api/v1/support/ai-chat),
+ * then falls back to Next.js API route (/api/ai-chat).
+ */
+export async function sendAiChatMessage(payload) {
+  const { message, history, locale } = payload || {};
+
+  try {
+    const { data } = await unauthApi.post("support/ai-chat", {
+      message,
+      history,
+      locale,
+    });
+    return data;
+  } catch (error) {
+    try {
+      const fallbackRes = await fetch("/api/ai-chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message, history, locale }),
+      });
+      if (fallbackRes.ok) {
+        return await fallbackRes.json();
+      }
+    } catch (e) {
+      // Fall through to throw original error
+    }
     throw error;
   }
 }

@@ -9,6 +9,7 @@ const {
   adminReplyToTicket,
   updateTicketStatusByAdmin,
 } = require('../services/supportService');
+const { aiChatSupport } = require('../services/aiSupportService');
 const {
   createSupportTicketValidator,
   addSupportMessageValidator,
@@ -17,6 +18,9 @@ const {
 } = require('../utils/validators/supportValidator');
 
 const router = express.Router();
+
+// Public route: AI Support Chatbot (OpenRouter / Fallback Intelligent Concierge)
+router.post('/ai-chat', aiChatSupport);
 
 router.use(authService.protect);
 
