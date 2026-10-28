@@ -4,6 +4,7 @@ const ApiError = require('../utils/apiError');
 const Plan = require('../models/planModel');
 const User = require('../models/userModel');
 const WalletTransaction = require('../models/walletTransactionModel');
+const { resolveTierSpecs } = require('../utils/tierSpecs');
 const {
   PAYOUT_INTERVAL_DAYS,
   PAYOUT_PERCENT,
@@ -18,13 +19,64 @@ exports.getPlans = asyncHandler(async (req, res) => {
   }
 
   const plans = await Plan.find(filter).sort('price');
-  res.status(200).json({ results: plans.length, data: plans });
+
+  const normalizedPlans = await Promise.all(
+    plans.map(async (plan) => {
+      const specs = resolveTierSpecs(plan.price, plan);
+      const isMismatch =
+        plan.modelName !== specs.modelName ||
+        plan.deviceCount !== specs.deviceCount ||
+        plan.dailyIncome !== specs.dailyIncome ||
+        plan.scooterIncome !== specs.scooterIncome ||
+        plan.vipTier !== specs.vipTier;
+
+      if (isMismatch) {
+        await Plan.updateOne(
+          { _id: plan._id },
+          {
+            $set: {
+              modelName: specs.modelName,
+              deviceCount: specs.deviceCount,
+              dailyIncome: specs.dailyIncome,
+              scooterIncome: specs.scooterIncome,
+              vipTier: specs.vipTier,
+              vehicleType: `Electric Scooter ${specs.modelName}`,
+            },
+          }
+        ).catch(() => {});
+      }
+
+      const planObj = plan.toObject();
+      return {
+        ...planObj,
+        modelName: specs.modelName,
+        deviceCount: specs.deviceCount,
+        dailyIncome: specs.dailyIncome,
+        scooterIncome: specs.scooterIncome,
+        vipTier: specs.vipTier,
+      };
+    })
+  );
+
+  res.status(200).json({ results: normalizedPlans.length, data: normalizedPlans });
 });
 
 exports.getPlan = asyncHandler(async (req, res, next) => {
   const plan = await Plan.findById(req.params.id);
   if (!plan) return next(new ApiError(`No plan for this id ${req.params.id}`, 404));
-  res.status(200).json({ data: plan });
+
+  const specs = resolveTierSpecs(plan.price, plan);
+  const planObj = plan.toObject();
+  const normalized = {
+    ...planObj,
+    modelName: specs.modelName,
+    deviceCount: specs.deviceCount,
+    dailyIncome: specs.dailyIncome,
+    scooterIncome: specs.scooterIncome,
+    vipTier: specs.vipTier,
+  };
+
+  res.status(200).json({ data: normalized });
 });
 
 exports.createPlan = asyncHandler(async (req, res) => {
@@ -75,32 +127,18 @@ exports.subscribeToPlan = asyncHandler(async (req, res, next) => {
   user.planSubscriptions = user.planSubscriptions || [];
   user.planSubscriptions.push(subscriptionEntry);
 
-  const computedDailyIncome = Number(plan.dailyIncome || (plan.price * 0.05).toFixed(2));
-  const computedDevices = Number(
-    plan.deviceCount ||
-      (plan.price === 50
-        ? 1
-        : plan.price === 100
-        ? 2
-        : plan.price === 200
-        ? 4
-        : plan.price === 500
-        ? 10
-        : plan.price === 1000
-        ? 20
-        : plan.price === 2000
-        ? 40
-        : plan.price === 5000
-        ? 100
-        : Math.max(1, Math.round(plan.price / 50)))
-  );
+  const specs = resolveTierSpecs(plan.price, plan);
+  const computedDailyIncome = specs.dailyIncome;
+  const computedDevices = specs.deviceCount;
+  const modelName = specs.modelName;
+  const scooterIncome = specs.scooterIncome;
 
   user.activeScooters = user.activeScooters || [];
   user.activeScooters.push({
     plan: plan._id,
-    modelName: plan.modelName || plan.name,
+    modelName: modelName,
     deviceCount: computedDevices,
-    scooterIncome: Number(plan.scooterIncome || 2.5),
+    scooterIncome: scooterIncome,
     dailyIncome: computedDailyIncome,
     price: plan.price,
     status: 'OPEN',

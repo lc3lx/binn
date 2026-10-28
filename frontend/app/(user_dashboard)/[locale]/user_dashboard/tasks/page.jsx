@@ -32,17 +32,53 @@ export default function RideScootersPage() {
 
   const taskData = statusResponse?.data || {};
   const activeScooters = taskData.activeScooters || [];
-  const primaryScooter = activeScooters[0] || {
-    modelName: "E3",
-    deviceCount: 4,
+  const rawPrimary = activeScooters[0] || {
+    modelName: "E2",
+    deviceCount: 2,
     countdown: "04:59:50",
-    dailyIncome: 10.0,
+    dailyIncome: 5.0,
     scooterIncome: 2.5,
     status: "OPEN",
-    price: 200,
+    price: 100,
     purchasedAt: "09-06-2026 10:34:33",
     currentIncome: 0,
     image: "/scooter_transparent.png",
+  };
+
+  const primaryPrice = Number(rawPrimary.price || 100);
+  const primaryDailyIncome =
+    rawPrimary.dailyIncome != null && rawPrimary.dailyIncome !== 6.4
+      ? rawPrimary.dailyIncome
+      : Number((primaryPrice * 0.05).toFixed(2));
+  const primaryDevices =
+    rawPrimary.deviceCount != null && rawPrimary.deviceCount !== 4
+      ? rawPrimary.deviceCount
+      : Math.max(1, Math.round(primaryPrice / 50));
+  const primaryModel =
+    rawPrimary.modelName && !["E2", "E2 Scooter"].includes(rawPrimary.modelName)
+      ? rawPrimary.modelName
+      : primaryPrice === 50
+      ? "E1"
+      : primaryPrice === 100
+      ? "E2"
+      : primaryPrice === 200
+      ? "E3"
+      : primaryPrice === 500
+      ? "E4"
+      : primaryPrice === 1000
+      ? "E5"
+      : primaryPrice === 2000
+      ? "E6"
+      : primaryPrice === 5000
+      ? "E7"
+      : rawPrimary.modelName || "E2";
+
+  const primaryScooter = {
+    ...rawPrimary,
+    modelName: primaryModel,
+    dailyIncome: primaryDailyIncome,
+    deviceCount: primaryDevices,
+    scooterIncome: rawPrimary.scooterIncome || 2.5,
   };
 
   const isScooterRunning = primaryScooter.status === "PROGRESS";

@@ -54,15 +54,15 @@ const planSchema = new mongoose.Schema(
     },
     modelName: {
       type: String,
-      default: 'E2',
+      default: 'E1',
     },
     deviceCount: {
       type: Number,
-      default: 4,
+      default: 1,
     },
     scooterIncome: {
       type: Number,
-      default: 1.6,
+      default: 2.5,
     },
     vehicleType: {
       type: String,
@@ -74,7 +74,7 @@ const planSchema = new mongoose.Schema(
     },
     dailyIncome: {
       type: Number,
-      default: 0,
+      default: 2.5,
     },
     vehicleImage: {
       type: String,

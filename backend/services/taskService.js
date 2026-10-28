@@ -3,6 +3,7 @@ const ApiError = require('../utils/apiError');
 const User = require('../models/userModel');
 const Plan = require('../models/planModel');
 const WalletTransaction = require('../models/walletTransactionModel');
+const { resolveTierSpecs } = require('../utils/tierSpecs');
 
 /**
  * Returns current UTC date string YYYY-MM-DD
@@ -43,8 +44,25 @@ const ensureUserScooter = async (user) => {
     modified = true;
   }
 
-  // If user has no active scooters, provide the primary scooter (default E2)
-  if (!user.activeScooters || user.activeScooters.length === 0) {
+  // If user has active scooters, ensure their tier attributes (modelName, deviceCount, income) match exactly
+  if (user.activeScooters && user.activeScooters.length > 0) {
+    user.activeScooters.forEach((sc) => {
+      const specs = resolveTierSpecs(sc.price, sc);
+      if (
+        sc.modelName !== specs.modelName ||
+        sc.deviceCount !== specs.deviceCount ||
+        sc.dailyIncome !== specs.dailyIncome ||
+        sc.scooterIncome !== specs.scooterIncome
+      ) {
+        sc.modelName = specs.modelName;
+        sc.deviceCount = specs.deviceCount;
+        sc.dailyIncome = specs.dailyIncome;
+        sc.scooterIncome = specs.scooterIncome;
+        modified = true;
+      }
+    });
+  } else {
+    // If user has no active scooters, provide the primary scooter (default E2)
     const e2Plan = await Plan.findOne({ modelName: 'E2' });
     const now = new Date();
     user.activeScooters = [
@@ -107,17 +125,20 @@ exports.getTodayTaskStatus = asyncHandler(async (req, res, next) => {
       countdownStr = '04:59:50';
     }
 
-    const calculatedDaily = scooter.dailyIncome || (scooter.price ? Number((scooter.price * 0.05).toFixed(2)) : 5.0);
-    const calculatedDevices = scooter.deviceCount || (scooter.price ? Math.max(1, Math.round(scooter.price / 50)) : 2);
+    const specs = resolveTierSpecs(scooter.price, scooter);
+    const calculatedDaily = specs.dailyIncome;
+    const calculatedDevices = specs.deviceCount;
+    const modelName = specs.modelName;
+    const scooterIncome = specs.scooterIncome;
 
     return {
       id: scooter._id,
-      modelName: scooter.modelName || 'E2',
+      modelName,
       deviceCount: calculatedDevices,
       countdown: countdownStr,
       remainingSeconds,
       dailyIncome: calculatedDaily,
-      scooterIncome: scooter.scooterIncome || 2.5,
+      scooterIncome,
       status: scooter.status || 'OPEN',
       price: scooter.price || 100,
       purchasedAt: formatDateTime(scooter.purchasedAt),
@@ -237,9 +258,8 @@ exports.collectScooterEarnings = asyncHandler(async (req, res, next) => {
     return next(new ApiError('No scooter found to collect earnings', 400));
   }
 
-  const rewardAmount =
-    targetScooter.dailyIncome ||
-    (targetScooter.price ? Number((targetScooter.price * 0.05).toFixed(2)) : 5.0);
+  const specs = resolveTierSpecs(targetScooter.price, targetScooter);
+  const rewardAmount = specs.dailyIncome;
   const balanceBefore = user.walletBalance || 0;
   const balanceAfter = Number((balanceBefore + rewardAmount).toFixed(2));
 
@@ -295,7 +315,8 @@ exports.collectAllScooters = asyncHandler(async (req, res, next) => {
   let totalReward = 0;
   if (user.activeScooters && user.activeScooters.length > 0) {
     user.activeScooters.forEach((sc) => {
-      totalReward += sc.dailyIncome || (sc.price ? Number((sc.price * 0.05).toFixed(2)) : 5.0);
+      const specs = resolveTierSpecs(sc.price, sc);
+      totalReward += specs.dailyIncome;
       sc.status = 'OPEN';
     });
   } else {

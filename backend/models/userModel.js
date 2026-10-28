@@ -180,11 +180,11 @@ const userSchema = new mongoose.Schema(
     activeScooters: [
       {
         plan: { type: mongoose.Schema.ObjectId, ref: 'Plan' },
-        modelName: { type: String, default: 'E2' },
-        deviceCount: { type: Number, default: 4 },
-        scooterIncome: { type: Number, default: 1.6 },
-        dailyIncome: { type: Number, default: 6.4 },
-        price: { type: Number, default: 220 },
+        modelName: { type: String, default: 'E1' },
+        deviceCount: { type: Number, default: 1 },
+        scooterIncome: { type: Number, default: 2.5 },
+        dailyIncome: { type: Number, default: 2.5 },
+        price: { type: Number, default: 50 },
         status: {
           type: String,
           enum: ['OPEN', 'PROGRESS', 'COMPLETED'],

@@ -97,6 +97,38 @@ const fallbackScooters = [
   },
 ];
 
+const TIER_MAPPINGS = {
+  50: { modelName: "E1", deviceCount: 1, scooterIncome: 2.5, dailyIncome: 2.5 },
+  100: { modelName: "E2", deviceCount: 2, scooterIncome: 2.5, dailyIncome: 5.0 },
+  200: { modelName: "E3", deviceCount: 4, scooterIncome: 2.5, dailyIncome: 10.0 },
+  500: { modelName: "E4", deviceCount: 10, scooterIncome: 2.5, dailyIncome: 25.0 },
+  1000: { modelName: "E5", deviceCount: 20, scooterIncome: 2.5, dailyIncome: 50.0 },
+  2000: { modelName: "E6", deviceCount: 40, scooterIncome: 2.5, dailyIncome: 100.0 },
+  5000: { modelName: "E7", deviceCount: 100, scooterIncome: 2.5, dailyIncome: 250.0 },
+};
+
+const resolveScooterData = (scooter) => {
+  const price = Number(scooter?.price || 50);
+  if (TIER_MAPPINGS[price]) {
+    return {
+      price,
+      modelName: TIER_MAPPINGS[price].modelName,
+      deviceCount: TIER_MAPPINGS[price].deviceCount,
+      scooterIncome: TIER_MAPPINGS[price].scooterIncome,
+      dailyIncome: TIER_MAPPINGS[price].dailyIncome,
+    };
+  }
+  const dailyIncome = Number((price * 0.05).toFixed(2));
+  const deviceCount = Math.max(1, Math.round(price / 50));
+  const scooterIncome = 2.5;
+  const modelName =
+    scooter?.modelName && !["E2", "E2 Scooter"].includes(scooter.modelName)
+      ? scooter.modelName
+      : `E${Math.min(7, Math.max(1, Math.round(price / 50)))}`;
+
+  return { price, modelName, deviceCount, scooterIncome, dailyIncome };
+};
+
 export default function ScooterPlansPage() {
   const { locale } = useTranslations();
   const [subscribingPlanId, setSubscribingPlanId] = useState(null);
@@ -125,8 +157,8 @@ export default function ScooterPlansPage() {
       await subscribeMutation.mutateAsync(planToConfirm._id);
       toast.success(
         isArabic
-          ? `تم استئجار سكوتر ${planToConfirm.name || planToConfirm.modelName} بنجاح! توجه لشاشة RIDE لبدء التشغيل.`
-          : `Scooter ${planToConfirm.name || planToConfirm.modelName} leased successfully! Head to RIDE to power on.`
+          ? `تم استئجار سكوتر ${planToConfirm.modelName || planToConfirm.name} بنجاح! توجه لشاشة RIDE لبدء التشغيل.`
+          : `Scooter ${planToConfirm.modelName || planToConfirm.name} leased successfully! Head to RIDE to power on.`
       );
       setPlanToConfirm(null);
     } catch (err) {
@@ -157,11 +189,12 @@ export default function ScooterPlansPage() {
       {/* Scooters List */}
       <div className="space-y-4">
         {sourcePlans.map((scooter) => {
-          const modelName = scooter.modelName || scooter.name || "E2";
-          const deviceCount = scooter.deviceCount || 4;
-          const price = scooter.price || 220;
-          const dailyIncome = scooter.dailyIncome || (deviceCount * 1.6);
-          const scooterIncome = scooter.scooterIncome || Number((dailyIncome / deviceCount).toFixed(2));
+          const resolved = resolveScooterData(scooter);
+          const modelName = resolved.modelName;
+          const deviceCount = resolved.deviceCount;
+          const price = resolved.price;
+          const dailyIncome = resolved.dailyIncome;
+          const scooterIncome = resolved.scooterIncome;
 
           return (
             <motion.div
@@ -227,7 +260,7 @@ export default function ScooterPlansPage() {
 
               {/* Action Button */}
               <Button
-                onClick={() => setPlanToConfirm(scooter)}
+                onClick={() => setPlanToConfirm({ ...scooter, ...resolved })}
                 className="w-full py-5 rounded-2xl bg-[#0c2a54] hover:bg-[#103569] text-white font-extrabold text-sm shadow-xl shadow-blue-950/60 border border-blue-500/40 transition-all active:scale-[0.98]"
               >
                 {isArabic ? `تأجير سكوتر ${modelName} الآن` : `Lease ${modelName} Now`}

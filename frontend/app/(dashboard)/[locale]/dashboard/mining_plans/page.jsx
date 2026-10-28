@@ -76,9 +76,9 @@ export default function AdminMiningPlansPage() {
       totalReturn:
         plan.totalReturnPercent != null ? `${plan.totalReturnPercent}%` : "--",
       dailyIncome:
-        plan.scooterIncome != null || plan.hashrate != null
-          ? `${plan.scooterIncome || plan.hashrate} ${isArabic ? "USDT / يوم" : "USDT / day"}`
-          : `1.6 ${isArabic ? "USDT / يوم" : "USDT / day"}`,
+        plan.dailyIncome != null
+          ? `${plan.dailyIncome} ${isArabic ? "USDT / يوم" : "USDT / day"}`
+          : `${(Number(plan.price || 50) * 0.05).toFixed(2)} ${isArabic ? "USDT / يوم" : "USDT / day"}`,
       subscribers: `${Number(plan.totalSubscribers || 0).toLocaleString(
         "en-US",
       )} ${isArabic ? "مشترك" : "subscribers"}`,
