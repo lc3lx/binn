@@ -279,8 +279,8 @@ export default function ScooterPlansPage() {
             </DialogTitle>
             <DialogDescription className="text-slate-400 text-xs text-center pt-2">
               {isArabic
-                ? `سيتم خصم ${planToConfirm?.price} USDT من رصيد محفظتك وتفعيل سكوتر ${planToConfirm?.name || planToConfirm?.modelName} في شاشة RIDE فوراً.`
-                : `Deduct ${planToConfirm?.price} USDT from your wallet to activate ${planToConfirm?.name || planToConfirm?.modelName} in RIDE.`}
+                ? `سيتم خصم ${planToConfirm?.price} USDT من محفظتك ودمج وترقية السكوتر الجديد (${planToConfirm?.modelName || planToConfirm?.name}) في أسطولك النشط فوراً لتوليد أرباح مجمعة بنسبة 5% يومياً.`
+                : `Deduct ${planToConfirm?.price} USDT from your wallet to merge and upgrade your active fleet with ${planToConfirm?.modelName || planToConfirm?.name} for combined 5% daily yield.`}
             </DialogDescription>
           </DialogHeader>
 
@@ -300,8 +300,8 @@ export default function ScooterPlansPage() {
               className="bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl"
             >
               {subscribingPlanId
-                ? isArabic ? "جارٍ التفعيل..." : "Activating..."
-                : isArabic ? "تأكيد الاستئجار" : "Confirm Lease"}
+                ? isArabic ? "جارٍ التفعيل والترقية..." : "Activating..."
+                : isArabic ? "تأكيد الاستئجار والترقية" : "Confirm Lease & Upgrade"}
             </Button>
           </DialogFooter>
         </DialogContent>

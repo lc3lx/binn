@@ -8,6 +8,8 @@ const TIER_SPECS = {
   5000: { modelName: 'E7', name: 'E7', deviceCount: 100, dailyIncome: 250.0, scooterIncome: 2.5, vipTier: 7 },
 };
 
+const TASK_DURATION_SECONDS = 5 * 3600; // 5 hours = 18000 seconds
+
 const resolveTierSpecs = (price, existing = {}) => {
   const p = Number(price) || 50;
   if (TIER_SPECS[p]) {
@@ -21,15 +23,16 @@ const resolveTierSpecs = (price, existing = {}) => {
     };
   }
 
-  // 5% daily return, $2.5 per scooter
+  // 5% daily return, $2.50 per scooter device
   const dailyIncome = Number((p * 0.05).toFixed(2));
   const scooterIncome = 2.5;
   const deviceCount = Math.max(1, Math.round(p / 50));
   const vipTier = Math.min(7, Math.max(1, Math.round(p / 50)));
   const modelName =
-    existing.modelName && !['E2', 'E2 Scooter'].includes(existing.modelName)
+    existing.modelName &&
+    !['E1', 'E2', 'E2 Scooter', 'E3', 'E4', 'E5', 'E6', 'E7'].includes(existing.modelName)
       ? existing.modelName
-      : `E${vipTier}`;
+      : `E-Fleet (${p} USDT)`;
 
   return {
     modelName,
@@ -43,5 +46,6 @@ const resolveTierSpecs = (price, existing = {}) => {
 
 module.exports = {
   TIER_SPECS,
+  TASK_DURATION_SECONDS,
   resolveTierSpecs,
 };

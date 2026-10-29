@@ -1,8 +1,11 @@
 "use client";
 
 import { useMemo } from "react";
+import Link from "next/link";
 import { useTranslations } from "@/hooks/useTranslations";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Zap } from "lucide-react";
 import { useMyPlanSubscriptionsQuery } from "@/api/services/user/mining_plans/mining_plans.query";
 
 export default function MyPlansPage() {
@@ -78,9 +81,17 @@ export default function MyPlansPage() {
   return (
     <div className="min-h-screen p-6">
       <div className="mx-auto max-w-6xl space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-white">{text.title}</h1>
-          <p className="mt-1 text-sm text-white/65">{text.subtitle}</p>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-bold text-white">{text.title}</h1>
+            <p className="mt-1 text-sm text-white/65">{text.subtitle}</p>
+          </div>
+          <Link href={`/${locale}/user_dashboard/mining_plans`}>
+            <Button className="bg-[#0c2a54] hover:bg-[#103569] text-white font-bold border border-blue-500/40 rounded-xl">
+              <Zap className="w-4 h-4 mr-1 text-cyan-400" />
+              {isArabic ? "ترقية / استئجار سكوتر جديد" : "Upgrade / Lease New Scooter"}
+            </Button>
+          </Link>
         </div>
 
         <Card>

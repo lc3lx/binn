@@ -130,7 +130,7 @@ export default function UserDashboardPage() {
             </Button>
           </Link>
 
-          <Link href={`${base}/my_plans`} className="w-full">
+          <Link href={`${base}/mining_plans`} className="w-full">
             <Button
               variant="outline"
               className="w-full py-5 rounded-2xl border-slate-700 hover:bg-slate-800 text-white font-extrabold text-xs sm:text-sm transition-all"

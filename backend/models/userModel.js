@@ -100,6 +100,7 @@ const userSchema = new mongoose.Schema(
           required: true,
         },
         planName: { type: String },
+        price: { type: Number, default: 0 },
         subscribedAt: { type: Date },
         expiresAt: { type: Date },
         status: {
@@ -191,6 +192,8 @@ const userSchema = new mongoose.Schema(
           default: 'OPEN',
         },
         countdownEndsAt: { type: Date },
+        runSecondsToday: { type: Number, default: 0 },
+        lastStartedAt: { type: Date },
         lastClaimDate: { type: String, default: '' },
         pendingIncome: { type: Number, default: 0 },
         totalCollected: { type: Number, default: 0 },

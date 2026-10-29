@@ -105,21 +105,41 @@ exports.subscribeToPlan = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user._id);
   if (!user) return next(new ApiError('User not found', 404));
 
-  const balanceBefore = user.walletBalance || 0;
-  if (balanceBefore < plan.price) {
-    return next(new ApiError('Insufficient wallet balance to subscribe', 400));
+  // Check available balance minus pending withdrawals
+  const pendingTxs = await WalletTransaction.find({
+    user: user._id,
+    type: 'withdraw',
+    status: 'pending',
+  }).select('amount');
+  const pendingWithdrawalTotal = pendingTxs.reduce(
+    (sum, tx) => sum + (Number(tx.amount) || 0),
+    0
+  );
+  const availableBalance = (user.walletBalance || 0) - pendingWithdrawalTotal;
+
+  if (availableBalance < plan.price) {
+    return next(
+      new ApiError(
+        pendingWithdrawalTotal > 0
+          ? `الرصيد المتاح غير كافٍ للاشتراك بالباقة (توجد طلبات سحب معلقة بقيمة $${pendingWithdrawalTotal.toFixed(2)})`
+          : 'Insufficient wallet balance to subscribe',
+        400
+      )
+    );
   }
 
-  const balanceAfter = balanceBefore - plan.price;
+  const balanceBefore = user.walletBalance || 0;
+  const balanceAfter = Number((balanceBefore - plan.price).toFixed(2));
   user.walletBalance = balanceAfter;
 
   const subscribedAt = new Date();
   const expiresAt = new Date(subscribedAt);
-  expiresAt.setDate(expiresAt.getDate() + plan.durationDays);
+  expiresAt.setDate(expiresAt.getDate() + (plan.durationDays || 30));
 
   const subscriptionEntry = {
     plan: plan._id,
     planName: plan.name,
+    price: plan.price,
     subscribedAt,
     expiresAt,
     status: 'active',
@@ -127,29 +147,42 @@ exports.subscribeToPlan = asyncHandler(async (req, res, next) => {
   user.planSubscriptions = user.planSubscriptions || [];
   user.planSubscriptions.push(subscriptionEntry);
 
-  const specs = resolveTierSpecs(plan.price, plan);
-  const computedDailyIncome = specs.dailyIncome;
-  const computedDevices = specs.deviceCount;
-  const modelName = specs.modelName;
-  const scooterIncome = specs.scooterIncome;
+  // Plan Stacking / Upgrade Logic:
+  // Calculate total active fleet investment across all active subscriptions
+  const activeSubs = user.planSubscriptions.filter((s) => s.status === 'active');
+  const totalSubPrice = activeSubs.reduce((sum, s) => sum + (Number(s.price) || 0), 0);
+  const newTotalPrice = Math.max(plan.price, totalSubPrice);
 
-  user.activeScooters = user.activeScooters || [];
-  user.activeScooters.push({
+  const fleetSpecs = resolveTierSpecs(newTotalPrice);
+  const existingScooter = user.activeScooters && user.activeScooters[0];
+
+  user.activeScooters = [
+    {
+      plan: plan._id,
+      modelName: fleetSpecs.modelName,
+      deviceCount: fleetSpecs.deviceCount,
+      scooterIncome: 2.5,
+      dailyIncome: fleetSpecs.dailyIncome,
+      price: newTotalPrice,
+      status: existingScooter ? existingScooter.status : 'OPEN',
+      countdownEndsAt: existingScooter ? existingScooter.countdownEndsAt : null,
+      runSecondsToday: existingScooter ? (existingScooter.runSecondsToday || 0) : 0,
+      lastStartedAt: existingScooter ? existingScooter.lastStartedAt : null,
+      lastClaimDate: existingScooter ? existingScooter.lastClaimDate : '',
+      pendingIncome: fleetSpecs.dailyIncome,
+      totalCollected: existingScooter ? (existingScooter.totalCollected || 0) : 0,
+      purchasedAt: existingScooter?.purchasedAt || subscribedAt,
+    },
+  ];
+
+  user.currentPlan = {
     plan: plan._id,
-    modelName: modelName,
-    deviceCount: computedDevices,
-    scooterIncome: scooterIncome,
-    dailyIncome: computedDailyIncome,
-    price: plan.price,
-    status: 'OPEN',
-    countdownEndsAt: new Date(Date.now() + 5 * 3600 * 1000),
-    purchasedAt: subscribedAt,
-    pendingIncome: 0,
-    totalCollected: 0,
-  });
-
-  // Backward compatibility: keep currentPlan as the most recently created subscription
-  user.currentPlan = subscriptionEntry;
+    planName: fleetSpecs.modelName,
+    price: newTotalPrice,
+    subscribedAt,
+    expiresAt,
+    status: 'active',
+  };
   await user.save();
 
   await WalletTransaction.create({
@@ -160,17 +193,18 @@ exports.subscribeToPlan = asyncHandler(async (req, res, next) => {
     currency: 'USD',
     balanceBefore,
     balanceAfter,
-    note: `Plan subscription: ${plan.name}`,
+    note: `استثمار وترقية أسطول السكوتر: ${plan.name} (${plan.price} USDT) | إجمالي الأسطول: ${newTotalPrice} USDT`,
     createdBy: req.user._id,
   });
 
   res.status(200).json({
     status: 'Success',
-    message: 'Plan subscribed successfully',
+    message: `تم تفعيل وتحديث أسطولك بنجاح! إجمالي الأسطول: ${newTotalPrice} USDT بدخل يومي ${fleetSpecs.dailyIncome} USDT`,
     data: {
       walletBalance: user.walletBalance,
       currentPlan: user.currentPlan,
       planSubscriptions: user.planSubscriptions,
+      activeScooter: user.activeScooters[0],
       plan,
     },
   });
