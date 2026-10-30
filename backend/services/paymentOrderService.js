@@ -396,90 +396,154 @@ exports.getOrderStatus = asyncHandler(async (req, res, next) => {
  */
 exports.submitTxHash = asyncHandler(async (req, res, next) => {
   const { orderId, txHash } = req.body;
-  if (!orderId || !txHash) {
-    return next(new ApiError('orderId and txHash are required', 400));
+  if (!txHash) {
+    return next(new ApiError('txHash is required', 400));
   }
 
   const cleanTxHash = txHash.trim();
-  const or = [{ orderId }];
-  if (mongoose.Types.ObjectId.isValid(orderId)) {
-    or.push({ _id: orderId });
-  }
 
-  const order = await PaymentOrder.findOne({
-    $or: or,
-    user: req.user._id,
-  });
-
-  if (!order) {
-    return next(new ApiError('Order not found', 404));
-  }
-
-  if (order.status === 'paid') {
-    return res.status(200).json({
-      status: 'Success',
-      message: 'Order is already marked as paid and credited',
-      data: order,
-    });
-  }
-
-  // Idempotency check: Ensure txHash is not used on another paid order
-  const existingTx = await PaymentOrder.findOne({
+  // Idempotency check: Ensure txHash is not used on another paid order or confirmed wallet transaction
+  const existingOrder = await PaymentOrder.findOne({
     txHash: cleanTxHash,
-    _id: { $ne: order._id },
     status: 'paid',
   });
-  if (existingTx) {
-    return next(new ApiError('This transaction hash has already been credited to another order', 400));
+  if (existingOrder) {
+    return next(new ApiError('تم قيد هاش المعاملة هذا مسبقاً / This transaction hash has already been credited', 400));
   }
 
+  const existingTx = await WalletTransaction.findOne({
+    txHash: cleanTxHash,
+    status: { $in: ['confirmed', 'completed'] },
+  });
+  if (existingTx) {
+    return next(new ApiError('تم قيد هاش المعاملة هذا في المحفظة مسبقاً / This transaction hash has already been credited', 400));
+  }
+
+  const depositAddresses = await getDepositAddresses();
   const contractAddress = process.env.BEP20_USDT_CONTRACT || USDT_BEP20_CONTRACT;
+
+  let order = null;
+  if (orderId) {
+    const or = [{ orderId }];
+    if (mongoose.Types.ObjectId.isValid(orderId)) {
+      or.push({ _id: orderId });
+    }
+    order = await PaymentOrder.findOne({
+      $or: or,
+      user: req.user._id,
+    });
+  } else {
+    // If no orderId passed, find most recent pending order for this user if available
+    order = await PaymentOrder.findOne({
+      user: req.user._id,
+      status: 'pending',
+      expiresAt: { $gt: new Date() },
+    }).sort('-createdAt');
+  }
+
+  const expectedTo = order ? [order.address] : depositAddresses;
+
   const verification = await verifyBep20TransactionReceipt({
     txHash: cleanTxHash,
-    expectedTo: order.address,
+    expectedTo,
     contractAddress,
   });
 
   if (!verification.verified) {
-    return next(
-      new ApiError(
-        verification.reason || 'Transaction could not be verified on BSC blockchain',
-        400
-      )
-    );
-  }
-
-  const tolerance = getTolerance();
-  const diff = Math.abs(verification.amount - order.expectedAmount);
-  const now = new Date();
-
-  order.txHash = verification.txHash;
-  order.paidAmount = verification.amount;
-  order.paidAt = now;
-  order.lastCheckedAt = now;
-
-  if (diff <= tolerance || verification.amount >= order.baseAmount) {
-    order.status = 'paid';
-    order.mismatchType = 'none';
-    order.mismatchAmount = undefined;
-    await order.save({ validateBeforeSave: false });
-    await creditPaidOrder({ orderId: order._id, now });
+    // If on-chain verification is delayed, create/update a pending WalletTransaction for manual review
+    const pendingTx = await WalletTransaction.findOne({
+      txHash: cleanTxHash,
+      status: 'pending',
+    });
+    if (!pendingTx) {
+      await WalletTransaction.create({
+        user: req.user._id,
+        type: 'deposit',
+        status: 'pending',
+        amount: Number(req.body.amount || (order ? order.baseAmount : 50)),
+        currency: 'USD',
+        balanceBefore: req.user.walletBalance || 0,
+        balanceAfter: req.user.walletBalance || 0,
+        walletAddress: order ? order.address : depositAddresses[0],
+        txHash: cleanTxHash,
+        note: `إيداع معلق بانتظار التأكيدات (${verification.reason || 'BSC receipt pending'})`,
+        createdBy: req.user._id,
+      });
+    }
 
     return res.status(200).json({
       status: 'Success',
-      message: 'Transaction verified and wallet credited successfully!',
+      message:
+        'تم استلام هاش المعاملة بنجاح، المعاملة قيد المراجعة الفورية من قبل الإدارة / Transaction received and queued for review',
+      data: {
+        txHash: cleanTxHash,
+        status: 'pending',
+      },
+    });
+  }
+
+  const now = new Date();
+
+  if (order) {
+    const tolerance = getTolerance();
+    const diff = Math.abs(verification.amount - order.expectedAmount);
+
+    order.txHash = verification.txHash;
+    order.paidAmount = verification.amount;
+    order.paidAt = now;
+    order.lastCheckedAt = now;
+
+    if (diff <= tolerance || verification.amount >= order.baseAmount) {
+      order.status = 'paid';
+      order.mismatchType = 'none';
+      order.mismatchAmount = undefined;
+      await order.save({ validateBeforeSave: false });
+      await creditPaidOrder({ orderId: order._id, now });
+
+      return res.status(200).json({
+        status: 'Success',
+        message: 'تم التحقق من المعاملة عبر البلوكتشين بنجاح وقيد الرصيد فوراً في محفظتك!',
+        data: order,
+      });
+    }
+
+    order.mismatchType = verification.amount < order.expectedAmount ? 'underpaid' : 'overpaid';
+    order.mismatchAmount = roundToUsdt(Math.abs(diff));
+    await order.save({ validateBeforeSave: false });
+
+    return res.status(200).json({
+      status: 'Success',
+      message: 'تم كشف المعاملة وتحديث حالتها للمراجعة',
       data: order,
     });
   }
 
-  order.mismatchType = verification.amount < order.expectedAmount ? 'underpaid' : 'overpaid';
-  order.mismatchAmount = roundToUsdt(Math.abs(diff));
-  await order.save({ validateBeforeSave: false });
+  // If no order existed, credit user wallet directly via WalletTransaction
+  const user = await User.findById(req.user._id);
+  const amountToCredit = Number(verification.amount.toFixed(2));
+  const balanceBefore = user.walletBalance || 0;
+  const balanceAfter = Number((balanceBefore + amountToCredit).toFixed(2));
+  user.walletBalance = balanceAfter;
+  await user.save();
+
+  const newTx = await WalletTransaction.create({
+    user: user._id,
+    type: 'deposit',
+    status: 'confirmed',
+    amount: amountToCredit,
+    currency: 'USD',
+    balanceBefore,
+    balanceAfter,
+    walletAddress: verification.to,
+    txHash: verification.txHash,
+    note: `Auto verified BEP20 USDT direct deposit`,
+    createdBy: user._id,
+  });
 
   res.status(200).json({
     status: 'Success',
-    message: 'Payment detected with amount mismatch, awaiting review',
-    data: order,
+    message: `تم التحقق من المعاملة عبر البلوكتشين بنجاح وإيداع ${amountToCredit} USDT في محفظتك فوراً!`,
+    data: newTx,
   });
 });
 

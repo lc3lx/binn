@@ -28,13 +28,13 @@ exports.requestWithdrawValidator = [
   body('amount')
     .notEmpty()
     .withMessage('Withdrawal amount is required')
-    .isFloat({ gt: 0 })
-    .withMessage('Withdrawal amount must be greater than 0'),
+    .isFloat({ min: 2.5 })
+    .withMessage('Minimum withdrawal amount is 2.50 USDT'),
   body('walletAddress')
     .notEmpty()
     .withMessage('walletAddress is required')
-    .isString()
-    .withMessage('walletAddress must be a string'),
+    .matches(/^0x[a-fA-F0-9]{40}$/)
+    .withMessage('Invalid BEP-20 wallet address. Must start with 0x and be 42 characters long'),
   body('withdrawalFee')
     .optional()
     .isFloat({ min: 0 })

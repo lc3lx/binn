@@ -165,12 +165,16 @@ exports.verifyBep20TransactionReceipt = async ({
   expectedTo,
   contractAddress = USDT_BEP20_CONTRACT,
 }) => {
-  if (!txHash || !expectedTo) {
-    return { verified: false, reason: 'Missing txHash or expectedTo address' };
+  if (!txHash) {
+    return { verified: false, reason: 'Missing txHash' };
   }
 
   const cleanTxHash = txHash.trim();
-  const cleanTo = expectedTo.trim().toLowerCase();
+  const allowedAddresses = Array.isArray(expectedTo)
+    ? expectedTo.map((a) => String(a || '').trim().toLowerCase()).filter(Boolean)
+    : expectedTo
+    ? [String(expectedTo).trim().toLowerCase()]
+    : [];
   const targetContract = (contractAddress || USDT_BEP20_CONTRACT).trim().toLowerCase();
 
   const receipt = await callRpcWithFailover('eth_getTransactionReceipt', [cleanTxHash]);
@@ -194,7 +198,8 @@ exports.verifyBep20TransactionReceipt = async ({
       log.topics[2]
     ) {
       const recipient = extractAddressFromTopic(log.topics[2]);
-      if (recipient === cleanTo) {
+      const isRecipientMatch = allowedAddresses.length === 0 || allowedAddresses.includes(recipient);
+      if (isRecipientMatch) {
         const rawValue = BigInt(log.data);
         const amount = roundToUsdt(Number(rawValue) / 1e18);
         const sender = extractAddressFromTopic(log.topics[1]);

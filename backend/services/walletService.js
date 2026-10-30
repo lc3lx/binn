@@ -103,24 +103,96 @@ exports.requestDeposit = asyncHandler(async (req, res, next) => {
     return next(new ApiError('User not found', 404));
   }
 
+  const cleanTxHash = txHash ? txHash.trim() : '';
+
+  // 1. Anti-Replay: Check if txHash has already been submitted or credited
+  if (cleanTxHash) {
+    const duplicateTx = await WalletTransaction.findOne({
+      txHash: cleanTxHash,
+      status: { $in: ['pending', 'confirmed', 'completed'] },
+    });
+    if (duplicateTx) {
+      return next(
+        new ApiError(
+          'هاش المعاملة هذا تم تقديمه أو قيده مسبقاً / This transaction hash has already been submitted or credited',
+          400
+        )
+      );
+    }
+
+    const PaymentOrder = require('../models/paymentOrderModel');
+    const duplicatePaymentOrder = await PaymentOrder.findOne({
+      txHash: cleanTxHash,
+      status: 'paid',
+    });
+    if (duplicatePaymentOrder) {
+      return next(
+        new ApiError(
+          'هاش المعاملة هذا تم استخدامه وقيد رصيده بالفعل / This transaction hash was already credited',
+          400
+        )
+      );
+    }
+
+    // 2. Automated On-Chain Verification attempt
+    try {
+      const { verifyBep20TransactionReceipt, USDT_BEP20_CONTRACT } = require('../utils/bscClient');
+      const contractAddress = process.env.BEP20_USDT_CONTRACT || USDT_BEP20_CONTRACT;
+      const verification = await verifyBep20TransactionReceipt({
+        txHash: cleanTxHash,
+        contractAddress,
+      });
+
+      if (verification && verification.verified && verification.amount > 0) {
+        const balanceBefore = user.walletBalance || 0;
+        const creditAmt = Number(verification.amount.toFixed(2));
+        const balanceAfter = Number((balanceBefore + creditAmt).toFixed(2));
+        user.walletBalance = balanceAfter;
+        await user.save();
+
+        const transaction = await WalletTransaction.create({
+          user: user._id,
+          type: 'deposit',
+          status: 'confirmed',
+          amount: creditAmt,
+          currency: 'USD',
+          balanceBefore,
+          balanceAfter,
+          walletAddress: verification.to || walletAddress,
+          txHash: cleanTxHash,
+          note: `Auto verified BEP20 USDT deposit`,
+          createdBy: user._id,
+        });
+
+        return res.status(201).json({
+          status: 'Success',
+          message: `تم التحقق من المعاملة عبر البلوكتشين بنجاح وإيداع ${creditAmt} USDT في محفظتك فوراً!`,
+          data: transaction,
+        });
+      }
+    } catch (err) {
+      // Gracefully fall back to manual pending review
+    }
+  }
+
   const balance = user.walletBalance || 0;
   const transaction = await WalletTransaction.create({
     user: user._id,
     type: 'deposit',
     status: 'pending',
-    amount,
+    amount: Number(amount),
     currency: 'USD',
     balanceBefore: balance,
     balanceAfter: balance,
     walletAddress,
-    txHash,
-    note,
+    txHash: cleanTxHash,
+    note: note || 'طلب إيداع يدوي عبر BEP-20',
     createdBy: req.user._id,
   });
 
   res.status(201).json({
     status: 'Success',
-    message: 'Deposit request submitted and waiting for admin confirmation',
+    message: 'تم تقديم طلب الإيداع بنجاح، جاري التحقق من المعاملة وتأكيدها / Deposit submitted successfully and pending confirmation',
     data: transaction,
   });
 });
@@ -144,54 +216,61 @@ exports.requestWithdraw = asyncHandler(async (req, res, next) => {
     return next(new ApiError('User not found', 404));
   }
 
-  const pendingTxs = await WalletTransaction.find({
-    user: user._id,
-    type: 'withdraw',
-    status: 'pending',
-  }).select('amount');
+  const withdrawAmount = Number(amount);
+  if (!Number.isFinite(withdrawAmount) || withdrawAmount <= 0) {
+    return next(new ApiError('مبلغ السحب غير صالح / Invalid withdrawal amount', 400));
+  }
 
-  const pendingTotal = pendingTxs.reduce(
-    (sum, tx) => sum + (Number(tx.amount) || 0),
-    0
-  );
-  const availableBalance = (user.walletBalance || 0) - pendingTotal;
+  if (withdrawAmount < 2.5) {
+    return next(new ApiError('الحد الأدنى للسحب هو 2.50 USDT / Minimum withdrawal amount is 2.50 USDT', 400));
+  }
 
-  if (availableBalance < amount) {
+  const cleanAddress = String(walletAddress || '').trim();
+  if (!/^0x[a-fA-F0-9]{40}$/.test(cleanAddress)) {
     return next(
       new ApiError(
-        pendingTotal > 0
-          ? `Insufficient available balance. You have $${pendingTotal.toFixed(2)} in pending withdrawals.`
-          : 'Insufficient wallet balance for withdrawal',
+        'عنوان المحفظة غير صالح. يجب أن يكون عنوان BEP-20 صحيح يبدأ بـ 0x / Invalid BEP-20 wallet address. Must start with 0x and be 42 characters long',
         400
       )
     );
   }
 
-  const fee = Number(withdrawalFee) || 0;
-  const netAmount = Number(amount) - fee;
-  if (netAmount < 0) {
-    return next(new ApiError('withdrawalFee cannot be greater than amount', 400));
+  // Security Check: Ensure sufficient balance
+  const currentBalance = Number(user.walletBalance || 0);
+  if (currentBalance < withdrawAmount) {
+    return next(
+      new ApiError('رصيد المحفظة غير كافٍ لإتمام طلب السحب / Insufficient wallet balance for withdrawal', 400)
+    );
   }
+
+  const fee = Math.max(0, Number(withdrawalFee) || 0.5);
+  const netAmount = Math.max(0, Number((withdrawAmount - fee).toFixed(2)));
+
+  // Critical Security: Deduct balance immediately upon request to prevent race conditions / double-spending
+  const balanceBefore = currentBalance;
+  const balanceAfter = Number((balanceBefore - withdrawAmount).toFixed(2));
+  user.walletBalance = balanceAfter;
+  await user.save();
 
   const transaction = await WalletTransaction.create({
     user: user._id,
     type: 'withdraw',
     status: 'pending',
-    amount,
+    amount: withdrawAmount,
     withdrawalFee: fee,
     netAmount,
     currency: 'USD',
-    balanceBefore: user.walletBalance || 0,
-    balanceAfter: user.walletBalance || 0,
-    walletAddress,
-    note,
+    balanceBefore,
+    balanceAfter,
+    walletAddress: cleanAddress,
+    note: note || 'طلب سحب أرباح BEP-20',
     createdBy: req.user._id,
   });
 
   res.status(201).json({
     status: 'Success',
     message:
-      'تم تقديم طلب السحب بنجاح، ستتم المعالجة والتحويل لمحفظتك خلال 48 ساعة كحد أقصى / Withdrawal request submitted successfully and will be processed within 48 hours',
+      'تم تقديم طلب السحب وخصم المبلغ من محفظتك بنجاح، ستتم المراجعة والتحويل لمحفظتك خلال 48 ساعة كحد أقصى / Withdrawal request submitted successfully and will be processed within 48 hours',
     data: transaction,
   });
 });
@@ -212,36 +291,34 @@ exports.reviewWithdrawByAdmin = asyncHandler(async (req, res, next) => {
     );
   }
 
+  const user = await User.findById(transaction.user);
+  if (!user) {
+    return next(new ApiError('User not found for this withdrawal', 404));
+  }
+
   if (status === 'rejected') {
+    // Refund amount back to user's wallet
+    const balanceBeforeRefund = user.walletBalance || 0;
+    const balanceAfterRefund = Number((balanceBeforeRefund + transaction.amount).toFixed(2));
+    user.walletBalance = balanceAfterRefund;
+    await user.save();
+
     transaction.status = 'rejected';
     transaction.rejectionReason = rejectionReason;
+    transaction.balanceAfter = balanceAfterRefund;
     transaction.approvedBy = req.user._id;
     transaction.approvedAt = Date.now();
     await transaction.save();
 
     return res.status(200).json({
       status: 'Success',
-      message: 'Withdrawal request rejected',
+      message: 'Withdrawal request rejected and funds refunded to user wallet',
       data: transaction,
     });
   }
 
-  const user = await User.findById(transaction.user);
-  if (!user) {
-    return next(new ApiError('User not found for this withdrawal', 404));
-  }
-  if ((user.walletBalance || 0) < transaction.amount) {
-    return next(new ApiError('Insufficient wallet balance for approval', 400));
-  }
-
-  const balanceBefore = user.walletBalance || 0;
-  const balanceAfter = balanceBefore - transaction.amount;
-  user.walletBalance = balanceAfter;
-  await user.save();
-
+  // If approved: Funds were already safely deducted upfront upon request
   transaction.status = 'approved';
-  transaction.balanceBefore = balanceBefore;
-  transaction.balanceAfter = balanceAfter;
   transaction.approvedBy = req.user._id;
   transaction.approvedAt = Date.now();
   transaction.rejectionReason = undefined;
@@ -249,7 +326,7 @@ exports.reviewWithdrawByAdmin = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     status: 'Success',
-    message: 'Withdrawal request approved',
+    message: 'Withdrawal request approved successfully',
     data: transaction,
   });
 });
