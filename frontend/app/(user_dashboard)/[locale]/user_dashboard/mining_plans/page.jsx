@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "@/hooks/useTranslations";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,12 +14,23 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Zap, Sparkles, CheckCircle2, ChevronRight, ArrowRight } from "lucide-react";
+import {
+  Zap,
+  Sparkles,
+  CheckCircle2,
+  ChevronRight,
+  ArrowRight,
+  Wallet,
+  PlusCircle,
+  AlertCircle,
+  CreditCard,
+} from "lucide-react";
 import { motion } from "framer-motion";
 import {
   useActivePlansQuery,
   useSubscribeToPlanMutation,
 } from "@/api/services/user/plans/plans.query";
+import { useDashboardSummaryQuery } from "@/api/services/user/Statistics/statistics.query";
 import { toast } from "sonner";
 import { formatApiError } from "@/lib/format-error";
 
@@ -131,13 +143,17 @@ const resolveScooterData = (scooter) => {
 
 export default function ScooterPlansPage() {
   const { locale } = useTranslations();
+  const router = useRouter();
   const [subscribingPlanId, setSubscribingPlanId] = useState(null);
   const [planToConfirm, setPlanToConfirm] = useState(null);
   const isArabic = locale === "ar";
   const base = `/${locale}/user_dashboard`;
 
   const { data: plansResponse, isLoading } = useActivePlansQuery({ activeOnly: true });
+  const { data: summaryResponse, refetch: refetchSummary } = useDashboardSummaryQuery();
   const subscribeMutation = useSubscribeToPlanMutation();
+
+  const walletBalance = Number(summaryResponse?.data?.walletBalance ?? 0);
 
   const sourcePlans = useMemo(() => {
     const list =
@@ -150,8 +166,34 @@ export default function ScooterPlansPage() {
     return fallbackScooters;
   }, [plansResponse]);
 
+  const handleSelectPlan = (scooterData) => {
+    if (walletBalance < scooterData.price) {
+      toast.warning(
+        isArabic
+          ? `رصيدك الحالي (${walletBalance.toFixed(2)} USDT) غير كافٍ لاستئجار سكوتر ${scooterData.modelName} (${scooterData.price} USDT). جاري توجيهك لشحن الرصيد...`
+          : `Your wallet balance (${walletBalance.toFixed(2)} USDT) is insufficient to lease ${scooterData.modelName} (${scooterData.price} USDT). Redirecting to deposit...`
+      );
+      router.push(`${base}/deposit?amount=${scooterData.price}`);
+      return;
+    }
+    setPlanToConfirm(scooterData);
+  };
+
   const handleConfirmSubscribe = async () => {
     if (!planToConfirm) return;
+
+    if (walletBalance < planToConfirm.price) {
+      toast.warning(
+        isArabic
+          ? `رصيدك الحالي (${walletBalance.toFixed(2)} USDT) غير كافٍ. جاري توجيهك لصفحة الشحن...`
+          : `Your wallet balance (${walletBalance.toFixed(2)} USDT) is insufficient. Redirecting to deposit...`
+      );
+      const targetAmount = planToConfirm.price;
+      setPlanToConfirm(null);
+      router.push(`${base}/deposit?amount=${targetAmount}`);
+      return;
+    }
+
     setSubscribingPlanId(planToConfirm._id);
     try {
       await subscribeMutation.mutateAsync(planToConfirm._id);
@@ -160,13 +202,33 @@ export default function ScooterPlansPage() {
           ? `تم استئجار سكوتر ${planToConfirm.modelName || planToConfirm.name} بنجاح! توجه لشاشة RIDE لبدء التشغيل.`
           : `Scooter ${planToConfirm.modelName || planToConfirm.name} leased successfully! Head to RIDE to power on.`
       );
+      refetchSummary();
       setPlanToConfirm(null);
     } catch (err) {
-      toast.error(formatApiError(err, locale));
+      const errMsg = formatApiError(err, locale);
+      toast.error(errMsg);
+      const isBalanceErr =
+        errMsg.toLowerCase().includes("رصيد") ||
+        errMsg.toLowerCase().includes("balance") ||
+        errMsg.toLowerCase().includes("insufficient");
+      if (isBalanceErr && planToConfirm) {
+        const targetAmount = planToConfirm.price;
+        setPlanToConfirm(null);
+        setTimeout(() => {
+          router.push(`${base}/deposit?amount=${targetAmount}`);
+        }, 800);
+      }
     } finally {
       setSubscribingPlanId(null);
     }
   };
+
+  const isInsufficient = Boolean(
+    planToConfirm && walletBalance < Number(planToConfirm.price || 0)
+  );
+  const neededAmount = planToConfirm
+    ? Math.max(0, Number(planToConfirm.price) - walletBalance)
+    : 0;
 
   return (
     <div className="min-h-screen pb-24 px-3 sm:px-4 pt-3 max-w-lg mx-auto space-y-4">
@@ -186,6 +248,31 @@ export default function ScooterPlansPage() {
         </p>
       </div>
 
+      {/* Wallet Balance Banner with Quick Deposit Action */}
+      <div className="rounded-3xl bg-gradient-to-r from-slate-900/90 via-slate-850/90 to-slate-900/90 border border-slate-700/60 p-4 shadow-xl backdrop-blur-xl flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-cyan-400 shadow-inner">
+            <Wallet className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="text-[11px] text-slate-400 font-medium">
+              {isArabic ? "رصيد المحفظة المتاح" : "Available Balance"}
+            </div>
+            <div className="text-xl font-black text-white font-mono flex items-center gap-1.5">
+              <span>{walletBalance.toFixed(2)}</span>
+              <span className="text-xs text-cyan-400 font-normal">USDT</span>
+            </div>
+          </div>
+        </div>
+        <Link
+          href={`${base}/deposit`}
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md shadow-blue-900/40 transition-all active:scale-95"
+        >
+          <PlusCircle className="w-3.5 h-3.5" />
+          <span>{isArabic ? "شحن الرصيد" : "Deposit"}</span>
+        </Link>
+      </div>
+
       {/* Scooters List */}
       <div className="space-y-4">
         {sourcePlans.map((scooter) => {
@@ -195,6 +282,7 @@ export default function ScooterPlansPage() {
           const price = resolved.price;
           const dailyIncome = resolved.dailyIncome;
           const scooterIncome = resolved.scooterIncome;
+          const hasEnoughBalance = walletBalance >= price;
 
           return (
             <motion.div
@@ -258,12 +346,30 @@ export default function ScooterPlansPage() {
                 </div>
               </div>
 
-              {/* Action Button */}
+              {/* Action Button: Auto directs to deposit if balance is insufficient */}
               <Button
-                onClick={() => setPlanToConfirm({ ...scooter, ...resolved })}
-                className="w-full py-5 rounded-2xl bg-[#0c2a54] hover:bg-[#103569] text-white font-extrabold text-sm shadow-xl shadow-blue-950/60 border border-blue-500/40 transition-all active:scale-[0.98]"
+                onClick={() => handleSelectPlan({ ...scooter, ...resolved })}
+                className={`w-full py-5 rounded-2xl font-extrabold text-sm shadow-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2 ${
+                  hasEnoughBalance
+                    ? "bg-[#0c2a54] hover:bg-[#103569] text-white border border-blue-500/40 shadow-blue-950/60"
+                    : "bg-slate-850 hover:bg-slate-800 text-amber-300 border border-amber-500/40 shadow-amber-950/20"
+                }`}
               >
-                {isArabic ? `تأجير سكوتر ${modelName} الآن` : `Lease ${modelName} Now`}
+                {hasEnoughBalance ? (
+                  <>
+                    <Zap className="w-4 h-4 text-cyan-400" />
+                    <span>{isArabic ? `تأجير سكوتر ${modelName} الآن` : `Lease ${modelName} Now`}</span>
+                  </>
+                ) : (
+                  <>
+                    <CreditCard className="w-4 h-4 text-amber-400" />
+                    <span>
+                      {isArabic
+                        ? `شحن الرصيد واستئجار ${modelName} (${price} USDT)`
+                        : `Deposit & Lease ${modelName} (${price} USDT)`}
+                    </span>
+                  </>
+                )}
               </Button>
             </motion.div>
           );
@@ -284,6 +390,21 @@ export default function ScooterPlansPage() {
             </DialogDescription>
           </DialogHeader>
 
+          {/* Insufficient Balance Notice inside Dialog if applicable */}
+          {isInsufficient && (
+            <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs space-y-1.5">
+              <div className="flex items-center gap-2 font-bold text-amber-400">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{isArabic ? "رصيد المحفظة غير كافٍ" : "Insufficient Wallet Balance"}</span>
+              </div>
+              <p className="text-[11px] leading-relaxed">
+                {isArabic
+                  ? `سعر الباقة: ${planToConfirm?.price} USDT | رصيدك الحالي: ${walletBalance.toFixed(2)} USDT | ينقصك: ${neededAmount.toFixed(2)} USDT للشحن.`
+                  : `Plan price: ${planToConfirm?.price} USDT | Current balance: ${walletBalance.toFixed(2)} USDT | Needed: ${neededAmount.toFixed(2)} USDT.`}
+              </p>
+            </div>
+          )}
+
           <DialogFooter className="gap-2 sm:gap-0 pt-4">
             <Button
               type="button"
@@ -293,16 +414,34 @@ export default function ScooterPlansPage() {
             >
               {isArabic ? "إلغاء" : "Cancel"}
             </Button>
-            <Button
-              type="button"
-              onClick={handleConfirmSubscribe}
-              disabled={Boolean(subscribingPlanId)}
-              className="bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl"
-            >
-              {subscribingPlanId
-                ? isArabic ? "جارٍ التفعيل والترقية..." : "Activating..."
-                : isArabic ? "تأكيد الاستئجار والترقية" : "Confirm Lease & Upgrade"}
-            </Button>
+
+            {isInsufficient ? (
+              <Button
+                type="button"
+                onClick={() => {
+                  const targetAmount = planToConfirm?.price;
+                  setPlanToConfirm(null);
+                  router.push(`${base}/deposit?amount=${targetAmount}`);
+                }}
+                className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black rounded-xl shadow-lg shadow-amber-950/40 flex items-center gap-1.5"
+              >
+                <CreditCard className="w-4 h-4" />
+                {isArabic
+                  ? `الانتقال للشحن (${planToConfirm?.price} USDT)`
+                  : `Go to Deposit (${planToConfirm?.price} USDT)`}
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                onClick={handleConfirmSubscribe}
+                disabled={Boolean(subscribingPlanId)}
+                className="bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl"
+              >
+                {subscribingPlanId
+                  ? isArabic ? "جارٍ التفعيل والترقية..." : "Activating..."
+                  : isArabic ? "تأكيد الاستئجار والترقية" : "Confirm Lease & Upgrade"}
+              </Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>

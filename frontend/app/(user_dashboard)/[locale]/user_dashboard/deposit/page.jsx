@@ -117,6 +117,24 @@ export default function DepositPage() {
   )}`;
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const amt = params.get("amount");
+      if (amt && Number(amt) > 0) {
+        const timer = setTimeout(() => {
+          setBaseAmount(String(Number(amt)));
+          toast.info(
+            isArabic
+              ? `تم تحديد مبلغ الإيداع المطلوب: ${amt} USDT لتفعيل الباقة`
+              : `Deposit amount set to ${amt} USDT to activate your scooter`
+          );
+        }, 0);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [isArabic]);
+
+  useEffect(() => {
     if (!orderData?.expires_at) return undefined;
 
     const interval = setInterval(() => {

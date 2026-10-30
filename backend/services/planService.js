@@ -122,7 +122,7 @@ exports.subscribeToPlan = asyncHandler(async (req, res, next) => {
       new ApiError(
         pendingWithdrawalTotal > 0
           ? `الرصيد المتاح غير كافٍ للاشتراك بالباقة (توجد طلبات سحب معلقة بقيمة $${pendingWithdrawalTotal.toFixed(2)})`
-          : 'Insufficient wallet balance to subscribe',
+          : 'رصيد المحفظة غير كافٍ للاستئجار. يرجى شحن الرصيد أولاً / Insufficient wallet balance to subscribe. Please deposit funds.',
         400
       )
     );

@@ -207,7 +207,7 @@ export default function Mining_plan() {
                 <Link
                   href={
                     canAccessUserDashboard
-                      ? `${base}/user_dashboard/my_plans`
+                      ? `${base}/user_dashboard/mining_plans`
                       : `${base}/user_auth/signup`
                   }
                   className="block pt-1"
