@@ -60,6 +60,9 @@ exports.getDashboardSummary = asyncHandler(async (req, res, next) => {
 
   const activeSubs = getActiveSubscriptions(user);
   const now = new Date();
+  const referralCount = await User.countDocuments({ referredBy: user._id });
+  const referralBonusPercent = Number((referralCount * 0.5).toFixed(1));
+  const totalYieldPercent = Number((5.0 + referralBonusPercent).toFixed(1));
 
   let totalHashrate = 0;
   let estimatedMonthlyDividends = 0;
@@ -146,6 +149,9 @@ exports.getDashboardSummary = asyncHandler(async (req, res, next) => {
         remainingDaysMax,
         realizedTodayPnL,
         activePlansCount: activePlansDetailed.length,
+        referralCount,
+        referralBonusPercent,
+        totalYieldPercent,
       },
 
       activePlans: activePlansDetailed,

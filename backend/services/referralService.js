@@ -331,6 +331,13 @@ exports.getMyReferralProgram = asyncHandler(async (req, res, next) => {
       ...linkInfo,
       totalReferrals: totalSignups,
       totalEarnings,
+      profitBoost: {
+        boostPerReferral: 0.5,
+        totalReferrals: totalSignups,
+        totalBoostPercent: Number((totalSignups * 0.5).toFixed(1)),
+        baseYieldPercent: 5.0,
+        currentYieldPercent: Number((5.0 + totalSignups * 0.5).toFixed(1)),
+      },
       tier: {
         name: currentTier.name,
         commissionPercent: currentTier.commissionPercent,

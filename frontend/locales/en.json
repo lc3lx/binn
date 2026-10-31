@@ -294,6 +294,15 @@
       "rule2Desc": "Referred users must register through your link, deposit USDT, and lease an active scooter.",
       "rule3Title": "3. Claim $100 & Withdraw Anytime",
       "rule3Desc": "Every 10 depositing members unlocks $100 cash added directly to your wallet balance with no withdrawal limits!"
+    },
+    "profitBoost": {
+      "title": "Daily Scooter Profit Multiplier (+0.5% per invite)",
+      "badge": "+0.5% per referral",
+      "description": "For every person you invite with your referral link, your active scooter's daily yield permanently increases by +0.5%!",
+      "baseRate": "Base Daily Yield",
+      "bonusRate": "Referral Bonus",
+      "totalRate": "Total Daily Yield",
+      "viewTasks": "Launch Scooter (RIDE)"
     }
   },
   "stats": {

@@ -107,6 +107,14 @@ export default function ReferralPage() {
   const needMore = Number(payload?.tier?.referralsNeededForNext || 0);
   const nextCommission = Number(payload?.tier?.nextTier?.commissionPercent || 0);
 
+  const profitBoost = payload?.profitBoost || {
+    boostPerReferral: 0.5,
+    totalReferrals: totalReferrals,
+    totalBoostPercent: totalReferrals * 0.5,
+    currentYieldPercent: 5.0 + totalReferrals * 0.5,
+    baseRatePercent: 5.0,
+  };
+
   const tierProgress =
     activeReferralsForTier + needMore > 0
       ? Math.min(activeReferralsForTier / (activeReferralsForTier + needMore), 1)
@@ -525,6 +533,64 @@ export default function ReferralPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* =========================================================================
+          PROFIT BOOST MULTIPLIER CARD (+0.5% per invite)
+      ========================================================================= */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="relative overflow-hidden rounded-2xl border border-emerald-500/40 bg-gradient-to-br from-emerald-950/40 via-sidebar to-[#121418] p-5 sm:p-6 shadow-xl"
+      >
+        <div className="pointer-events-none absolute -top-16 -right-16 h-48 w-48 rounded-full bg-emerald-500/10 blur-3xl" />
+        <div className="relative z-10 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+          <div className="space-y-2 max-w-2xl">
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-400">
+              <Zap size={13} className="text-emerald-400 fill-emerald-400" />
+              <span>{t("referral.profitBoost.badge")}</span>
+            </div>
+            <h2 className="text-lg font-bold text-white sm:text-xl">
+              {t("referral.profitBoost.title")}
+            </h2>
+            <p className="text-xs sm:text-sm text-white/80 leading-relaxed">
+              {t("referral.profitBoost.description")}
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
+            <div className="rounded-xl border border-white/10 bg-black/40 px-3.5 py-2 text-center">
+              <div className="text-[11px] text-white/60">{t("referral.profitBoost.baseRate")}</div>
+              <div className="text-sm font-bold text-white/90">
+                {profitBoost.baseRatePercent || 5.0}%
+              </div>
+            </div>
+            <span className="text-base font-bold text-emerald-400">+</span>
+            <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-2 text-center">
+              <div className="text-[11px] text-emerald-300">{t("referral.profitBoost.bonusRate")}</div>
+              <div className="text-sm font-bold text-emerald-400">
+                +{profitBoost.totalBoostPercent}%
+              </div>
+            </div>
+            <span className="text-base font-bold text-white">=</span>
+            <div className="rounded-xl border border-primary/40 bg-primary/10 px-4 py-2 text-center shadow-[0_0_15px_rgba(240,185,11,0.15)]">
+              <div className="text-[11px] text-primary">{t("referral.profitBoost.totalRate")}</div>
+              <div className="text-base font-black text-primary">
+                {profitBoost.currentYieldPercent}% / {locale === "ar" ? "يومياً" : "daily"}
+              </div>
+            </div>
+            <Link href={`/${locale}/user_dashboard/tasks`} className="w-full sm:w-auto">
+              <Button
+                variant="outline"
+                className="w-full sm:w-auto border-emerald-500/50 bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500/25 text-xs font-semibold h-10"
+              >
+                <span>{t("referral.profitBoost.viewTasks")}</span>
+                {isRtl ? <ArrowLeft size={14} className="mr-1" /> : <ArrowRight size={14} className="ml-1" />}
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </motion.div>
 
       {/* =========================================================================
           4. REFERRAL LINK & CODE SHARING CARD

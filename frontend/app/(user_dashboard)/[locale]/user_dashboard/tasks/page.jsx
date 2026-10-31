@@ -59,6 +59,10 @@ export default function RideScootersPage() {
     remainingSeconds: 18000,
     dailyIncome: 2.5,
     scooterIncome: 2.5,
+    totalRatePercent: 5.0,
+    referralBonusPercent: 0,
+    referralCount: 0,
+    baseDailyIncome: 2.5,
     status: "OPEN",
     price: 50,
     purchasedAt: "09-06-2026 10:34:33",
@@ -497,11 +501,20 @@ export default function RideScootersPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="text-right">
                   <span className="text-slate-400 text-xs block">
-                    {isArabic ? ":إجمالي الدخل اليومي (5%)" : "Daily Yield (5%):"}
+                    {isArabic
+                      ? `:إجمالي الدخل اليومي (${primaryScooter.totalRatePercent || 5}%)`
+                      : `Daily Yield (${primaryScooter.totalRatePercent || 5}%):`}
                   </span>
-                  <span className="font-bold text-cyan-400 text-sm">
-                    {primaryScooter.dailyIncome} <span className="text-xs text-slate-400 font-normal">USDT</span>
-                  </span>
+                  <div className="flex items-center gap-1.5 justify-end">
+                    <span className="font-bold text-cyan-400 text-sm">
+                      {primaryScooter.dailyIncome} <span className="text-xs text-slate-400 font-normal">USDT</span>
+                    </span>
+                    {Number(primaryScooter.referralBonusPercent || 0) > 0 && (
+                      <span className="text-[10px] font-black text-amber-300 bg-amber-500/20 px-1.5 py-0.5 rounded-md border border-amber-500/30">
+                        +{primaryScooter.referralBonusPercent}%
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <div className="text-left">
                   <span className="text-slate-400 text-xs block">
@@ -569,6 +582,41 @@ export default function RideScootersPage() {
                   </span>
                 </div>
               </div>
+            </div>
+
+            {/* Referral Yield Boost Highlight Banner */}
+            <div className="rounded-2xl bg-gradient-to-r from-amber-500/15 via-amber-600/10 to-transparent border border-amber-500/30 p-3 flex items-center justify-between gap-2.5">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center shrink-0">
+                  <Sparkles className="w-4 h-4 text-amber-400" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+                    <span>{isArabic ? "مضاعف أرباح الإحالات (+0.5% لكل شخص)" : "Referral Yield Boost (+0.5% per invite)"}</span>
+                    {Number(primaryScooter.referralBonusPercent || 0) > 0 && (
+                      <span className="text-[10px] bg-amber-400 text-slate-950 px-1.5 py-0.2 rounded font-black">
+                        +{primaryScooter.referralBonusPercent}%
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[10px] text-slate-300">
+                    {Number(primaryScooter.referralCount || 0) > 0
+                      ? isArabic
+                        ? `لديك ${primaryScooter.referralCount} إحالات نشطة رفعت عائدك اليومي إلى ${primaryScooter.totalRatePercent}%!`
+                        : `You have ${primaryScooter.referralCount} referrals boosting your daily yield to ${primaryScooter.totalRatePercent}%!`
+                      : isArabic
+                      ? "شارك رابط إحالتك لزيادة نسبة ربحك اليومي +0.5% عن كل شخص تدعوه!"
+                      : "Invite friends to get +0.5% higher daily yield on your scooter for every invitee!"}
+                  </p>
+                </div>
+              </div>
+
+              <Link
+                href={`${base}/Referral`}
+                className="shrink-0 px-2.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[11px] shadow-md shadow-amber-950/40 transition-all active:scale-95"
+              >
+                {isArabic ? "دعوة الأعضاء" : "Invite"}
+              </Link>
             </div>
           </div>
 

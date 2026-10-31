@@ -10,37 +10,51 @@ const TIER_SPECS = {
 
 const TASK_DURATION_SECONDS = 5 * 3600; // 5 hours = 18000 seconds
 
-const resolveTierSpecs = (price, existing = {}) => {
+const resolveTierSpecs = (price, existing = {}, referralCount = 0) => {
   const p = Number(price) || 50;
+  const count = Math.max(0, Number(referralCount) || 0);
+
+  // Base return is 5%, +0.5% for every person invited
+  const baseRatePercent = 5.0;
+  const referralBonusPercent = Number((count * 0.5).toFixed(1));
+  const totalRatePercent = Number((baseRatePercent + referralBonusPercent).toFixed(1));
+
+  let modelName = 'E1';
+  let deviceCount = 1;
+  let vipTier = 1;
+
   if (TIER_SPECS[p]) {
-    return {
-      modelName: TIER_SPECS[p].modelName,
-      name: TIER_SPECS[p].name,
-      deviceCount: TIER_SPECS[p].deviceCount,
-      dailyIncome: TIER_SPECS[p].dailyIncome,
-      scooterIncome: TIER_SPECS[p].scooterIncome,
-      vipTier: TIER_SPECS[p].vipTier,
-    };
+    modelName = TIER_SPECS[p].modelName;
+    deviceCount = TIER_SPECS[p].deviceCount;
+    vipTier = TIER_SPECS[p].vipTier;
+  } else {
+    deviceCount = Math.max(1, Math.round(p / 50));
+    vipTier = Math.min(7, Math.max(1, Math.round(p / 50)));
+    modelName =
+      existing.modelName &&
+      !['E1', 'E2', 'E2 Scooter', 'E3', 'E4', 'E5', 'E6', 'E7'].includes(existing.modelName)
+        ? existing.modelName
+        : `E-Fleet (${p} USDT)`;
   }
 
-  // 5% daily return, $2.50 per scooter device
-  const dailyIncome = Number((p * 0.05).toFixed(2));
-  const scooterIncome = 2.5;
-  const deviceCount = Math.max(1, Math.round(p / 50));
-  const vipTier = Math.min(7, Math.max(1, Math.round(p / 50)));
-  const modelName =
-    existing.modelName &&
-    !['E1', 'E2', 'E2 Scooter', 'E3', 'E4', 'E5', 'E6', 'E7'].includes(existing.modelName)
-      ? existing.modelName
-      : `E-Fleet (${p} USDT)`;
+  // Base daily income at standard 5%
+  const baseDailyIncome = Number((p * 0.05).toFixed(2));
+  // Boosted daily income with referral bonus
+  const dailyIncome = Number(((p * totalRatePercent) / 100).toFixed(2));
+  const scooterIncome = Number((dailyIncome / deviceCount).toFixed(2));
 
   return {
     modelName,
     name: modelName,
     deviceCount,
     dailyIncome,
+    baseDailyIncome,
     scooterIncome,
     vipTier,
+    referralCount: count,
+    baseRatePercent,
+    referralBonusPercent,
+    totalRatePercent,
   };
 };
 

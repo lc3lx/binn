@@ -119,15 +119,17 @@ const ensureUserScooter = async (user) => {
     effectiveFleetPrice = 50; // default entry tier
   }
 
-  const fleetSpecs = resolveTierSpecs(effectiveFleetPrice);
+  const referralCount = await User.countDocuments({ referredBy: user._id });
+  const fleetSpecs = resolveTierSpecs(effectiveFleetPrice, primary, referralCount);
   const primary = (user.activeScooters && user.activeScooters[0]) || {};
 
-  // Check if consolidation or update is needed
+  // Check if consolidation or update is needed (including new referrals boost)
   const needsConsolidation =
     !user.activeScooters ||
     user.activeScooters.length !== 1 ||
     primary.price !== effectiveFleetPrice ||
     primary.dailyIncome !== fleetSpecs.dailyIncome ||
+    primary.referralCount !== referralCount ||
     primary.deviceCount !== fleetSpecs.deviceCount;
 
   if (needsConsolidation) {
@@ -136,8 +138,12 @@ const ensureUserScooter = async (user) => {
         plan: primary.plan || null,
         modelName: fleetSpecs.modelName,
         deviceCount: fleetSpecs.deviceCount,
-        scooterIncome: 2.5,
+        scooterIncome: fleetSpecs.scooterIncome,
         dailyIncome: fleetSpecs.dailyIncome,
+        baseDailyIncome: fleetSpecs.baseDailyIncome,
+        referralCount: fleetSpecs.referralCount,
+        referralBonusPercent: fleetSpecs.referralBonusPercent,
+        totalRatePercent: fleetSpecs.totalRatePercent,
         price: effectiveFleetPrice,
         status: primary.status || 'OPEN',
         countdownEndsAt: primary.countdownEndsAt,
@@ -206,7 +212,12 @@ exports.getTodayTaskStatus = asyncHandler(async (req, res, next) => {
       remainingSeconds: isWeekend ? 0 : claimedToday ? 0 : runState.remainingSeconds,
       runSecondsToday: runState.runSeconds,
       dailyIncome: primaryScooter.dailyIncome,
-      scooterIncome: 2.5,
+      baseDailyIncome: primaryScooter.baseDailyIncome || Number((primaryScooter.price * 0.05).toFixed(2)),
+      scooterIncome: primaryScooter.scooterIncome || 2.5,
+      referralCount: primaryScooter.referralCount || 0,
+      referralBonusPercent: primaryScooter.referralBonusPercent || 0,
+      totalRatePercent: primaryScooter.totalRatePercent || 5.0,
+      baseRatePercent: 5.0,
       status: currentStatus,
       price: primaryScooter.price,
       purchasedAt: formatDateTime(primaryScooter.purchasedAt),
@@ -244,6 +255,11 @@ exports.getTodayTaskStatus = asyncHandler(async (req, res, next) => {
       hasActiveVehicle: true,
       vehicleName: `ETG Scooter ${primaryScooter.modelName}`,
       vipTier: Math.min(7, Math.max(1, Math.round(primaryScooter.price / 50))),
+      referralCount: primaryScooter.referralCount || 0,
+      referralBonusPercent: primaryScooter.referralBonusPercent || 0,
+      totalRatePercent: primaryScooter.totalRatePercent || 5.0,
+      baseRatePercent: 5.0,
+      baseDailyIncome: primaryScooter.baseDailyIncome || Number((primaryScooter.price * 0.05).toFixed(2)),
       totalTasks: 1,
       tasksCompleted: user.todayTasksCompleted || (claimedToday ? 1 : 0),
       tasksRemaining: claimedToday ? 0 : 1,
@@ -432,6 +448,10 @@ exports.collectScooterEarnings = asyncHandler(async (req, res, next) => {
 
   await user.save();
 
+  const bonusText = (targetScooter.referralBonusPercent && targetScooter.referralBonusPercent > 0)
+    ? ` (عائد ${targetScooter.totalRatePercent}% بفضل ${targetScooter.referralCount} إحالات)`
+    : ' (عائد 5%)';
+
   await WalletTransaction.create({
     user: user._id,
     type: 'ride_task_profit',
@@ -440,7 +460,7 @@ exports.collectScooterEarnings = asyncHandler(async (req, res, next) => {
     currency: 'USD',
     balanceBefore,
     balanceAfter,
-    note: `استلام أرباح مهمة الـ 5 ساعات لسكوتر ${targetScooter.modelName} (إجمالي الأسطول: ${targetScooter.price} USDT)`,
+    note: `استلام أرباح مهمة الـ 5 ساعات لسكوتر ${targetScooter.modelName} (إجمالي الأسطول: ${targetScooter.price} USDT)${bonusText}`,
     createdBy: user._id,
   });
 

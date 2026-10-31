@@ -153,7 +153,8 @@ exports.subscribeToPlan = asyncHandler(async (req, res, next) => {
   const totalSubPrice = activeSubs.reduce((sum, s) => sum + (Number(s.price) || 0), 0);
   const newTotalPrice = Math.max(plan.price, totalSubPrice);
 
-  const fleetSpecs = resolveTierSpecs(newTotalPrice);
+  const referralCount = await User.countDocuments({ referredBy: user._id });
+  const fleetSpecs = resolveTierSpecs(newTotalPrice, existingScooter, referralCount);
   const existingScooter = user.activeScooters && user.activeScooters[0];
 
   user.activeScooters = [
@@ -161,9 +162,12 @@ exports.subscribeToPlan = asyncHandler(async (req, res, next) => {
       plan: plan._id,
       modelName: fleetSpecs.modelName,
       deviceCount: fleetSpecs.deviceCount,
-      scooterIncome: 2.5,
+      scooterIncome: fleetSpecs.scooterIncome,
       dailyIncome: fleetSpecs.dailyIncome,
       price: newTotalPrice,
+      referralCount: fleetSpecs.referralCount,
+      referralBonusPercent: fleetSpecs.referralBonusPercent,
+      totalRatePercent: fleetSpecs.totalRatePercent,
       status: existingScooter ? existingScooter.status : 'OPEN',
       countdownEndsAt: existingScooter ? existingScooter.countdownEndsAt : null,
       runSecondsToday: existingScooter ? (existingScooter.runSecondsToday || 0) : 0,
