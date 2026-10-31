@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -80,11 +80,13 @@ export default function DepositPage() {
   const { refetch: refetchSummary } = useDashboardSummaryQuery();
   const { data: transactionsResponse, refetch: refetchTransactions } = useTransactionsListQuery();
 
+  const autoCreatedRef = useRef(false);
+
   const orderId = order?.order_id || "";
   const { data: orderStatusResponse, refetch: refetchOrderStatus } =
     usePaymentOrderStatusQuery(orderId, {
       enabled: Boolean(orderId),
-      refetchInterval: orderId ? 7000 : false,
+      refetchInterval: orderId ? 4000 : false,
     });
 
   const orderStatusPayload = useMemo(
@@ -116,23 +118,61 @@ export default function DepositPage() {
     activeAddress
   )}`;
 
+  const handleCreateOrder = useCallback(
+    async (customAmt) => {
+      const amountValue = Number(customAmt || baseAmount);
+      if (!amountValue || amountValue <= 0) {
+        toast.error(isArabic ? "أدخل مبلغاً صحيحاً" : "Enter a valid amount");
+        return;
+      }
+
+      try {
+        const response = await createOrderMutation.mutateAsync({
+          baseAmount: amountValue,
+        });
+        const payload = pickPayload(response);
+
+        setOrder(payload);
+        setManualTxHash("");
+        setNowTs(Date.now());
+        detectedNotifiedRef.current = false;
+        successNotifiedRef.current = false;
+
+        toast.success(
+          isArabic
+            ? "تم إنشاء طلب الدفع الآلي بنجاح! يمكنك الآن تحويل المبلغ المطلوب."
+            : "Automated payment order created! Please transfer the exact amount."
+        );
+      } catch (error) {
+        toast.error(formatApiError(error, locale));
+      }
+    },
+    [baseAmount, createOrderMutation, isArabic, locale]
+  );
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       const amt = params.get("amount");
-      if (amt && Number(amt) > 0) {
-        const timer = setTimeout(() => {
+      const targetAmt = amt && Number(amt) > 0 ? Number(amt) : 50;
+
+      const timer = setTimeout(() => {
+        if (amt && Number(amt) > 0) {
           setBaseAmount(String(Number(amt)));
           toast.info(
             isArabic
               ? `تم تحديد مبلغ الإيداع المطلوب: ${amt} USDT لتفعيل الباقة`
               : `Deposit amount set to ${amt} USDT to activate your scooter`
           );
-        }, 0);
-        return () => clearTimeout(timer);
-      }
+        }
+        if (!autoCreatedRef.current) {
+          autoCreatedRef.current = true;
+          handleCreateOrder(targetAmt);
+        }
+      }, 100);
+      return () => clearTimeout(timer);
     }
-  }, [isArabic]);
+  }, [handleCreateOrder, isArabic]);
 
   useEffect(() => {
     if (!orderData?.expires_at) return undefined;
@@ -185,35 +225,6 @@ export default function DepositPage() {
   const creditedAt = orderData?.credited_at;
   const isPending = status === "pending";
   const isFinalSuccess = status === "paid" && Boolean(creditedAt);
-
-  const handleCreateOrder = async (customAmt) => {
-    const amountValue = Number(customAmt || baseAmount);
-    if (!amountValue || amountValue <= 0) {
-      toast.error(isArabic ? "أدخل مبلغاً صحيحاً" : "Enter a valid amount");
-      return;
-    }
-
-    try {
-      const response = await createOrderMutation.mutateAsync({
-        baseAmount: amountValue,
-      });
-      const payload = pickPayload(response);
-
-      setOrder(payload);
-      setManualTxHash("");
-      setNowTs(Date.now());
-      detectedNotifiedRef.current = false;
-      successNotifiedRef.current = false;
-
-      toast.success(
-        isArabic
-          ? "تم إنشاء طلب الدفع الآلي بنجاح! يمكنك الآن تحويل المبلغ المطلوب."
-          : "Automated payment order created! Please transfer the exact amount."
-      );
-    } catch (error) {
-      toast.error(formatApiError(error, locale));
-    }
-  };
 
   const handleCopyAddress = async () => {
     if (!activeAddress) return;
@@ -498,6 +509,49 @@ export default function DepositPage() {
                       </span>
                     </div>
                   )}
+                </div>
+              )}
+
+              {/* Automated Scanner Indicator Badge */}
+              {isPending && (
+                <div className="p-3 rounded-2xl bg-cyan-950/40 border border-cyan-500/40 flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2 text-cyan-300 font-bold">
+                    <span className="relative flex h-2.5 w-2.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-500"></span>
+                    </span>
+                    <span>
+                      {isArabic
+                        ? "الفحص التلقائي للبلوكتشين نشط (تأكيد فوري دون تدخل بشري)"
+                        : "Blockchain Auto-Scanner Active (Instant Confirmation)"}
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-cyan-400 font-mono bg-cyan-500/10 px-2.5 py-0.5 rounded-full border border-cyan-500/30">
+                    {isArabic ? "فحص آلي كل 4 ثوانٍ" : "Auto-Check 4s"}
+                  </span>
+                </div>
+              )}
+
+              {/* Success Confirmation & Direct Scooter Lease CTA */}
+              {isFinalSuccess && (
+                <div className="p-5 rounded-2xl bg-emerald-950/40 border border-emerald-500/50 space-y-3 text-center">
+                  <div className="flex items-center justify-center gap-2 text-emerald-400 font-black text-sm sm:text-base">
+                    <CheckCircle2 className="w-5 h-5" />
+                    <span>{isArabic ? "تم تأكيد الإيداع وقيد الرصيد بنجاح!" : "Deposit Confirmed & Credited!"}</span>
+                  </div>
+                  <p className="text-xs text-slate-300">
+                    {isArabic
+                      ? `تمت إضافة ${formatAmount(orderData.credited_amount || orderData.base_amount, locale)} USDT إلى محفظتك بنجاح.`
+                      : `${formatAmount(orderData.credited_amount || orderData.base_amount, locale)} USDT has been credited to your wallet.`}
+                  </p>
+                  <Button
+                    type="button"
+                    onClick={() => router.push(`/${locale}/user_dashboard/mining_plans`)}
+                    className="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-black rounded-xl py-4 shadow-lg shadow-emerald-950/50"
+                  >
+                    <Zap className="w-4 h-4 mr-1.5" />
+                    {isArabic ? "استئجار سكوتر كهربائي الآن (Energy)" : "Lease Scooter Now (Energy)"}
+                  </Button>
                 </div>
               )}
 

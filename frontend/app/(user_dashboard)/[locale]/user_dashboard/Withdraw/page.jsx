@@ -53,7 +53,7 @@ export default function WithdrawPage() {
   const currentNet = {
     key: "bsc",
     label: isArabic ? "BNB Smart Chain (BEP-20)" : "BNB Smart Chain (BEP-20)",
-    fee: 0.5,
+    feePercent: 10,
     placeholder: "0x...",
   };
 
@@ -67,7 +67,9 @@ export default function WithdrawPage() {
     return Number.isFinite(a) ? Math.max(0, a) : 0;
   }, [amount]);
 
-  const receive = Math.max(0, Number((parsedAmount - currentNet.fee).toFixed(2)));
+  // Exact 10% withdrawal fee
+  const withdrawalFee = Number(((parsedAmount * 10) / 100).toFixed(2));
+  const receive = Math.max(0, Number((parsedAmount - withdrawalFee).toFixed(2)));
   const insufficient = parsedAmount > balance;
   const isBelowMin = parsedAmount > 0 && parsedAmount < minWithdrawal;
   const isValidAddress = /^0x[a-fA-F0-9]{40}$/.test(address.trim());
@@ -128,7 +130,7 @@ export default function WithdrawPage() {
       const res = await withdrawMutation.mutateAsync({
         amount: parsedAmount,
         walletAddress: address.trim(),
-        withdrawalFee: Number(currentNet.fee),
+        withdrawalFee: withdrawalFee,
         note: note.trim() || "cash out",
       });
       toast.success(
@@ -437,8 +439,8 @@ export default function WithdrawPage() {
             </div>
 
             <div className="flex items-center justify-between text-slate-400">
-              <span>{isArabic ? "رسوم التحويل والغاز (BEP-20):" : "Network Transfer Fee:"}</span>
-              <span className="font-bold text-amber-400 font-mono">-{nf.format(currentNet.fee)} USDT</span>
+              <span>{isArabic ? "رسوم السحب والشبكة (10%):" : "Withdrawal Fee (10%):"}</span>
+              <span className="font-bold text-amber-400 font-mono">-{nf.format(withdrawalFee)} USDT</span>
             </div>
 
             <div className="border-t border-slate-700/60 pt-2.5 flex items-center justify-between text-sm sm:text-base font-extrabold">

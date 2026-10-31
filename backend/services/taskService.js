@@ -39,6 +39,14 @@ const formatDateTime = (d) => {
 };
 
 /**
+ * Check if given date falls on a weekend (Saturday or Sunday)
+ */
+const isWeekendDay = (date = new Date()) => {
+  const day = date.getUTCDay();
+  return day === 0 || day === 6; // 0: Sunday, 6: Saturday
+};
+
+/**
  * Calculate active scooter runtime state
  */
 const getScooterRunState = (scooter) => {
@@ -186,15 +194,16 @@ exports.getTodayTaskStatus = asyncHandler(async (req, res, next) => {
   }
 
   const claimedToday = primaryScooter.lastClaimDate === todayStr || user.todayTasksCompleted > 0;
-  const currentStatus = claimedToday ? 'CLAIMED' : runState.status;
+  const isWeekend = isWeekendDay();
+  const currentStatus = isWeekend ? 'WEEKEND_PAUSED' : claimedToday ? 'CLAIMED' : runState.status;
 
   const scooters = [
     {
       id: primaryScooter._id,
       modelName: primaryScooter.modelName,
       deviceCount: primaryScooter.deviceCount,
-      countdown: claimedToday ? '00:00:00' : runState.countdown,
-      remainingSeconds: claimedToday ? 0 : runState.remainingSeconds,
+      countdown: isWeekend ? '00:00:00' : claimedToday ? '00:00:00' : runState.countdown,
+      remainingSeconds: isWeekend ? 0 : claimedToday ? 0 : runState.remainingSeconds,
       runSecondsToday: runState.runSeconds,
       dailyIncome: primaryScooter.dailyIncome,
       scooterIncome: 2.5,
@@ -205,8 +214,9 @@ exports.getTodayTaskStatus = asyncHandler(async (req, res, next) => {
       image: '/scooter_transparent.png',
       isCompleted: runState.isCompleted,
       claimedToday,
-      canCollect: !claimedToday && runState.isCompleted,
-      canPowerOn: !claimedToday && !runState.isCompleted && currentStatus !== 'PROGRESS',
+      isWeekend,
+      canCollect: !isWeekend && !claimedToday && runState.isCompleted,
+      canPowerOn: !isWeekend && !claimedToday && !runState.isCompleted && currentStatus !== 'PROGRESS',
       canPowerOff: currentStatus === 'PROGRESS',
       taskDurationSeconds: DURATION_SECONDS,
     },
@@ -218,15 +228,19 @@ exports.getTodayTaskStatus = asyncHandler(async (req, res, next) => {
       userId: user.numericId || 1649,
       maskedAccount,
       activeTier: primaryScooter.modelName,
-      activeStatus: currentStatus === 'PROGRESS' ? 'قيد الرحلة' : claimedToday ? 'مكتمل ومستلم' : 'بنشاط',
+      activeStatus: isWeekend ? 'عطلة رسمية' : currentStatus === 'PROGRESS' ? 'قيد الرحلة' : claimedToday ? 'مكتمل ومستلم' : 'بنشاط',
       progress: Math.min(100, Math.round((runState.runSeconds / DURATION_SECONDS) * 100)),
       totalIncome: user.totalTaskEarnings || 0,
-      availableToClaim: !claimedToday && runState.isCompleted ? primaryScooter.dailyIncome : 0,
+      availableToClaim: !isWeekend && !claimedToday && runState.isCompleted ? primaryScooter.dailyIncome : 0,
       todayIncome: user.todayScooterIncome || 0,
       walletBalance: user.walletBalance || 0,
       activeScooters: scooters,
       completedScooters: [],
       serverDate: todayStr,
+      isWeekend,
+      weekendNotice: isWeekend
+        ? 'عطلة نهاية الأسبوع (السبت والأحد): تتوقف المهام وتوليد الأرباح وتُستأنف صباح الإثنين'
+        : null,
       hasActiveVehicle: true,
       vehicleName: `ETG Scooter ${primaryScooter.modelName}`,
       vipTier: Math.min(7, Math.max(1, Math.round(primaryScooter.price / 50))),
@@ -236,9 +250,9 @@ exports.getTodayTaskStatus = asyncHandler(async (req, res, next) => {
       dailyIncome: primaryScooter.dailyIncome,
       totalTaskEarnings: user.totalTaskEarnings || 0,
       claimedToday,
-      canCollect: !claimedToday && runState.isCompleted,
-      countdown: claimedToday ? '00:00:00' : runState.countdown,
-      remainingSeconds: claimedToday ? 0 : runState.remainingSeconds,
+      canCollect: !isWeekend && !claimedToday && runState.isCompleted,
+      countdown: isWeekend ? '00:00:00' : claimedToday ? '00:00:00' : runState.countdown,
+      remainingSeconds: isWeekend ? 0 : claimedToday ? 0 : runState.remainingSeconds,
       taskDurationHours: 5,
     },
   });
@@ -252,6 +266,15 @@ exports.getTodayTaskStatus = asyncHandler(async (req, res, next) => {
 exports.powerOnScooter = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user._id);
   if (!user) return next(new ApiError('User not found', 404));
+
+  if (isWeekendDay()) {
+    return next(
+      new ApiError(
+        'المهمات وتوليد الأرباح متوقفة في عطلة نهاية الأسبوع (السبت والأحد). تُستأنف المهام صباح يوم الإثنين. / Tasks and earnings are paused on weekends (Saturday & Sunday). Tasks resume Monday.',
+        400
+      )
+    );
+  }
 
   await ensureUserScooter(user);
 
@@ -351,6 +374,15 @@ exports.powerOnScooter = asyncHandler(async (req, res, next) => {
 exports.collectScooterEarnings = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user._id);
   if (!user) return next(new ApiError('User not found', 404));
+
+  if (isWeekendDay()) {
+    return next(
+      new ApiError(
+        'جمع الأرباح غير متاح في عطلة نهاية الأسبوع (السبت والأحد). تُستأنف صباح الإثنين. / Earnings collection is paused on weekends (Saturday & Sunday).',
+        400
+      )
+    );
+  }
 
   await ensureUserScooter(user);
 

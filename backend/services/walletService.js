@@ -243,7 +243,8 @@ exports.requestWithdraw = asyncHandler(async (req, res, next) => {
     );
   }
 
-  const fee = Math.max(0, Number(withdrawalFee) || 0.5);
+  // Fee calculation: Exact 10% deduction from withdrawal amount
+  const fee = Number((withdrawAmount * 0.10).toFixed(2));
   const netAmount = Math.max(0, Number((withdrawAmount - fee).toFixed(2)));
 
   // Critical Security: Deduct balance immediately upon request to prevent race conditions / double-spending

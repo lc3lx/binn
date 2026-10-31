@@ -225,6 +225,11 @@ const processSingleUser = async (user, now) => {
 
     for (let j = 0; j < payoutMoments.length; j += 1) {
       const payoutMoment = payoutMoments[j];
+
+      // Weekend rule: Saturday (6) and Sunday (0) are holidays (no mining profit distribution)
+      const dayOfWeek = payoutMoment.getUTCDay();
+      if (dayOfWeek === 0 || dayOfWeek === 6) continue;
+
       const key = `${String(sub._id)}|${dayKey(payoutMoment)}`;
       if (existingKeys.has(key)) continue;
 

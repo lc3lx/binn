@@ -5,7 +5,7 @@ let inProgress = false;
 
 const getPollInterval = () => {
   const n = Number(process.env.PAYMENT_POLL_INTERVAL_MS);
-  if (!n || n < 10000) return 15000;
+  if (!n || n < 10000) return 10000;
   return n;
 };
 

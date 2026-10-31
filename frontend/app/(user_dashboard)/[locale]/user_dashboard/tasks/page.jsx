@@ -80,6 +80,11 @@ export default function RideScootersPage() {
     Math.max(0, Math.round(((18000 - remainingSeconds) / 18000) * 100))
   );
 
+  // Weekend Rule: Saturday (6) and Sunday (0) are official holidays (tasks paused)
+  const today = new Date();
+  const dayOfWeek = today.getUTCDay();
+  const isWeekend = dayOfWeek === 0 || dayOfWeek === 6 || Boolean(taskData.isWeekend);
+
   // Real-time countdown effect when in progress
   useEffect(() => {
     if (!isScooterRunning) {
@@ -122,6 +127,15 @@ export default function RideScootersPage() {
 
   // Handle Power Button click
   const handlePowerClick = () => {
+    if (isWeekend) {
+      toast.warning(
+        isArabic
+          ? "المهمات متوقفة في عطلة نهاية الأسبوع (السبت والأحد). تُستأنف صباح يوم الإثنين."
+          : "Tasks are paused during the weekend holiday (Saturday & Sunday). Resumes Monday."
+      );
+      return;
+    }
+
     if (claimedToday) {
       toast.info(
         isArabic
@@ -167,6 +181,15 @@ export default function RideScootersPage() {
 
   // Handle Collect Button ($)
   const handleCollect = async () => {
+    if (isWeekend) {
+      toast.warning(
+        isArabic
+          ? "جمع الأرباح غير متاح في عطلة نهاية الأسبوع (السبت والأحد)."
+          : "Earnings collection is paused on weekends (Saturday & Sunday)."
+      );
+      return;
+    }
+
     if (claimedToday) {
       toast.info(
         isArabic
@@ -204,6 +227,15 @@ export default function RideScootersPage() {
 
   // Handle Collect All ("جمع في نقرة واحدة")
   const handleCollectAll = async () => {
+    if (isWeekend) {
+      toast.warning(
+        isArabic
+          ? "جمع الأرباح غير متاح في عطلة نهاية الأسبوع (السبت والأحد)."
+          : "Earnings collection is paused on weekends (Saturday & Sunday)."
+      );
+      return;
+    }
+
     if (claimedToday) {
       toast.info(
         isArabic
@@ -269,6 +301,25 @@ export default function RideScootersPage() {
           transition={{ duration: 0.25 }}
           className="space-y-4"
         >
+          {/* Weekend Holiday Banner */}
+          {isWeekend && (
+            <div className="rounded-3xl bg-amber-950/40 border border-amber-500/40 p-4 shadow-xl flex items-start gap-3 text-amber-300">
+              <AlertTriangle className="w-5 h-5 flex-shrink-0 text-amber-400 mt-0.5 animate-pulse" />
+              <div className="space-y-1">
+                <h4 className="text-xs sm:text-sm font-black text-white">
+                  {isArabic
+                    ? "عطلة نهاية الأسبوع الرسمية (السبت والأحد)"
+                    : "Official Weekend Holiday (Saturday & Sunday)"}
+                </h4>
+                <p className="text-[11px] leading-relaxed text-slate-300/90">
+                  {isArabic
+                    ? "تتوقف مهام تشغيل السكوتر وتوليد الأرباح مؤقتاً خلال يومي السبت والأحد، وتُستأنف المهام والتحصيل تلقائياً صباح يوم الإثنين."
+                    : "Scooter operations and profit generation are paused on Saturday & Sunday, resuming Monday morning."}
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* Mission Requirement Banner */}
           <div className="rounded-2xl bg-gradient-to-r from-blue-950/60 via-slate-900/80 to-blue-950/60 border border-blue-500/30 p-3.5 shadow-xl flex items-center justify-between gap-3">
             <div className="flex items-center gap-2.5">
@@ -332,16 +383,20 @@ export default function RideScootersPage() {
                 {/* Collect Button ($) */}
                 <button
                   onClick={handleCollect}
-                  disabled={isCollecting || claimedToday || !isCompleted}
+                  disabled={isCollecting || claimedToday || !isCompleted || isWeekend}
                   title={
-                    claimedToday
+                    isWeekend
+                      ? isArabic ? "عطلة نهاية الأسبوع (السبت والأحد)" : "Weekend Holiday"
+                      : claimedToday
                       ? isArabic ? "تم استلام أرباح اليوم" : "Claimed today"
                       : isCompleted
                       ? isArabic ? "اضغط لجمع الأرباح فوراً" : "Click to collect profits"
                       : isArabic ? "غير متاح قبل إكمال 5 ساعات" : "Locked until 5 hours complete"
                   }
                   className={`w-12 h-12 rounded-2xl font-extrabold text-xl flex items-center justify-center shadow-lg transition-all active:scale-95 ${
-                    claimedToday
+                    isWeekend
+                      ? "bg-slate-800/50 text-slate-500 border border-slate-700/40 opacity-50 cursor-not-allowed"
+                      : claimedToday
                       ? "bg-emerald-950/40 text-emerald-500/60 border border-emerald-800/30 opacity-60 cursor-not-allowed"
                       : isCompleted
                       ? "bg-gradient-to-br from-[#8c1221] to-[#b31b2c] text-white shadow-red-600/50 border border-red-400 animate-bounce cursor-pointer"
@@ -358,16 +413,20 @@ export default function RideScootersPage() {
                 {/* Power Button (⏻) */}
                 <button
                   onClick={handlePowerClick}
-                  disabled={isPowering || claimedToday}
+                  disabled={isPowering || claimedToday || isWeekend}
                   title={
-                    claimedToday
+                    isWeekend
+                      ? isArabic ? "عطلة نهاية الأسبوع (السبت والأحد)" : "Weekend Holiday"
+                      : claimedToday
                       ? isArabic ? "مكتمل لليوم" : "Completed today"
                       : isScooterRunning
                       ? isArabic ? "إيقاف السكوتر مؤقتاً" : "Pause Scooter"
                       : isArabic ? "تشغيل السكوتر لبدء الـ 5 ساعات" : "Power On Scooter"
                   }
                   className={`w-12 h-12 rounded-2xl font-bold flex items-center justify-center shadow-lg transition-transform active:scale-95 disabled:opacity-50 border ${
-                    claimedToday
+                    isWeekend
+                      ? "bg-slate-800/60 text-slate-500 border-slate-700 cursor-not-allowed"
+                      : claimedToday
                       ? "bg-emerald-950/40 text-emerald-400 border-emerald-500/40 opacity-80"
                       : isScooterRunning
                       ? "bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-blue-500/40 border-cyan-400 animate-pulse"

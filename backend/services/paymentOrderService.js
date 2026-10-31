@@ -307,6 +307,32 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
     return next(new ApiError('Invalid baseAmount', 400));
   }
 
+  // Reuse existing valid pending order for this user & baseAmount if still active (at least 60s remaining)
+  const existingActive = await PaymentOrder.findOne({
+    user: req.user._id,
+    baseAmount,
+    status: 'pending',
+    expiresAt: { $gt: new Date(Date.now() + 60 * 1000) },
+  }).sort('-createdAt');
+
+  if (existingActive) {
+    return res.status(200).json({
+      status: 'Success',
+      data: {
+        order_id: existingActive.orderId,
+        network: existingActive.network,
+        token_symbol: existingActive.tokenSymbol,
+        address: existingActive.address,
+        base_amount: existingActive.baseAmount,
+        micro_amount: existingActive.microAmount,
+        expected_amount: existingActive.expectedAmount,
+        status: existingActive.status,
+        created_at: existingActive.createdAt,
+        expires_at: existingActive.expiresAt,
+      },
+    });
+  }
+
   const addresses = await getDepositAddresses();
   if (!addresses.length) {
     return next(new ApiError('BEP20 deposit addresses are not configured', 500));
@@ -362,8 +388,77 @@ exports.getOrderStatus = asyncHandler(async (req, res, next) => {
     filter.user = req.user._id;
   }
 
-  const order = await PaymentOrder.findOne(filter);
+  let order = await PaymentOrder.findOne(filter);
   if (!order) return next(new ApiError('Order not found', 404));
+
+  // Automated Real-Time On-Chain Verification on Every Status Poll
+  if (order.status === 'pending' && order.expiresAt > new Date()) {
+    const lastCheck = order.lastCheckedAt ? new Date(order.lastCheckedAt).getTime() : 0;
+    const nowTs = Date.now();
+
+    // Throttle to at most once every 3.5 seconds to preserve RPC stability
+    if (nowTs - lastCheck >= 3500) {
+      try {
+        order.lastCheckedAt = new Date();
+        await order.save({ validateBeforeSave: false });
+
+        const contractAddress = process.env.BEP20_USDT_CONTRACT || USDT_BEP20_CONTRACT;
+        const txs = await getBep20UsdtTransactionsByAddress({
+          address: order.address,
+          contractAddress,
+          blockLookback: 250, // ~12 minutes lookback on BSC
+        });
+
+        if (Array.isArray(txs) && txs.length > 0) {
+          const candidates = txs.filter((tx) => {
+            const txTime = Number(tx.timestamp || 0);
+            return (
+              tx.to === order.address &&
+              txTime >= new Date(order.createdAt).getTime() - 2 * 60 * 1000 &&
+              txTime <= new Date(order.expiresAt).getTime() + 2 * 60 * 1000
+            );
+          });
+
+          const tolerance = getTolerance();
+          const picked = chooseBestCandidate(
+            candidates,
+            Number(order.expectedAmount),
+            tolerance
+          );
+
+          if (picked.exact) {
+            const existingPaid = await PaymentOrder.findOne({
+              txHash: picked.exact.txHash,
+              status: 'paid',
+              _id: { $ne: order._id },
+            }).select('_id');
+
+            if (!existingPaid) {
+              const checkNow = new Date();
+              order.status = 'paid';
+              order.txHash = picked.exact.txHash;
+              order.paidAmount = picked.exact.amount;
+              order.paidAt = new Date(Number(picked.exact.timestamp || Date.now()));
+              order.lastCheckedAt = checkNow;
+              order.mismatchType = 'none';
+              order.mismatchAmount = undefined;
+              await order.save({ validateBeforeSave: false });
+
+              await creditPaidOrder({ orderId: order._id, now: checkNow });
+
+              // Re-fetch to return latest credited state
+              const updated = await PaymentOrder.findById(order._id);
+              if (updated) order = updated;
+            }
+          }
+        }
+      } catch (err) {
+        // Silently capture RPC transient errors so API response is never disrupted
+        // eslint-disable-next-line no-console
+        console.warn(`[AutoVerify] BSC check error: ${err.message}`);
+      }
+    }
+  }
 
   res.status(200).json({
     status: 'Success',
