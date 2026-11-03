@@ -303,7 +303,7 @@ export async function POST(req) {
               headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${apiKey.trim()}`,
-                "HTTP-Referer": "https://binancemg.onrender.com",
+                "HTTP-Referer": "https://www.miniing.com",
                 "X-Title": "ETG RIDE AI Support",
               },
               body: JSON.stringify({

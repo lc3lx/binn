@@ -195,13 +195,31 @@ async function creditReferralPayout(recipient, amount, meta) {
 }
 
 function buildReferralLink(settings, code) {
-  const base =
+  let base =
     (settings.referralRegistrationBaseUrl && String(settings.referralRegistrationBaseUrl).trim()) ||
     process.env.FRONTEND_REGISTER_URL ||
-    'https://www.binancemg.com';
-  const trimmed = base.replace(/\/$/, '');
-  const sep = trimmed.includes('?') ? '&' : '?';
-  return { referralLink: `${trimmed}${sep}code=${encodeURIComponent(code)}` };
+    'https://www.miniing.com';
+
+  if (base.includes('binancemg.com') || base.includes('binancecoins.com')) {
+    base = base.replace(
+      /www\.binancemg\.com|binancemg\.com|www\.binancecoins\.com|binancecoins\.com/g,
+      'www.miniing.com'
+    );
+  }
+
+  const trimmed = base.replace(/\/+$/, '');
+  try {
+    const parsed = new URL(trimmed);
+    const sep = parsed.search ? '&' : '?';
+    return {
+      referralLink: `${parsed.origin}${parsed.pathname || '/'}${parsed.search}${sep}code=${encodeURIComponent(code)}`,
+    };
+  } catch {
+    const sep = trimmed.includes('?') ? '&' : '?';
+    return {
+      referralLink: `${trimmed}/${sep}code=${encodeURIComponent(code)}`.replace(/\/\?/, '/?'),
+    };
+  }
 }
 
 exports.getMyReferralProgram = asyncHandler(async (req, res, next) => {

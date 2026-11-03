@@ -339,7 +339,7 @@ async function callOpenRouter(userMessage, history = [], locale = 'ar') {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${apiKey.trim()}`,
-          'HTTP-Referer': 'https://binancemg.onrender.com',
+          'HTTP-Referer': 'https://www.miniing.com',
           'X-Title': 'ETG RIDE AI Support Concierge',
         },
         body: JSON.stringify({

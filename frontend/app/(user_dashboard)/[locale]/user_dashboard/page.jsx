@@ -50,8 +50,13 @@ export default function UserDashboardPage() {
 
   const handleCopyInviteLink = () => {
     if (typeof window === "undefined") return;
-    const origin = window.location.origin;
-    const inviteUrl = `${origin}/?code=${referralCode}`;
+    const origin =
+      window.location.origin &&
+      !window.location.origin.includes("localhost") &&
+      !window.location.origin.includes("127.0.0.1")
+        ? window.location.origin
+        : "https://www.miniing.com";
+    const inviteUrl = `${origin}/?code=${encodeURIComponent(referralCode)}`;
     navigator.clipboard.writeText(inviteUrl);
     setCopiedCode(true);
     toast.success(isArabic ? "تم نسخ رابط الإحالة بنجاح!" : "Referral link copied!");

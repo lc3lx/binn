@@ -45,6 +45,26 @@ const nextConfig = {
         pathname: "/**",
       },
       {
+        protocol: "https",
+        hostname: "www.miniing.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "miniing.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "http",
+        hostname: "www.miniing.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "http",
+        hostname: "miniing.com",
+        pathname: "/**",
+      },
+      {
         protocol: "http",
         hostname: "localhost",
         pathname: "/**",

@@ -89,7 +89,15 @@ export default function ReferralPage() {
     roadmap: [],
   };
 
-  const referralLink = payload?.referralLink || "";
+  const rawReferralLink = payload?.referralLink || "";
+  const referralLink = rawReferralLink
+    ? rawReferralLink.replace(
+        /www\.binancemg\.com|binancemg\.com|www\.binancecoins\.com|binancecoins\.com/g,
+        "www.miniing.com"
+      )
+    : referralCode
+      ? `https://www.miniing.com/?code=${encodeURIComponent(referralCode)}`
+      : "";
 
   const nf = useMemo(
     () =>
